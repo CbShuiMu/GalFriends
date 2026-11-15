@@ -1,0 +1,286 @@
+{
+  "index": {
+    "directory": "checkpoints",
+    "record": "verified-models.json",
+    "repository": "IndexTeam/IndexTTS-2.5",
+    "revision": "c39ce5ba981572cb187443877ff559dfb246ce63",
+    "files": [
+      {
+        "path": ".gitattributes",
+        "sha256": "b82c299ad0e975be79be308df962ef3b8d72f8a435066287360daa8211c30ddb",
+        "size": 1589
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "cc7da9ea0f8a97ef15ab3bf0389e636ce79ffca1aef5489520796ac87d87a87b",
+        "size": 10553
+      },
+      {
+        "path": "README.md",
+        "sha256": "d21e2ed55013ce0c456b9aa6d4fab7222365bfad10dd839155da0ce36fa93001",
+        "size": 4272
+      },
+      {
+        "path": "codec.pth",
+        "sha256": "d15cbed16a40f478438c961fb043f68dfa6353bf56c966761315db3433e9722c",
+        "size": 607290935
+      },
+      {
+        "path": "config.yaml",
+        "sha256": "18adf417be3e8f5e2e48e30f7420c719170a6870619436250f360d626877870e",
+        "size": 2860
+      },
+      {
+        "path": "feat1.pt",
+        "sha256": "f219cb447d80216ba615666da2ff8d63ac544eee26657f3a7b278692bf7a67c4",
+        "size": 57170
+      },
+      {
+        "path": "feat2.pt",
+        "sha256": "9c4292e96dee535aea9a6206e9a0c856dd578dde9212acdb16dd3ada4d12bf80",
+        "size": 374866
+      },
+      {
+        "path": "gpt.pth",
+        "sha256": "43a8f4c30eccdf201958d3b9713511482c19d56dc20b0b1c4ee1e6b080b19d85",
+        "size": 3259599833
+      },
+      {
+        "path": "multilingual_zh_ja_yue_char_del.tiktoken",
+        "sha256": "747979631e813193436aabcff7c1c235d37de8097b71c563ec8b63b7a515c718",
+        "size": 907395
+      },
+      {
+        "path": "s2mel.pth",
+        "sha256": "9b1b0003fc189c94cc349758d7ebc25f903b7eb2de4602879959cc64ce816456",
+        "size": 414908601
+      },
+      {
+        "path": "wav2vec2bert_stats.pt",
+        "sha256": "c9c176c2b8850ab2e3ba828bbfa969deaf4566ce55db5f2687b8430b87526ad2",
+        "size": 9343
+      }
+    ]
+  },
+  "bert": {
+    "directory": "checkpoints/hf_cache/w2v-bert-2.0",
+    "record": "verified-models.json",
+    "repository": "facebook/w2v-bert-2.0",
+    "revision": "da985ba0987f70aaeb84a80f2851cfac8c697a7b",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "478afeacb3b4ce0d86b361f099416d28a7e7673ade31775c0f85f396979b7fc2",
+        "size": 4792
+      },
+      {
+        "path": "config.json",
+        "sha256": "f5572bd5998b68182e9c328a43127ed21fed687f6910497136b91a4e3b0e3675",
+        "size": 1874
+      },
+      {
+        "path": "model.safetensors",
+        "sha256": "eb890c9660ed6e3414b6812e27257b8ce5454365d5490d3ad581ea60b93be043",
+        "size": 2322063736
+      },
+      {
+        "path": "preprocessor_config.json",
+        "sha256": "8e6281aad64f97e40534135a59dcc5d33571efae376f2a25adf5551951897ab4",
+        "size": 275
+      }
+    ]
+  },
+  "camp": {
+    "directory": "checkpoints/hf_cache",
+    "record": "verified-models.json",
+    "repository": "funasr/campplus",
+    "revision": "e4b6ede7ce16997aff4ae69fbca1f0175e2afede",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "c6025ccc42e290640f44e06f0742c584b99afe738bb819d74889330c692446f9",
+        "size": 2020
+      },
+      {
+        "path": "campplus_cn_common.bin",
+        "sha256": "3388cf5fd3493c9ac9c69851d8e7a8badcfb4f3dc631020c4961371646d5ada8",
+        "size": 28036335
+      }
+    ]
+  },
+  "bigvgan": {
+    "directory": "checkpoints/hf_cache/bigvgan",
+    "record": "verified-models.json",
+    "repository": "nvidia/bigvgan_v2_22khz_80band_256x",
+    "revision": "633ff708ed5b74903e86ff1298cf4a98e921c513",
+    "files": [
+      {
+        "path": "LICENSE",
+        "sha256": "90459cd52fc41bd723df7c0c76fac1e4dd60e6bfd644a7e2a93f325bed4f6d95",
+        "size": 1076
+      },
+      {
+        "path": "README.md",
+        "sha256": "e70574f9ca1a0fac3a1faea840898c4c814552e46f5c160639db1397f9c7ddf4",
+        "size": 8038
+      },
+      {
+        "path": "bigvgan_generator.pt",
+        "sha256": "e95ba25972d3de0628d99cd156e9315a9c018899bf739988959ebe3544080ced",
+        "size": 449228171
+      },
+      {
+        "path": "config.json",
+        "sha256": "88a1f47acf747db0b21e97a389d838566147f7a5464583ff5c8d819d870f03ee",
+        "size": 1405
+      }
+    ]
+  },
+  "v5": {
+    "directory": "gpt-sovits/GPT_SoVITS/pretrained_models",
+    "record": "verified-models.json",
+    "repository": "lj1995/GPT-SoVITS",
+    "revision": "8f8857563c040d542de108a2c18b0425abd6c9c5",
+    "files": [
+      {
+        "path": "chinese-hubert-base/config.json",
+        "sha256": "c3e5060a1277e0f078cc6be9da4528a605dba6ece93018981fe2c820e5c7b103",
+        "size": 1449
+      },
+      {
+        "path": "chinese-hubert-base/preprocessor_config.json",
+        "sha256": "dcd684124d06722947939d41ea6ae58dbf10968c60a11a29f23ddc602c64a29b",
+        "size": 212
+      },
+      {
+        "path": "chinese-hubert-base/pytorch_model.bin",
+        "sha256": "24164f129c66499d1346e2aa55f183250c223161ec2770c0da3d3b08cf432d3c",
+        "size": 188811417
+      },
+      {
+        "path": "chinese-roberta-wwm-ext-large/config.json",
+        "sha256": "3d57de2fd7e80d0e5c8ff194f0bbb6baa10df7e43fc262a0cc71298a78b0a3e5",
+        "size": 963
+      },
+      {
+        "path": "chinese-roberta-wwm-ext-large/pytorch_model.bin",
+        "sha256": "e53a693acc59ace251d143d068096ae0d7b79e4b1b503fa84c9dcf576448c1d8",
+        "size": 651225145
+      },
+      {
+        "path": "chinese-roberta-wwm-ext-large/tokenizer.json",
+        "sha256": "173796956820ea27bd14f76bf28162607ff4254807e2948253eb5b46f5bb643b",
+        "size": 268962
+      },
+      {
+        "path": "gsv-v5-pretrained/s2Gv5turbo.pth",
+        "sha256": "287b32a06b7d486f5303ec520468b0728fb01aac8b0f5d86fd5455c9a1d3e022",
+        "size": 766406144
+      },
+      {
+        "path": "gsv-v5-pretrained/vocoder.pth",
+        "sha256": "b7543c83222aa2105bb4efb56845086bc5f2eeba61243d723ffa062052b3221f",
+        "size": 57761163
+      },
+      {
+        "path": "s1v3.ckpt",
+        "sha256": "87133414860ea14ff6620c483a3db5ed07b44be42e2c3fcdad65523a729a745a",
+        "size": 155284856
+      }
+    ]
+  },
+  "v2": {
+    "directory": "gpt-sovits/GPT_SoVITS/pretrained_models",
+    "record": "verified-models-v2pro.json",
+    "repository": "lj1995/GPT-SoVITS",
+    "revision": "8f8857563c040d542de108a2c18b0425abd6c9c5",
+    "files": [
+      {
+        "path": "chinese-hubert-base/config.json",
+        "sha256": "c3e5060a1277e0f078cc6be9da4528a605dba6ece93018981fe2c820e5c7b103",
+        "size": 1449
+      },
+      {
+        "path": "chinese-hubert-base/preprocessor_config.json",
+        "sha256": "dcd684124d06722947939d41ea6ae58dbf10968c60a11a29f23ddc602c64a29b",
+        "size": 212
+      },
+      {
+        "path": "chinese-hubert-base/pytorch_model.bin",
+        "sha256": "24164f129c66499d1346e2aa55f183250c223161ec2770c0da3d3b08cf432d3c",
+        "size": 188811417
+      },
+      {
+        "path": "chinese-roberta-wwm-ext-large/config.json",
+        "sha256": "3d57de2fd7e80d0e5c8ff194f0bbb6baa10df7e43fc262a0cc71298a78b0a3e5",
+        "size": 963
+      },
+      {
+        "path": "chinese-roberta-wwm-ext-large/pytorch_model.bin",
+        "sha256": "e53a693acc59ace251d143d068096ae0d7b79e4b1b503fa84c9dcf576448c1d8",
+        "size": 651225145
+      },
+      {
+        "path": "chinese-roberta-wwm-ext-large/tokenizer.json",
+        "sha256": "173796956820ea27bd14f76bf28162607ff4254807e2948253eb5b46f5bb643b",
+        "size": 268962
+      },
+      {
+        "path": "s1v3.ckpt",
+        "sha256": "87133414860ea14ff6620c483a3db5ed07b44be42e2c3fcdad65523a729a745a",
+        "size": 155284856
+      },
+      {
+        "path": "sv/pretrained_eres2netv2w24s4ep4.ckpt",
+        "sha256": "4f5a0bf73c61eb41b174e1bb54e7ee3c83233892be8e0af1f187024e8e581a35",
+        "size": 107528697
+      },
+      {
+        "path": "v2Pro/s2Dv2Pro.pth",
+        "sha256": "257a7f36ae49e9ff08790d2cd3d398592530852caba810197f8606e884a52c54",
+        "size": 126431971
+      },
+      {
+        "path": "v2Pro/s2Gv2Pro.pth",
+        "sha256": "0f8ead815234365edf045c6d86370ed6e4f440e8195be77ff0ea72684ad406a5",
+        "size": 162303657
+      }
+    ]
+  },
+  "base": {
+    "directory": "irodori-assets/base",
+    "record": "verified-models.json",
+    "repository": "Aratako/Irodori-TTS-v4.1-Small",
+    "revision": "2b28324dc263ed5e6638b3cf3dd94c82ead07b4b",
+    "files": [
+      {
+        "path": "model.safetensors",
+        "size": 3064295596,
+        "sha256": "c85de88c01700cb53538e706f128ebcb1b8513ad21d7d0e75f58bc82cdbf89f6"
+      },
+      {
+        "path": "tokenizer/tokenizer.json",
+        "size": 6718495,
+        "sha256": "6a0734cf21c802169defaffe719bc2ef12bb9d0be37e54b61ed27aa89394723d"
+      },
+      {
+        "path": "tokenizer/tokenizer_config.json",
+        "size": 668,
+        "sha256": "d229a271c64de1a7939d20d3665498e873fa91d5ee2edf135d73ec752cb9c9d3"
+      }
+    ]
+  },
+  "codec": {
+    "directory": "irodori-assets/codec",
+    "record": "verified-models.json",
+    "repository": "Aratako/Semantic-DACVAE-Japanese-32dim",
+    "revision": "47376ee24834d7a05a48ebabfe3cde29b3c5e214",
+    "files": [
+      {
+        "path": "weights.pth",
+        "size": 429620065,
+        "sha256": "db120339c5ee7eca1912cdf29bc612b947a0808e69c3cebfb4936b45a762c1d5"
+      }
+    ]
+  }
+}

@@ -1,0 +1,72 @@
+:root {color-scheme:light; font-family:"Segoe UI","Microsoft YaHei",sans-serif; font-size:14px;}
+:root[data-font-size="14"] {font-size:14px;}
+:root[data-font-size="16"] {font-size:16px;}
+:root[data-font-size="18"] {font-size:18px;}
+* {box-sizing:border-box;}
+html,body,#app {width:100%;height:100%;margin:0;background:transparent;overflow:hidden;}
+button,input,textarea,select {font:inherit;}
+button {border:0;border-radius:999px;cursor:pointer;color:inherit;background:transparent;min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center;}
+button:hover {background:rgba(150,100,130,.14);}
+button:disabled {opacity:.4;cursor:default;}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible {outline:2px solid var(--accent,#d56898);outline-offset:2px;}
+.icon {width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;}
+.google-icon {stroke:none;fill:currentColor;}
+.pet {position:relative;height:100%;color:var(--palette-302a35,#332b37);padding:12px;}
+.pet-art {position:absolute;inset:42px 0 0;width:100%;height:calc(100% - 42px);object-fit:contain;object-position:center bottom;user-select:none;pointer-events:none;filter:drop-shadow(0 10px 8px #20132720);}
+.pet-handle {display:flex;align-items:center;gap:4px;position:relative;border-radius:99px;padding:4px 8px;background:color-mix(in srgb,var(--surface,#fff) 92%,transparent);box-shadow:0 2px 12px #20132712;}
+.pet-handle strong {flex:1;cursor:grab;padding:5px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pet-handle button[aria-pressed=false] {opacity:.4;}
+.pet-dialogue {position:absolute;top:42%;left:16px;right:16px;max-height:54%;display:flex;flex-direction:column;background:color-mix(in srgb,var(--surface,#fff) 92%,transparent);border:1px solid color-mix(in srgb,var(--text,#332b37) 12%,transparent);border-radius:22px;padding:14px;box-shadow:0 10px 28px #20132718;isolation:isolate;}
+/* Keep the blur on a separate layer so fixed dropdowns use the viewport. */
+.pet-dialogue::before {content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;backdrop-filter:blur(14px);pointer-events:none;}
+.pet-dialogue {
+  --pet-scroll-thumb:color-mix(in srgb,var(--palette-302a35,#332b37) 28%,transparent);
+  --pet-scroll-thumb-hover:color-mix(in srgb,var(--palette-302a35,#332b37) 46%,transparent);
+  --pet-scroll-thumb-active:color-mix(in srgb,var(--palette-302a35,#332b37) 62%,transparent);
+}
+.pet-dialogue :is(.pet-messages,.pet-profile,textarea) {
+  scrollbar-width:thin;
+  scrollbar-color:var(--pet-scroll-thumb) transparent;
+  scrollbar-gutter:stable;
+  overscroll-behavior:contain;
+}
+/* WebView2 使用伪元素控制轨道和箭头，标准 scrollbar 属性保持 auto。 */
+@supports selector(::-webkit-scrollbar) {
+  .pet-dialogue :is(.pet-messages,.pet-profile,textarea) {scrollbar-width:auto;scrollbar-color:auto;}
+}
+.pet-dialogue :is(.pet-messages,.pet-profile,textarea)::-webkit-scrollbar {width:8px;height:8px;}
+.pet-dialogue :is(.pet-messages,.pet-profile,textarea)::-webkit-scrollbar-track {background:transparent;}
+.pet-dialogue :is(.pet-messages,.pet-profile,textarea)::-webkit-scrollbar-thumb {min-height:28px;border:2px solid transparent;border-radius:999px;background-color:var(--pet-scroll-thumb);background-clip:padding-box;}
+.pet-dialogue :is(.pet-messages,.pet-profile,textarea)::-webkit-scrollbar-thumb:hover {background-color:var(--pet-scroll-thumb-hover);}
+.pet-dialogue :is(.pet-messages,.pet-profile,textarea)::-webkit-scrollbar-thumb:active {background-color:var(--pet-scroll-thumb-active);}
+.pet-dialogue :is(.pet-messages,.pet-profile,textarea)::-webkit-scrollbar-button {display:none;width:0;height:0;}
+.pet-dialogue :is(.pet-messages,.pet-profile,textarea)::-webkit-scrollbar-corner {background:transparent;}
+.pet-messages {overflow-y:auto;overflow-x:hidden;min-height:28px;padding-right:6px;}
+.pet-messages p {margin:0 0 9px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;}
+.pet-user {font-size:.75rem;opacity:.6;text-align:right;padding-left:24px;}
+.pet-messages article {margin-bottom:14px;}
+.pet-japanese {font-size:.8125rem;opacity:.72;}
+.pet-empty {opacity:.65;font-size:.8125rem;}
+form {flex:none;margin-top:8px;}
+textarea,input,select {color:inherit;border:1px solid color-mix(in srgb,var(--text,#332b37) 15%,transparent);background:color-mix(in srgb,var(--surface,#fff) 80%,transparent);border-radius:14px;padding:9px 11px;width:100%;resize:none;}
+footer {display:flex;align-items:center;gap:3px;margin-top:5px;}
+footer small {flex:1;font-size:.6875rem;opacity:.6;}
+.pet-profile {overflow:auto;flex-shrink:0;max-height:190px;font-size:.85rem;margin-bottom:10px;}
+.pet-profile label {display:block;margin-bottom:4px;}
+.pet-model-label {display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
+.pet-model-label label {margin:0;}
+.pet-profile .choice-trigger {justify-content:flex-start;font-size:inherit;}
+.pet-profile .choice-option {font-size:inherit;}
+.pet-profile .choice-label {overflow-wrap:anywhere;}
+.pet .notice-stack {right:12px;bottom:12px;max-width:calc(100% - 24px);}
+.pet-loading {background:#fff;border-radius:20px;margin:20px;padding:20px;}
+.controller-keyboard {position:fixed;inset:auto 8px 8px;z-index:100;background:var(--surface-raised,#fff);color:var(--button-color,#332b37);border:1px solid var(--button-line,#ccc);border-radius:18px;padding:12px;box-shadow:0 4px 22px #0003;}
+.controller-keyboard output {display:block;min-height:30px;max-height:60px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;}
+.controller-keys {display:grid;grid-template-columns:repeat(8,minmax(0,1fr));max-height:220px;overflow:auto;gap:2px;}
+.controller-keys button {font-size:12px;background:var(--button-bg,#eee);min-width:0;}
+@media(prefers-reduced-motion:no-preference){button {transition:background .15s ease;}}
+@media(forced-colors:active){
+  .pet-dialogue {--pet-scroll-thumb:CanvasText;--pet-scroll-thumb-hover:CanvasText;--pet-scroll-thumb-active:CanvasText;}
+  .pet-dialogue :is(.pet-messages,.pet-profile,textarea)::-webkit-scrollbar-thumb {forced-color-adjust:none;}
+}
+@media(max-height:560px){.pet-dialogue{top:37%;max-height:59%;}.pet-profile{max-height:90px;}}

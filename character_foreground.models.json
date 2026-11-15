@@ -1,0 +1,27 @@
+[
+  {
+    "file": "sam2.1-base-plus/prompt_encoder_mask_decoder.onnx",
+    "url": "https://huggingface.co/onnx-community/sam2.1-hiera-base-plus-ONNX/resolve/bab18593f44e652f04cf18b60b3690f60e8996b0/onnx/prompt_encoder_mask_decoder.onnx",
+    "sha256": "f39eeec20243ed1c8f2cd013812e77813d937ddbc800fa4bc703761adc7e63cd"
+  },
+  {
+    "file": "sam2.1-base-plus/prompt_encoder_mask_decoder.onnx_data",
+    "url": "https://huggingface.co/onnx-community/sam2.1-hiera-base-plus-ONNX/resolve/bab18593f44e652f04cf18b60b3690f60e8996b0/onnx/prompt_encoder_mask_decoder.onnx_data",
+    "sha256": "445cd3f72a218815db10e336f4f1c46a6eb2713a0160a85af5365134607f32a7"
+  },
+  {
+    "file": "sam2.1-base-plus/vision_encoder.onnx",
+    "url": "https://huggingface.co/onnx-community/sam2.1-hiera-base-plus-ONNX/resolve/bab18593f44e652f04cf18b60b3690f60e8996b0/onnx/vision_encoder.onnx",
+    "sha256": "6fd992cf796e6ad5a29f3b92a127f2ce33f7f320d63c8b3f02bf3775f5f692f4"
+  },
+  {
+    "file": "sam2.1-base-plus/vision_encoder.onnx_data",
+    "url": "https://huggingface.co/onnx-community/sam2.1-hiera-base-plus-ONNX/resolve/bab18593f44e652f04cf18b60b3690f60e8996b0/onnx/vision_encoder.onnx_data",
+    "sha256": "f8a5f1b14d02eb7ed3b3576ad6774b8ebcfef6cc20674d5f316d6144c60a08a5"
+  },
+  {
+    "file": "anime-person.onnx",
+    "url": "https://huggingface.co/deepghs/anime_person_detection/resolve/e39c744c22432ad01f91dd254fe2b02c8d878b8c/person_detect_v1.1_s/model.onnx",
+    "sha256": "02972c0401cd77e1a5f05eee480d9e6455e14fafd8df50f4b80ecaf47263f1de"
+  }
+]

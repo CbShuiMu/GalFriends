@@ -1,0 +1,1748 @@
+{
+  "emotion.recommended": {
+    "zh-CN": "参考音频推荐已完成。",
+    "ja-JP": "参照音声の推薦が完了しました。",
+    "en-US": "Reference audio recommendations are ready."
+  },
+  "emotion.cancelled": {
+    "zh-CN": "推荐已取消，原选择已保留。",
+    "ja-JP": "推薦をキャンセルしました。選択済みの音声は保持されています。",
+    "en-US": "Recommendations cancelled. Your selections were preserved."
+  },
+  "emotions": {
+    "zh-CN": "情绪参考音频",
+    "ja-JP": "感情別の参照音声",
+    "en-US": "Emotion references"
+  },
+  "emotion.target": {
+    "zh-CN": "悬浮角色",
+    "ja-JP": "表示中のキャラクター",
+    "en-US": "Floating character"
+  },
+  "emotion.recommend": {
+    "zh-CN": "AI 推荐参考音频",
+    "ja-JP": "AI で参照音声を推薦",
+    "en-US": "Recommend references with AI"
+  },
+  "emotion.recommending": {
+    "zh-CN": "正在按台词筛选",
+    "ja-JP": "台詞から選別中",
+    "en-US": "Selecting by transcript"
+  },
+  "emotion.cancelling": {
+    "zh-CN": "正在取消，等待当前请求结束…",
+    "ja-JP": "キャンセル中…",
+    "en-US": "Cancelling, waiting for the current request…"
+  },
+  "emotion.normal": {
+    "zh-CN": "正常",
+    "ja-JP": "通常",
+    "en-US": "Normal"
+  },
+  "emotion.happy": {
+    "zh-CN": "开心",
+    "ja-JP": "喜び",
+    "en-US": "Happy"
+  },
+  "emotion.sad": {
+    "zh-CN": "悲伤",
+    "ja-JP": "悲しみ",
+    "en-US": "Sad"
+  },
+  "emotion.angry": {
+    "zh-CN": "愤怒",
+    "ja-JP": "怒り",
+    "en-US": "Angry"
+  },
+  "emotion.shy": {
+    "zh-CN": "害羞",
+    "ja-JP": "照れ",
+    "en-US": "Shy"
+  },
+  "emotion.preview": {
+    "zh-CN": "试听",
+    "ja-JP": "試聴",
+    "en-US": "Preview"
+  },
+  "emotion.choose": {
+    "zh-CN": "选用",
+    "ja-JP": "選択",
+    "en-US": "Use reference"
+  },
+  "emotion.selected": {
+    "zh-CN": "已选用",
+    "ja-JP": "選択済み",
+    "en-US": "Selected"
+  },
+  "emotion.hint": {
+    "zh-CN": "AI 按日语台词为每类情绪推荐 5 条参考音频，试听后每类选用一条。推荐会将这些台词发送至设置中选定的 AI 服务。",
+    "ja-JP": "AI が日本語の台詞から各感情に5件を推薦します。試聴して各感情に1件を選択してください。台詞は設定した AI サービスに送信されます。",
+    "en-US": "AI recommends five clips per emotion from Japanese transcripts. Preview and select one per emotion. Transcripts are sent to your configured AI service."
+  },
+  "emotion.no_target": {
+    "zh-CN": "请先从角色详情打开一个悬浮角色。",
+    "ja-JP": "キャラクター詳細からデスクトップに表示してください。",
+    "en-US": "Open a floating character from their details first."
+  },
+  "emotion.model_required": {
+    "zh-CN": "请先为此角色绑定包含训练音频和台词的模型。",
+    "ja-JP": "このキャラクターに学習音声と台詞を含むモデルを設定してください。",
+    "en-US": "Bind a model containing training audio and transcripts for this character."
+  },
+  "emotion.no_candidates": {
+    "zh-CN": "尚无候选，请使用 AI 推荐。",
+    "ja-JP": "候補がありません。AI 推薦を実行してください。",
+    "en-US": "No candidates yet. Run AI recommendations."
+  },
+  "emotion.insufficient": {
+    "zh-CN": "此类符合条件的候选不足 5 条。",
+    "ja-JP": "この感情の候補は5件未満です。",
+    "en-US": "Fewer than five matching clips were found."
+  },
+  "emotion.invalid_data": {
+    "zh-CN": "参考音频数据无效或素材缺失。",
+    "ja-JP": "参照音声データが無効または見つかりません。",
+    "en-US": "Reference data is invalid or missing."
+  },
+  "emotion.duration_invalid": {
+    "zh-CN": "参考音频必须为 3–10 秒。",
+    "ja-JP": "参照音声は3～10秒にしてください。",
+    "en-US": "Reference audio must be 3–10 seconds."
+  },
+  "emotion.changed": {
+    "zh-CN": "模型或参考音频已变化，请刷新并重新选择。",
+    "ja-JP": "モデルまたは参照音声が変更されました。更新して再選択してください。",
+    "en-US": "The model or reference changed. Refresh and select again."
+  },
+  "voice.timeout": {
+    "zh-CN": "任务超时，请重试。",
+    "ja-JP": "処理がタイムアウトしました。再試行してください。",
+    "en-US": "The task timed out. Try again."
+  },
+  "companion.open": {
+    "zh-CN": "桌面陪伴",
+    "ja-JP": "デスクトップに表示",
+    "en-US": "Desktop companion"
+  },
+  "companion.drag": {
+    "zh-CN": "拖动角色窗口",
+    "ja-JP": "ウィンドウを移動",
+    "en-US": "Drag companion"
+  },
+  "companion.pin": {
+    "zh-CN": "始终置顶",
+    "ja-JP": "最前面に表示",
+    "en-US": "Always on top"
+  },
+  "companion.profile": {
+    "zh-CN": "语音设置",
+    "ja-JP": "音声設定",
+    "en-US": "Voice settings"
+  },
+  "companion.dialogue": {
+    "zh-CN": "角色对话",
+    "ja-JP": "キャラクターチャット",
+    "en-US": "Character chat"
+  },
+  "companion.model": {
+    "zh-CN": "角色语音模型",
+    "ja-JP": "キャラクター音声モデル",
+    "en-US": "Character voice model"
+  },
+  "companion.greeting": {
+    "zh-CN": "输入想说的话，按 Enter 开始聊天。",
+    "ja-JP": "メッセージを入力して Enter で話しかけてください。",
+    "en-US": "Type a message and press Enter to chat."
+  },
+  "companion.enter": {
+    "zh-CN": "Enter 发送 · Shift+Enter 换行",
+    "ja-JP": "Enter 送信 · Shift+Enter 改行",
+    "en-US": "Enter to send · Shift+Enter for a new line"
+  },
+  "companion.input": {
+    "zh-CN": "和角色说点什么…",
+    "ja-JP": "話しかけてみましょう…",
+    "en-US": "Say something…"
+  },
+  "companion.send": {
+    "zh-CN": "发送",
+    "ja-JP": "送信",
+    "en-US": "Send"
+  },
+  "companion.replay": {
+    "zh-CN": "播放日语",
+    "ja-JP": "日本語を再生",
+    "en-US": "Play Japanese"
+  },
+  "companion.thinking": {
+    "zh-CN": "正在回复…",
+    "ja-JP": "返答を考えています…",
+    "en-US": "Thinking…"
+  },
+  "companion.speaking": {
+    "zh-CN": "正在生成日语语音…",
+    "ja-JP": "日本語音声を生成中…",
+    "en-US": "Generating Japanese speech…"
+  },
+  "companion.ai_required": {
+    "zh-CN": "请先在设置 → AI 中配置当前服务并选择模型。",
+    "ja-JP": "設定 → AI で使用するサービスとモデルを設定してください。",
+    "en-US": "Configure the selected provider and model in Settings → AI."
+  },
+  "companion.model_invalid": {
+    "zh-CN": "请选择属于此角色的正式日语训练目录。",
+    "ja-JP": "このキャラクターの正式な日本語学習モデルを選択してください。",
+    "en-US": "Select this character’s completed Japanese training folder."
+  },
+  "companion.invalid_reply": {
+    "zh-CN": "AI 未返回完整的中日双语对白，请重试。",
+    "ja-JP": "AI の中国語・日本語の返答が不完全です。再試行してください。",
+    "en-US": "The AI response was not valid Chinese and Japanese. Try again."
+  },
+  "companion.input_invalid": {
+    "zh-CN": "消息须为 1–2000 字。",
+    "ja-JP": "1～2000 文字で入力してください。",
+    "en-US": "Enter between 1 and 2000 characters."
+  },
+  "companion.audio_invalid": {
+    "zh-CN": "语音输出校验失败，请重试。",
+    "ja-JP": "音声出力の検証に失敗しました。",
+    "en-US": "Audio validation failed. Try again."
+  },
+  "companion.play_failed": {
+    "zh-CN": "音频已生成，点击播放日语重试。",
+    "ja-JP": "音声は生成済みです。再生ボタンを押してください。",
+    "en-US": "Audio is ready. Click Play Japanese to retry."
+  },
+  "companion.failed": {
+    "zh-CN": "操作失败",
+    "ja-JP": "操作に失敗しました",
+    "en-US": "Operation failed"
+  },
+  "companion.busy": {
+    "zh-CN": "角色正在回复，请稍候或取消。",
+    "ja-JP": "処理中です。お待ちいただくかキャンセルしてください。",
+    "en-US": "The character is busy. Wait or cancel."
+  },
+  "companion.no_reply": {
+    "zh-CN": "暂无可播放的回复。",
+    "ja-JP": "再生できる返答がありません。",
+    "en-US": "No reply to play."
+  },
+  "home": {
+    "zh-CN": "首页",
+    "ja-JP": "ホーム",
+    "en-US": "Home"
+  },
+  "library": {
+    "zh-CN": "角色库",
+    "ja-JP": "キャラクター",
+    "en-US": "Characters"
+  },
+  "favorites": {
+    "zh-CN": "收藏夹",
+    "ja-JP": "お気に入り",
+    "en-US": "Collections"
+  },
+  "settings": {
+    "zh-CN": "设置",
+    "ja-JP": "設定",
+    "en-US": "Settings"
+  },
+  "about": {
+    "zh-CN": "关于",
+    "ja-JP": "このアプリについて",
+    "en-US": "About"
+  },
+  "search": {
+    "zh-CN": "搜索角色",
+    "ja-JP": "キャラクターを検索",
+    "en-US": "Find a character"
+  },
+  "search_hint": {
+    "zh-CN": "输入角色名、假名或罗马字",
+    "ja-JP": "名前・かな・ローマ字で検索",
+    "en-US": "Name, kana or romanized name"
+  },
+  "query": {
+    "zh-CN": "搜索",
+    "ja-JP": "検索",
+    "en-US": "Search"
+  },
+  "details": {
+    "zh-CN": "查看资料",
+    "ja-JP": "プロフィール",
+    "en-US": "View profile"
+  },
+  "favorite": {
+    "zh-CN": "加入收藏",
+    "ja-JP": "お気に入りに追加",
+    "en-US": "Add to favorites"
+  },
+  "unfavorite": {
+    "zh-CN": "已收藏",
+    "ja-JP": "お気に入り済み",
+    "en-US": "Favorited"
+  },
+  "all": {
+    "zh-CN": "全部角色",
+    "ja-JP": "すべてのキャラクター",
+    "en-US": "All characters"
+  },
+  "empty": {
+    "zh-CN": "这里还没有角色。搜索并添加你喜欢的角色。",
+    "ja-JP": "まだキャラクターがいません。検索して追加してください。",
+    "en-US": "No characters yet. Search and add a character."
+  },
+  "source": {
+    "zh-CN": "资料来源",
+    "ja-JP": "情報源",
+    "en-US": "Source"
+  },
+  "tag_source": {
+    "zh-CN": "标签来源",
+    "ja-JP": "タグの情報源",
+    "en-US": "Tag source"
+  },
+  "portraits": {
+    "zh-CN": "立绘相册",
+    "ja-JP": "立ち絵アルバム",
+    "en-US": "Portrait album"
+  },
+  "profile": {
+    "zh-CN": "角色资料",
+    "ja-JP": "プロフィール",
+    "en-US": "Profile"
+  },
+  "aliases": {
+    "zh-CN": "全部别名",
+    "ja-JP": "すべての別名",
+    "en-US": "All names"
+  },
+  "summary": {
+    "zh-CN": "人物介绍",
+    "ja-JP": "紹介",
+    "en-US": "Biography"
+  },
+  "tags": {
+    "zh-CN": "角色标签",
+    "ja-JP": "キャラクターのタグ",
+    "en-US": "Character traits"
+  },
+  "raw": {
+    "zh-CN": "完整来源数据",
+    "ja-JP": "元データを表示",
+    "en-US": "Full source data"
+  },
+  "close": {
+    "zh-CN": "关闭",
+    "ja-JP": "閉じる",
+    "en-US": "Close"
+  },
+  "back": {
+    "zh-CN": "返回",
+    "ja-JP": "戻る",
+    "en-US": "Back"
+  },
+  "add": {
+    "zh-CN": "添加到角色库",
+    "ja-JP": "キャラクターを追加",
+    "en-US": "Add character"
+  },
+  "link": {
+    "zh-CN": "关联此角色",
+    "ja-JP": "このキャラクターに関連付け",
+    "en-US": "Link to this character"
+  },
+  "link_hint": {
+    "zh-CN": "请选择同一角色，关联后保留两边的完整资料。",
+    "ja-JP": "同一人物を選択してください。両方の情報を保持します。",
+    "en-US": "Choose the same character. Both source records will be preserved."
+  },
+  "loading": {
+    "zh-CN": "正在处理…",
+    "ja-JP": "処理中…",
+    "en-US": "Working…"
+  },
+  "startup.loading": {
+    "zh-CN": "正在加载角色库…",
+    "ja-JP": "キャラクターライブラリを読み込み中…",
+    "en-US": "Loading your character library…"
+  },
+  "startup.description": {
+    "zh-CN": "正在读取本地角色资料与立绘",
+    "ja-JP": "ローカルのキャラクター情報と立ち絵を読み込んでいます",
+    "en-US": "Reading local character profiles and artwork"
+  },
+  "startup.failed": {
+    "zh-CN": "角色库加载失败",
+    "ja-JP": "キャラクターライブラリを読み込めませんでした",
+    "en-US": "Couldn’t load your character library"
+  },
+  "startup.error_details": {
+    "zh-CN": "查看错误详情",
+    "ja-JP": "エラーの詳細を表示",
+    "en-US": "View error details"
+  },
+  "saved": {
+    "zh-CN": "已保存",
+    "ja-JP": "保存しました",
+    "en-US": "Saved"
+  },
+  "no_results": {
+    "zh-CN": "未找到匹配项，请尝试其他别名或资料源。",
+    "ja-JP": "一致する結果がありません。別名や情報源を変えてください。",
+    "en-US": "No matches. Try another name or source."
+  },
+  "theme": {
+    "zh-CN": "外观",
+    "ja-JP": "外観",
+    "en-US": "Appearance"
+  },
+  "light": {
+    "zh-CN": "浅色",
+    "ja-JP": "ライト",
+    "en-US": "Light"
+  },
+  "dark": {
+    "zh-CN": "深色",
+    "ja-JP": "ダーク",
+    "en-US": "Dark"
+  },
+  "language": {
+    "zh-CN": "语言",
+    "ja-JP": "言語",
+    "en-US": "Language"
+  },
+  "network": {
+    "zh-CN": "网络代理",
+    "ja-JP": "ネットワークプロキシ",
+    "en-US": "Network proxy"
+  },
+  "proxy_hint": {
+    "zh-CN": "留空使用系统代理，例如 http://127.0.0.1:7890",
+    "ja-JP": "空欄でシステム設定を使用（例 http://127.0.0.1:7890）",
+    "en-US": "Leave empty for system proxy, e.g. http://127.0.0.1:7890"
+  },
+  "save": {
+    "zh-CN": "保存",
+    "ja-JP": "保存",
+    "en-US": "Save"
+  },
+  "sources_hint": {
+    "zh-CN": "立绘统一来自 Bangumi；角色标签来自鲲 Gal 或 VNDB。批评空间提供作品资料。",
+    "ja-JP": "立ち絵は Bangumi、タグは鲲 Gal または VNDB。批評空間は作品情報。",
+    "en-US": "Portraits from Bangumi; traits from Kungal or VNDB. Erogamescape provides work information."
+  },
+  "about_text": {
+    "zh-CN": "GalFriends 是基于 GalGear 的本地角色资料与立绘收藏应用。使用 Rust / WASM 与 Tauri 2 构建。",
+    "ja-JP": "GalFriends は GalGear から派生したローカルキャラクター・立ち絵ライブラリです。Rust / WASM と Tauri 2 で構築。",
+    "en-US": "GalFriends is a local character and portrait library derived from GalGear, built with Rust / WASM and Tauri 2."
+  },
+  "credits": {
+    "zh-CN": "GalGear 基础界面与通用组件 · GPL-3.0-only；角色图像版权归原作者。",
+    "ja-JP": "GalGear の UI と共通部品 · GPL-3.0-only。画像の権利は原作者に帰属します。",
+    "en-US": "GalGear interface and shared components · GPL-3.0-only. Character artwork belongs to its creators."
+  },
+  "sample": {
+    "zh-CN": "神堂刹那 · 本地样本",
+    "ja-JP": "神堂刹那 · ローカルサンプル",
+    "en-US": "Shindou Setsuna · local sample"
+  },
+  "original": {
+    "zh-CN": "Bangumi 原图",
+    "ja-JP": "Bangumi の原画",
+    "en-US": "Bangumi original"
+  },
+  "enhanced": {
+    "zh-CN": "waifu2x · 2×",
+    "ja-JP": "waifu2x · 2×",
+    "en-US": "waifu2x · 2×"
+  },
+  "enhance": {
+    "zh-CN": "超分当前立绘",
+    "ja-JP": "立ち絵を高解像度化",
+    "en-US": "Upscale portrait"
+  },
+  "reprocess_artworks": {
+    "zh-CN": "从原图重新抠图并超分全部立绘",
+    "ja-JP": "原画からすべての立ち絵の背景除去と高解像度化をやり直す",
+    "en-US": "Remove backgrounds and upscale all artwork again from originals"
+  },
+  "artwork_processing": {
+    "zh-CN": "正在重新抠图并超分全部立绘，完成后统一保存…",
+    "ja-JP": "立ち絵の背景除去と高解像度化を実行中。完了後にまとめて保存します…",
+    "en-US": "Removing backgrounds and upscaling all artwork; saving when complete…"
+  },
+  "error.artwork_reprocess": {
+    "zh-CN": "立绘处理失败，已保留原结果。详情：{detail}",
+    "ja-JP": "立ち絵の処理に失敗しました。以前の結果は保持されています。詳細：{detail}",
+    "en-US": "Artwork processing failed; previous results were kept. Details: {detail}"
+  },
+  "enhance_hint": {
+    "zh-CN": "原图保留，使用 waifu2x 生成透明 PNG 衍生图。",
+    "ja-JP": "原画を保持し、waifu2x で透過 PNG を生成します。",
+    "en-US": "Keep the original and create a transparent PNG with waifu2x."
+  },
+  "no_art": {
+    "zh-CN": "尚未关联 Bangumi 立绘，请通过“关联此角色”选择 Bangumi 资料。",
+    "ja-JP": "Bangumi の情報を関連付けて立ち絵を追加してください。",
+    "en-US": "Link a Bangumi character to add portraits."
+  },
+  "no_tags": {
+    "zh-CN": "该来源尚无标签，请关联资料。",
+    "ja-JP": "この情報源のタグはまだありません。",
+    "en-US": "Link a source record to see its traits."
+  },
+  "safe_tags": {
+    "zh-CN": "仅显示无剧透的一般标签；完整字段保存在来源数据中。",
+    "ja-JP": "ネタバレのない一般タグを表示。全データは元データに保存。",
+    "en-US": "Showing general traits without spoilers. Full fields remain in source data."
+  },
+  "remove": {
+    "zh-CN": "删除角色",
+    "ja-JP": "キャラクターを削除",
+    "en-US": "Delete character"
+  },
+  "remove_hint": {
+    "zh-CN": "将永久删除所选角色在 GalFriends 中保存的全部资料、历史归档、图片与超分数据，并清除收藏关系。此操作无法撤销。",
+    "ja-JP": "選択したキャラクターの GalFriends 内の全データ、履歴、保存済み画像と超解像データ、およびコレクションとの関連を完全に削除します。この操作は取り消せません。",
+    "en-US": "Permanently delete all GalFriends data for the selected characters, including archives, stored images, upscaled artwork and collection links. This cannot be undone."
+  },
+  "cancel": {
+    "zh-CN": "取消",
+    "ja-JP": "キャンセル",
+    "en-US": "Cancel"
+  },
+  "confirm": {
+    "zh-CN": "确认",
+    "ja-JP": "確認",
+    "en-US": "Confirm"
+  },
+  "new_collection": {
+    "zh-CN": "新建收藏夹",
+    "ja-JP": "コレクションを作成",
+    "en-US": "New collection"
+  },
+  "collection_name": {
+    "zh-CN": "收藏夹名称",
+    "ja-JP": "コレクション名",
+    "en-US": "Collection name"
+  },
+  "in_collection": {
+    "zh-CN": "加入收藏夹",
+    "ja-JP": "コレクションに追加",
+    "en-US": "Add to collection"
+  },
+  "collection_selected_count": {
+    "zh-CN": "已选 {count}",
+    "ja-JP": "{count} 件を選択",
+    "en-US": "{count} selected"
+  },
+  "collection_picker_empty": {
+    "zh-CN": "请先在收藏夹页面新建收藏夹。",
+    "ja-JP": "コレクション画面でコレクションを作成してください。",
+    "en-US": "Create a collection from the Collections page first."
+  },
+  "collection_picker_no_matches": {
+    "zh-CN": "没有匹配的收藏夹。",
+    "ja-JP": "一致するコレクションがありません。",
+    "en-US": "No matching collections."
+  },
+  "remove_collection": {
+    "zh-CN": "移除收藏关系",
+    "ja-JP": "登録を解除",
+    "en-US": "Remove from collection"
+  },
+  "works_only": {
+    "zh-CN": "批评空间仅搜索作品；点击结果打开作品资料。",
+    "ja-JP": "批評空間は作品検索のみです。クリックで作品情報を開きます。",
+    "en-US": "Erogamescape searches works. Open a result to view the work."
+  },
+  "open_source": {
+    "zh-CN": "打开来源",
+    "ja-JP": "情報源を開く",
+    "en-US": "Open source"
+  },
+  "error.operation": {
+    "zh-CN": "操作失败：{detail}",
+    "ja-JP": "操作に失敗しました：{detail}",
+    "en-US": "Operation failed: {detail}"
+  },
+  "retry": {
+    "zh-CN": "重试",
+    "ja-JP": "再試行",
+    "en-US": "Retry"
+  },
+  "all_names": {
+    "zh-CN": "搜索也支持全部别名",
+    "ja-JP": "すべての別名で検索可能",
+    "en-US": "Search includes every alias"
+  },
+  "initial": {
+    "zh-CN": "初始立绘",
+    "ja-JP": "初期立ち絵",
+    "en-US": "Initial portrait"
+  },
+  "collection_count": {
+    "zh-CN": "个收藏夹",
+    "ja-JP": " コレクション",
+    "en-US": " collections"
+  },
+  "character_count": {
+    "zh-CN": "个角色",
+    "ja-JP": " キャラクター",
+    "en-US": " characters"
+  },
+  "selected": {
+    "zh-CN": "已选择",
+    "ja-JP": "選択中",
+    "en-US": "selected"
+  },
+  "select_all": {
+    "zh-CN": "全选当前结果",
+    "ja-JP": "検索結果をすべて選択",
+    "en-US": "Select all results"
+  },
+  "clear_selection": {
+    "zh-CN": "清空选择",
+    "ja-JP": "選択を解除",
+    "en-US": "Clear selection"
+  },
+  "finish_selection": {
+    "zh-CN": "完成选择",
+    "ja-JP": "選択を完了",
+    "en-US": "Finish selection"
+  },
+  "select_characters": {
+    "zh-CN": "选择角色",
+    "ja-JP": "キャラクターを選択",
+    "en-US": "Select characters"
+  },
+  "unfavorite_action": {
+    "zh-CN": "取消收藏",
+    "ja-JP": "お気に入りから削除",
+    "en-US": "Remove from favorites"
+  },
+  "filter_tags": {
+    "zh-CN": "标签筛选",
+    "ja-JP": "タグで絞り込み",
+    "en-US": "Filter traits"
+  },
+  "clear_filters": {
+    "zh-CN": "清除筛选",
+    "ja-JP": "絞り込みを解除",
+    "en-US": "Clear filters"
+  },
+  "refresh_library": {
+    "zh-CN": "刷新角色库",
+    "ja-JP": "キャラクターを再読み込み",
+    "en-US": "Reload characters"
+  },
+  "sort": {
+    "zh-CN": "排序",
+    "ja-JP": "並び順",
+    "en-US": "Sort"
+  },
+  "sort_added": {
+    "zh-CN": "添加顺序",
+    "ja-JP": "追加順",
+    "en-US": "Added order"
+  },
+  "sort_name": {
+    "zh-CN": "人物名称",
+    "ja-JP": "名前順",
+    "en-US": "Name"
+  },
+  "sort_source": {
+    "zh-CN": "资料来源",
+    "ja-JP": "情報源順",
+    "en-US": "Source"
+  },
+  "sort_ascending": {
+    "zh-CN": "切换为升序",
+    "ja-JP": "昇順に切り替え",
+    "en-US": "Sort ascending"
+  },
+  "sort_descending": {
+    "zh-CN": "切换为降序",
+    "ja-JP": "降順に切り替え",
+    "en-US": "Sort descending"
+  },
+  "no_local_results": {
+    "zh-CN": "没有符合当前搜索或筛选条件的角色。",
+    "ja-JP": "条件に一致するキャラクターがいません。",
+    "en-US": "No characters match the current search or filters."
+  },
+  "add_menu": {
+    "zh-CN": "添加",
+    "ja-JP": "追加",
+    "en-US": "Add"
+  },
+  "import_processing": {
+    "zh-CN": "正在导入角色…",
+    "ja-JP": "キャラクターをインポート中…",
+    "en-US": "Importing character…"
+  },
+  "import.downloading": {
+    "zh-CN": "正在下载立绘…",
+    "ja-JP": "立ち絵をダウンロード中…",
+    "en-US": "Downloading artwork…"
+  },
+  "import.cutting_out": {
+    "zh-CN": "正在去除背景…",
+    "ja-JP": "背景を除去中…",
+    "en-US": "Removing background…"
+  },
+  "import.upscaling": {
+    "zh-CN": "正在超分立绘…",
+    "ja-JP": "立ち絵を高解像度化中…",
+    "en-US": "Upscaling artwork…"
+  },
+  "import.saving": {
+    "zh-CN": "正在保存角色…",
+    "ja-JP": "キャラクターを保存中…",
+    "en-US": "Saving character…"
+  },
+  "error.artwork_import": {
+    "zh-CN": "立绘处理失败，角色尚未保存。请重试；若缺少处理环境，请运行 scripts/setup-cutout.ps1。详情：{detail}",
+    "ja-JP": "画像処理に失敗したため、キャラクターは保存されていません。再試行してください。処理環境がない場合は scripts/setup-cutout.ps1 を実行してください。詳細：{detail}",
+    "en-US": "Artwork processing failed; the character was not saved. Retry, or run scripts/setup-cutout.ps1 if the runtime is missing. Details: {detail}"
+  },
+  "import_character": {
+    "zh-CN": "导入角色",
+    "ja-JP": "キャラクターをインポート",
+    "en-US": "Import character"
+  },
+  "new_child_collection": {
+    "zh-CN": "新建子收藏夹",
+    "ja-JP": "サブコレクションを作成",
+    "en-US": "New subcollection"
+  },
+  "edit_collection": {
+    "zh-CN": "编辑收藏夹",
+    "ja-JP": "コレクションを編集",
+    "en-US": "Edit collection"
+  },
+  "delete_collections": {
+    "zh-CN": "删除收藏夹",
+    "ja-JP": "コレクションを削除",
+    "en-US": "Delete collections"
+  },
+  "delete_collections_hint": {
+    "zh-CN": "删除选中的收藏夹及其子收藏夹，角色和原图会保留。",
+    "ja-JP": "選択したコレクションと子項目を削除します。キャラクターと原画は保持します。",
+    "en-US": "Delete the selected collections and their subcollections. Characters and original artwork are kept."
+  },
+  "parent_collection": {
+    "zh-CN": "上级收藏夹",
+    "ja-JP": "親コレクション",
+    "en-US": "Parent collection"
+  },
+  "collection_root": {
+    "zh-CN": "无（根目录）",
+    "ja-JP": "なし（ルート）",
+    "en-US": "None (root)"
+  },
+  "collection_path": {
+    "zh-CN": "收藏夹路径",
+    "ja-JP": "コレクションのパス",
+    "en-US": "Collection path"
+  },
+  "add_characters": {
+    "zh-CN": "添加角色",
+    "ja-JP": "キャラクターを追加",
+    "en-US": "Add characters"
+  },
+  "empty_collection": {
+    "zh-CN": "收藏夹中还没有角色。",
+    "ja-JP": "このコレクションにはキャラクターがいません。",
+    "en-US": "No characters in this collection."
+  },
+  "no_candidates": {
+    "zh-CN": "没有可添加的角色。",
+    "ja-JP": "追加できるキャラクターがいません。",
+    "en-US": "No characters available to add."
+  },
+  "starred": {
+    "zh-CN": "已收藏",
+    "ja-JP": "お気に入りのキャラクター",
+    "en-US": "Starred"
+  },
+  "refresh": {
+    "zh-CN": "刷新",
+    "ja-JP": "再読み込み",
+    "en-US": "Refresh"
+  },
+  "prefs.sources": {
+    "zh-CN": "数据源",
+    "ja-JP": "データソース",
+    "en-US": "Data sources"
+  },
+  "prefs.display": {
+    "zh-CN": "显示",
+    "ja-JP": "表示",
+    "en-US": "Display"
+  },
+  "prefs.system": {
+    "zh-CN": "系统",
+    "ja-JP": "システム",
+    "en-US": "System"
+  },
+  "prefs.paths": {
+    "zh-CN": "路径与工具",
+    "ja-JP": "パスとツール",
+    "en-US": "Paths & tools"
+  },
+  "prefs.color": {
+    "zh-CN": "配色",
+    "ja-JP": "カラーテーマ",
+    "en-US": "Color theme"
+  },
+  "prefs.pink": {
+    "zh-CN": "粉色",
+    "ja-JP": "ピンク",
+    "en-US": "Pink"
+  },
+  "prefs.white_pink": {
+    "zh-CN": "白粉",
+    "ja-JP": "ホワイトピンク",
+    "en-US": "White & pink"
+  },
+  "prefs.white": {
+    "zh-CN": "白色",
+    "ja-JP": "ホワイト",
+    "en-US": "White"
+  },
+  "prefs.mode": {
+    "zh-CN": "明暗模式",
+    "ja-JP": "表示モード",
+    "en-US": "Appearance"
+  },
+  "prefs.font": {
+    "zh-CN": "字体大小",
+    "ja-JP": "文字サイズ",
+    "en-US": "Font size"
+  },
+  "prefs.default_source": {
+    "zh-CN": "默认搜索源",
+    "ja-JP": "既定の検索ソース",
+    "en-US": "Default search source"
+  },
+  "prefs.kungal": {
+    "zh-CN": "鲲 Gal",
+    "ja-JP": "KUN Gal",
+    "en-US": "KUN Gal"
+  },
+  "prefs.erogamescape": {
+    "zh-CN": "批评空间",
+    "ja-JP": "批評空間",
+    "en-US": "ErogameScape"
+  },
+  "prefs.bangumi_hint": {
+    "zh-CN": "角色资料与立绘。角色图片统一使用 Bangumi 来源。",
+    "ja-JP": "キャラクター情報と立ち絵。画像は Bangumi から取得します。",
+    "en-US": "Character profiles and artwork. All character images come from Bangumi."
+  },
+  "prefs.kungal_hint": {
+    "zh-CN": "角色资料与标签，保留来源和剧透标记。",
+    "ja-JP": "キャラクター情報とタグ。出典とネタバレ情報を保持します。",
+    "en-US": "Character profiles and tags, with source and spoiler information preserved."
+  },
+  "prefs.vndb_hint": {
+    "zh-CN": "角色资料、特征标签、作品及声优关联。",
+    "ja-JP": "キャラクター情報、特徴タグ、作品・声優との関連。",
+    "en-US": "Character profiles, traits, related works and voice actors."
+  },
+  "prefs.library_path": {
+    "zh-CN": "角色库文件",
+    "ja-JP": "ライブラリファイル",
+    "en-US": "Library file"
+  },
+  "prefs.cache_path": {
+    "zh-CN": "应用缓存目录",
+    "ja-JP": "アプリのキャッシュ",
+    "en-US": "Application cache"
+  },
+  "prefs.paths_unavailable": {
+    "zh-CN": "无法读取路径信息。",
+    "ja-JP": "パス情報を取得できません。",
+    "en-US": "Path information is unavailable."
+  },
+  "prefs.tool_found": {
+    "zh-CN": "已检测到",
+    "ja-JP": "検出済み",
+    "en-US": "Detected"
+  },
+  "prefs.tool_missing": {
+    "zh-CN": "未检测到",
+    "ja-JP": "未検出",
+    "en-US": "Not detected"
+  },
+  "prefs.tool_path": {
+    "zh-CN": "waifu2x 程序路径",
+    "ja-JP": "waifu2x 実行ファイル",
+    "en-US": "waifu2x executable"
+  },
+  "ai.help": {
+    "zh-CN": "配置服务商的 Token，并从接口获取当前可用模型。",
+    "ja-JP": "プロバイダーの Token を設定し、API から利用可能なモデルを取得します。",
+    "en-US": "Configure each provider's Token and fetch the models available through its API."
+  },
+  "ai.model": {
+    "zh-CN": "模型",
+    "ja-JP": "モデル",
+    "en-US": "Model"
+  },
+  "ai.model_placeholder": {
+    "zh-CN": "选择模型",
+    "ja-JP": "モデルを選択",
+    "en-US": "Choose a model"
+  },
+  "ai.refresh": {
+    "zh-CN": "获取模型",
+    "ja-JP": "モデルを取得",
+    "en-US": "Fetch models"
+  },
+  "ai.save": {
+    "zh-CN": "保存配置",
+    "ja-JP": "設定を保存",
+    "en-US": "Save configuration"
+  },
+  "ai.retry": {
+    "zh-CN": "重试",
+    "ja-JP": "再試行",
+    "en-US": "Retry"
+  },
+  "ai.loading": {
+    "zh-CN": "正在连接…",
+    "ja-JP": "接続中…",
+    "en-US": "Connecting…"
+  },
+  "ai.configured": {
+    "zh-CN": "已配置",
+    "ja-JP": "設定済み",
+    "en-US": "Configured"
+  },
+  "ai.not_configured": {
+    "zh-CN": "未配置",
+    "ja-JP": "未設定",
+    "en-US": "Not configured"
+  },
+  "ai.token_placeholder": {
+    "zh-CN": "输入服务商的 API Token",
+    "ja-JP": "プロバイダーの API Token を入力",
+    "en-US": "Enter the provider's API Token"
+  },
+  "ai.token_saved": {
+    "zh-CN": "Token 已保存，留空沿用；输入可替换",
+    "ja-JP": "保存済み。空欄で継続使用、入力で置き換え",
+    "en-US": "Token saved; leave blank to keep it or enter a replacement"
+  },
+  "ai.models_hint": {
+    "zh-CN": "输入 Token 后，点击模型栏右侧的刷新按钮获取模型。",
+    "ja-JP": "Token を入力し、モデル欄右側の更新ボタンで一覧を取得してください。",
+    "en-US": "Enter a token, then use the refresh button beside Model to load the list."
+  },
+  "ai.model_count": {
+    "zh-CN": "已获取 {count} 个模型，可在下拉框中搜索。",
+    "ja-JP": "{count} 件のモデルを取得しました。一覧内で検索できます。",
+    "en-US": "Fetched {count} models. Search in the dropdown to find one."
+  },
+  "ai.select_model_hint": {
+    "zh-CN": "模型列表已获取，请选择模型后保存配置。",
+    "ja-JP": "モデル一覧を取得しました。モデルを選択してから設定を保存してください。",
+    "en-US": "Models loaded. Choose a model before saving the configuration."
+  },
+  "ai.empty": {
+    "zh-CN": "此 Token 未返回可用模型，请检查账号权限后重试。",
+    "ja-JP": "利用可能なモデルがありません。アカウントの権限を確認して再試行してください。",
+    "en-US": "No models were returned for this Token. Check your account permissions and try again."
+  },
+  "ai.vault": {
+    "zh-CN": "Token 保存在 Windows 凭据管理器中；所选模型会随配置保留。",
+    "ja-JP": "Token は Windows 資格情報マネージャーに保存され、選択したモデルは設定に保持されます。",
+    "en-US": "Tokens are stored in Windows Credential Manager. Selected models are kept in your settings."
+  },
+  "ai.cleared": {
+    "zh-CN": "AI 配置已清除。",
+    "ja-JP": "AI 設定を消去しました。",
+    "en-US": "AI configuration cleared."
+  },
+  "ai.invalid_provider": {
+    "zh-CN": "不支持此 AI 服务商。",
+    "ja-JP": "この AI プロバイダーには対応していません。",
+    "en-US": "This AI provider is not supported."
+  },
+  "ai.invalid_token": {
+    "zh-CN": "请输入有效的 API Token，不要包含空格或换行。",
+    "ja-JP": "空白や改行を含まない有効な API Token を入力してください。",
+    "en-US": "Enter a valid API Token without spaces or line breaks."
+  },
+  "ai.invalid_response": {
+    "zh-CN": "无法读取模型列表，请稍后重试。",
+    "ja-JP": "モデル一覧を読み取れません。しばらくしてから再試行してください。",
+    "en-US": "The model list could not be read. Try again later."
+  },
+  "ai.network_error": {
+    "zh-CN": "无法连接 AI 服务商，请检查网络后重试。",
+    "ja-JP": "AI プロバイダーに接続できません。ネットワークを確認して再試行してください。",
+    "en-US": "Could not connect to the AI provider. Check your network and try again."
+  },
+  "ai.unauthorized": {
+    "zh-CN": "Token 无效或已过期，请检查后重试。",
+    "ja-JP": "Token が無効か期限切れです。確認して再試行してください。",
+    "en-US": "The Token is invalid or expired. Check it and try again."
+  },
+  "ai.forbidden": {
+    "zh-CN": "此 Token 无权获取模型，请检查账号权限或服务可用地区。",
+    "ja-JP": "この Token にはモデル取得権限がありません。アカウントの権限や対応地域を確認してください。",
+    "en-US": "This Token cannot list models. Check account permissions and regional availability."
+  },
+  "ai.rate_limited": {
+    "zh-CN": "请求过于频繁或账号配额不足，请稍后重试或检查配额。",
+    "ja-JP": "リクエスト制限または利用枠に達しました。時間を置くか利用枠を確認してください。",
+    "en-US": "The request or account quota limit was reached. Try again later or check your quota."
+  },
+  "ai.http_error": {
+    "zh-CN": "AI 服务商返回 HTTP {status}，请稍后重试。",
+    "ja-JP": "AI プロバイダーが HTTP {status} を返しました。しばらくしてから再試行してください。",
+    "en-US": "The AI provider returned HTTP {status}. Try again later."
+  },
+  "ai.model_unavailable": {
+    "zh-CN": "所选模型不在此 Token 的可用列表中，请刷新并重新选择。",
+    "ja-JP": "選択したモデルはこの Token で利用できません。一覧を更新して選び直してください。",
+    "en-US": "The selected model is unavailable for this Token. Refresh the list and choose another model."
+  },
+  "auth.save_check": {
+    "zh-CN": "保存并验证",
+    "ja-JP": "保存して確認",
+    "en-US": "Save & verify"
+  },
+  "auth.clear": {
+    "zh-CN": "清除凭据",
+    "ja-JP": "認証情報を削除",
+    "en-US": "Clear credentials"
+  },
+  "auth.vault": {
+    "zh-CN": "凭据保存在此电脑的 Windows 凭据管理器中。",
+    "ja-JP": "認証情報はこの PC の Windows 資格情報マネージャーに保存されます。",
+    "en-US": "Stored in Windows Credential Manager on this computer."
+  },
+  "auth.store_error": {
+    "zh-CN": "无法访问 Windows 凭据管理器，凭据未写入设置文件。",
+    "ja-JP": "Windows 資格情報マネージャーにアクセスできません。",
+    "en-US": "Cannot access Windows Credential Manager. Credentials were not written to settings."
+  },
+  "auth.too_long": {
+    "zh-CN": "凭据超出 Windows 存储长度限制。请仅保留登录所需的 Cookie。",
+    "ja-JP": "認証情報が保存サイズの上限を超えています。必要な Cookie のみにしてください。",
+    "en-US": "Credentials exceed the Windows storage limit. Keep only the required session cookies."
+  },
+  "auth.platform": {
+    "zh-CN": "此平台暂不支持安全凭据存储。",
+    "ja-JP": "この環境では資格情報の保存に対応していません。",
+    "en-US": "Secure credential storage is not supported on this platform."
+  },
+  "sources.logged_in": {
+    "zh-CN": "已登录",
+    "ja-JP": "ログイン済み",
+    "en-US": "Signed in"
+  },
+  "sources.saved": {
+    "zh-CN": "凭据已保存",
+    "ja-JP": "認証情報を保存済み",
+    "en-US": "Credentials saved"
+  },
+  "sources.public": {
+    "zh-CN": "公开资料",
+    "ja-JP": "公開データ",
+    "en-US": "Public data"
+  },
+  "sources.keep_saved": {
+    "zh-CN": "已保存，留空保留当前凭据",
+    "ja-JP": "保存済み。空欄で現在の認証情報を保持",
+    "en-US": "Saved; leave blank to keep current credentials"
+  },
+  "sources.optional": {
+    "zh-CN": "可选，留空使用公开接口",
+    "ja-JP": "任意。空欄で公開APIを使用",
+    "en-US": "Optional; leave blank for public access"
+  },
+  "ai.active_provider": {
+    "zh-CN": "当前使用的 AI",
+    "ja-JP": "使用する AI",
+    "en-US": "Active AI provider"
+  },
+  "sources.oauth_login": {
+    "zh-CN": "OAuth登录",
+    "ja-JP": "OAuthログイン",
+    "en-US": "OAuth login"
+  },
+  "sources.oauth_cancel": {
+    "zh-CN": "取消登录",
+    "ja-JP": "ログインをキャンセル",
+    "en-US": "Cancel login"
+  },
+  "sources.oauth_help": {
+    "zh-CN": "使用 GalFriends 应用在系统浏览器中登录，无需填写应用配置。",
+    "ja-JP": "GalFriends アプリとしてシステムブラウザーでログインします。アプリ設定の入力は不要です。",
+    "en-US": "Sign in through GalFriends in your system browser. No application setup is needed."
+  },
+  "sources.oauth_error": {
+    "zh-CN": "OAuth 授权失败，请重新登录。",
+    "ja-JP": "OAuth認証に失敗しました。再度ログインしてください。",
+    "en-US": "OAuth authorization failed. Please sign in again."
+  },
+  "sources.oauth_port": {
+    "zh-CN": "无法监听 OAuth 回调端口，请检查端口是否被其他应用占用。",
+    "ja-JP": "OAuthコールバックのポートを開けません。他のアプリの使用状況を確認してください。",
+    "en-US": "Cannot open the OAuth callback port. Check whether another application is using it."
+  },
+  "sources.oauth_timeout": {
+    "zh-CN": "OAuth 登录超时，请重试。",
+    "ja-JP": "OAuthログインがタイムアウトしました。再試行してください。",
+    "en-US": "OAuth login timed out. Please retry."
+  },
+  "sources.oauth_cancelled": {
+    "zh-CN": "已取消 OAuth 登录。",
+    "ja-JP": "OAuthログインをキャンセルしました。",
+    "en-US": "OAuth login cancelled."
+  },
+  "sources.oauth_pending": {
+    "zh-CN": "已有 OAuth 登录正在进行。",
+    "ja-JP": "OAuthログインが進行中です。",
+    "en-US": "An OAuth login is already in progress."
+  },
+  "sources.oauth_unsupported": {
+    "zh-CN": "此数据源不支持用户 OAuth 登录。",
+    "ja-JP": "このデータソースはユーザーOAuthログインに対応していません。",
+    "en-US": "This source does not support user OAuth login."
+  },
+  "sources.oauth_return": {
+    "zh-CN": "已收到授权回调，请返回 GalFriends 查看登录结果。可以关闭此页面。",
+    "ja-JP": "認証応答を受信しました。GalFriends でログイン結果を確認してください。このページは閉じて構いません。",
+    "en-US": "Authorization callback received. Return to GalFriends to check the login result. You can close this page."
+  },
+  "prefs.ai": {
+    "zh-CN": "AI",
+    "ja-JP": "AI",
+    "en-US": "AI"
+  },
+  "connection.network_error": {
+    "zh-CN": "连接失败，请检查网络或代理。",
+    "ja-JP": "接続できません。ネットワークやプロキシを確認してください。",
+    "en-US": "Connection failed. Check your network or proxy."
+  },
+  "connection.proxy_error": {
+    "zh-CN": "代理设置无效。",
+    "ja-JP": "プロキシ設定が無効です。",
+    "en-US": "Invalid proxy settings."
+  },
+  "connection.unauthorized": {
+    "zh-CN": "凭据无效或没有访问权限。",
+    "ja-JP": "認証情報が無効か、アクセス権限がありません。",
+    "en-US": "The credentials are invalid or access is denied."
+  },
+  "connection.rate_limited": {
+    "zh-CN": "请求过于频繁，请稍后重试。",
+    "ja-JP": "リクエストが多すぎます。しばらくして再試行してください。",
+    "en-US": "Too many requests. Try again later."
+  },
+  "connection.http_error": {
+    "zh-CN": "服务返回 HTTP {status}。",
+    "ja-JP": "サービスから HTTP {status} が返されました。",
+    "en-US": "The service returned HTTP {status}."
+  },
+  "connection.invalid_response": {
+    "zh-CN": "服务返回的数据格式无效。",
+    "ja-JP": "サービスの応答形式が無効です。",
+    "en-US": "The service returned an invalid response."
+  },
+  "connection.invalid_service": {
+    "zh-CN": "不支持此服务。",
+    "ja-JP": "このサービスには対応していません。",
+    "en-US": "Unsupported service."
+  },
+  "connection.no_token": {
+    "zh-CN": "请输入 Token 或使用浏览器登录。",
+    "ja-JP": "Token を入力するかブラウザーでログインしてください。",
+    "en-US": "Enter a token or sign in using your browser."
+  },
+  "connection.loading": {
+    "zh-CN": "读取配置中…",
+    "ja-JP": "設定を読み込み中…",
+    "en-US": "Loading settings…"
+  },
+  "connection.open_website": {
+    "zh-CN": "打开网站",
+    "ja-JP": "ウェブサイトを開く",
+    "en-US": "Open website"
+  },
+  "connection.kungal_help": {
+    "zh-CN": "角色目录支持公开访问，也可使用 NextMoe 账户登录。",
+    "ja-JP": "キャラクターカタログは公開アクセス、または NextMoe アカウントで利用できます。",
+    "en-US": "The character catalog supports public access and NextMoe sign-in."
+  },
+  "connection.source_hint": {
+    "zh-CN": "公开查询无需 Token；留空可保留已保存的凭据。",
+    "ja-JP": "公開検索には Token は不要です。空欄の場合、保存済みの認証情報を保持します。",
+    "en-US": "Public queries need no token. Leave this blank to keep saved credentials."
+  },
+  "connection.search_models": {
+    "zh-CN": "搜索模型",
+    "ja-JP": "モデルを検索",
+    "en-US": "Search models"
+  },
+  "connection.unknown": {
+    "zh-CN": "未读取",
+    "ja-JP": "未取得",
+    "en-US": "Not loaded"
+  },
+  "connection.cleared": {
+    "zh-CN": "凭据已清除",
+    "ja-JP": "認証情報を削除しました",
+    "en-US": "Credentials cleared"
+  },
+  "tags.edit": {
+    "zh-CN": "编辑显示名称",
+    "ja-JP": "表示名を編集",
+    "en-US": "Edit display name"
+  },
+  "tags.hide": {
+    "zh-CN": "隐藏标签",
+    "ja-JP": "タグを非表示",
+    "en-US": "Hide tag"
+  },
+  "tags.reset": {
+    "zh-CN": "恢复来源标签",
+    "ja-JP": "元のタグに戻す",
+    "en-US": "Restore source tags"
+  },
+  "tags.reorder": {
+    "zh-CN": "长按拖动排序，Alt + 方向键调整顺序",
+    "ja-JP": "長押しで並べ替え、Alt + 矢印キーで移動",
+    "en-US": "Hold to reorder; Alt + arrow keys to move"
+  },
+  "tags.keep_original": {
+    "zh-CN": "仅隐藏本地显示，来源标签和原始响应会完整保留。",
+    "ja-JP": "表示のみを非表示にします。元のタグと応答は保持されます。",
+    "en-US": "Only the local display is hidden. Source tags and responses are retained."
+  },
+  "tags.add": {
+    "zh-CN": "添加标签",
+    "ja-JP": "タグを追加",
+    "en-US": "Add tag"
+  },
+  "tags.local": {
+    "zh-CN": "本地标签",
+    "ja-JP": "ローカルタグ",
+    "en-US": "Local tag"
+  },
+  "tags.replace_source": {
+    "zh-CN": "替换标签数据源",
+    "ja-JP": "タグのデータソースを変更",
+    "en-US": "Replace tag source"
+  },
+  "tags.source_hint": {
+    "zh-CN": "选择角色条目以替换当前标签来源。",
+    "ja-JP": "キャラクターを選択してタグの取得元を変更します。",
+    "en-US": "Select a character record to replace the current tag source."
+  },
+  "tags.auto": {
+    "zh-CN": "跟随语言",
+    "ja-JP": "言語に合わせる",
+    "en-US": "Follow language"
+  },
+  "tags.fetching": {
+    "zh-CN": "正在获取标签…",
+    "ja-JP": "タグを取得中…",
+    "en-US": "Fetching tags…"
+  },
+  "tags.fetch_failed": {
+    "zh-CN": "标签获取失败。",
+    "ja-JP": "タグの取得に失敗しました。",
+    "en-US": "Could not fetch tags."
+  },
+  "tags.retry": {
+    "zh-CN": "重试获取标签",
+    "ja-JP": "タグの取得を再試行",
+    "en-US": "Retry fetching tags"
+  },
+  "tags.no_match": {
+    "zh-CN": "未找到明确关联的角色，请使用替换数据源选择。",
+    "ja-JP": "対応するキャラクターを特定できません。データソースを変更して選択してください。",
+    "en-US": "No explicit character match found. Choose a record using Replace tag source."
+  },
+  "voice": {
+    "zh-CN": "声音训练",
+    "ja-JP": "音声トレーニング",
+    "en-US": "Voice training"
+  },
+  "voice.ready": {
+    "zh-CN": "本地模型已就绪",
+    "ja-JP": "ローカルモデル準備完了",
+    "en-US": "Local model ready"
+  },
+  "voice.runtime_missing": {
+    "zh-CN": "所选引擎未就绪，请运行对应环境准备脚本",
+    "ja-JP": "選択したエンジンのセットアップを実行してください",
+    "en-US": "Selected engine is not ready. Run its setup script"
+  },
+  "voice.refresh": {
+    "zh-CN": "检查运行环境",
+    "ja-JP": "実行環境を確認",
+    "en-US": "Check runtime"
+  },
+  "voice.source": {
+    "zh-CN": "游戏语音素材",
+    "ja-JP": "ゲームの音声素材",
+    "en-US": "Game voice material"
+  },
+  "voice.source_hint": {
+    "zh-CN": "选择游戏和独立输出目录。自动解包当前支持 AdvHD，保留原始语音与脚本引用。",
+    "ja-JP": "ゲームと専用の出力先を指定します。自動抽出は現在 AdvHD に対応し、原音声と参照を保持します。",
+    "en-US": "Choose the game and a separate output folder. Automatic extraction currently supports AdvHD and preserves source audio and references."
+  },
+  "voice.game": {
+    "zh-CN": "游戏目录",
+    "ja-JP": "ゲームフォルダー",
+    "en-US": "Game folder"
+  },
+  "voice.output": {
+    "zh-CN": "输出目录",
+    "ja-JP": "出力フォルダー",
+    "en-US": "Output folder"
+  },
+  "voice.extract": {
+    "zh-CN": "解包并识别说话人",
+    "ja-JP": "抽出して話者を識別",
+    "en-US": "Extract and identify speakers"
+  },
+  "voice.training": {
+    "zh-CN": "角色模型",
+    "ja-JP": "キャラクターモデル",
+    "en-US": "Character model"
+  },
+  "voice.training_hint": {
+    "zh-CN": "使用角色的日语对白及逐句台词训练；各引擎的模型独立保存。",
+    "ja-JP": "キャラクターの日本語音声と対応する台詞で学習します。エンジンごとに保存します。",
+    "en-US": "Train with Japanese voice clips and matching transcripts. Each engine saves its models separately."
+  },
+  "voice.manifest": {
+    "zh-CN": "对白与语音映射 JSON",
+    "ja-JP": "台詞・音声マッピング JSON",
+    "en-US": "Dialogue and voice mapping JSON"
+  },
+  "voice.inspect": {
+    "zh-CN": "读取素材中的说话人",
+    "ja-JP": "素材の話者を読み込む",
+    "en-US": "Read speakers from material"
+  },
+  "voice.character": {
+    "zh-CN": "角色库中的角色",
+    "ja-JP": "ライブラリのキャラクター",
+    "en-US": "Library character"
+  },
+  "voice.speaker": {
+    "zh-CN": "素材中的说话人 · 语音数",
+    "ja-JP": "素材の話者・音声数",
+    "en-US": "Source speaker · clips"
+  },
+  "voice.choose": {
+    "zh-CN": "请选择",
+    "ja-JP": "選択してください",
+    "en-US": "Choose"
+  },
+  "voice.language": {
+    "zh-CN": "原配音语言",
+    "ja-JP": "原音声の言語",
+    "en-US": "Source audio language"
+  },
+  "voice.epochs": {
+    "zh-CN": "训练轮数",
+    "ja-JP": "エポック数",
+    "en-US": "Epochs"
+  },
+  "voice.train": {
+    "zh-CN": "开始训练",
+    "ja-JP": "学習を開始",
+    "en-US": "Start training"
+  },
+  "voice.loading": {
+    "zh-CN": "正在检查",
+    "ja-JP": "確認中",
+    "en-US": "Checking"
+  },
+  "voice.extracting": {
+    "zh-CN": "正在解包",
+    "ja-JP": "抽出中",
+    "en-US": "Extracting"
+  },
+  "voice.mapping": {
+    "zh-CN": "正在关联对白与语音",
+    "ja-JP": "台詞と音声を関連付け中",
+    "en-US": "Linking dialogue and audio"
+  },
+  "voice.preparing": {
+    "zh-CN": "正在准备训练特征",
+    "ja-JP": "学習特徴量を準備中",
+    "en-US": "Preparing training features"
+  },
+  "voice.training_step": {
+    "zh-CN": "正在训练",
+    "ja-JP": "学習中",
+    "en-US": "Training"
+  },
+  "voice.validating": {
+    "zh-CN": "正在验证模型",
+    "ja-JP": "モデルを検証中",
+    "en-US": "Validating model"
+  },
+  "voice.saving": {
+    "zh-CN": "正在保存权重",
+    "ja-JP": "重みを保存中",
+    "en-US": "Saving weights"
+  },
+  "voice.cancelling": {
+    "zh-CN": "正在取消",
+    "ja-JP": "キャンセル中",
+    "en-US": "Cancelling"
+  },
+  "voice.cancelled": {
+    "zh-CN": "任务已取消，已完成产物保留在输出目录",
+    "ja-JP": "タスクを中止しました。完了済みの出力は保持されます",
+    "en-US": "Task cancelled. Completed artifacts remain in the output folder"
+  },
+  "voice.completed": {
+    "zh-CN": "本次操作已完成",
+    "ja-JP": "操作が完了しました",
+    "en-US": "Operation completed"
+  },
+  "voice.samples": {
+    "zh-CN": "语音样本",
+    "ja-JP": "音声サンプル",
+    "en-US": "Voice samples"
+  },
+  "voice.excluded": {
+    "zh-CN": "未完成或排除项",
+    "ja-JP": "未完了・除外項目",
+    "en-US": "Incomplete or excluded items"
+  },
+  "voice.failed": {
+    "zh-CN": "语音任务失败",
+    "ja-JP": "音声タスクに失敗しました",
+    "en-US": "Voice task failed"
+  },
+  "voice.path_required": {
+    "zh-CN": "请填写有效的绝对路径",
+    "ja-JP": "有効な絶対パスを入力してください",
+    "en-US": "Enter a valid absolute path"
+  },
+  "voice.output_overlap": {
+    "zh-CN": "输出目录必须与游戏、模型和运行环境分开",
+    "ja-JP": "出力先をゲーム・モデル・実行環境から分離してください",
+    "en-US": "The output folder must be separate from the game, models and runtime"
+  },
+  "voice.unsafe_path": {
+    "zh-CN": "路径包含越界、符号链接或重解析点",
+    "ja-JP": "パスが範囲外か、シンボリックリンクまたは再解析ポイントを含みます",
+    "en-US": "Path is out of bounds or contains a symbolic link or reparse point"
+  },
+  "voice.unsupported_engine": {
+    "zh-CN": "当前自动解包只支持已适配的 AdvHD 游戏，请导入已核验的素材映射",
+    "ja-JP": "自動抽出は対応済み AdvHD ゲームのみです。検証済みマッピングを読み込んでください",
+    "en-US": "Automatic extraction supports adapted AdvHD games. Import a verified mapping for other engines"
+  },
+  "voice.invalid_manifest": {
+    "zh-CN": "素材映射格式无效",
+    "ja-JP": "素材マッピング形式が無効です",
+    "en-US": "Invalid material mapping"
+  },
+  "voice.character_required": {
+    "zh-CN": "请先从角色库选择角色",
+    "ja-JP": "ライブラリからキャラクターを選択してください",
+    "en-US": "Select a character from the library"
+  },
+  "voice.insufficient_samples": {
+    "zh-CN": "有效语音不足，需要至少两条互不重复的清晰对白",
+    "ja-JP": "有効な音声が不足しています。異なる明瞭な台詞が最低2件必要です",
+    "en-US": "At least two distinct clear utterances are required"
+  },
+  "voice.busy": {
+    "zh-CN": "已有语音任务正在运行",
+    "ja-JP": "音声タスクはすでに実行中です",
+    "en-US": "A voice task is already running"
+  },
+  "voice.language_mismatch": {
+    "zh-CN": "所选语言与原配音语言不一致",
+    "ja-JP": "選択言語と原音声の言語が一致しません",
+    "en-US": "Selected language does not match the source audio"
+  },
+  "voice.gpu_required": {
+    "zh-CN": "训练需要可用的 NVIDIA CUDA 显卡",
+    "ja-JP": "学習には NVIDIA CUDA GPU が必要です",
+    "en-US": "Training requires an NVIDIA CUDA GPU"
+  },
+  "voice.invalid_action": {
+    "zh-CN": "不支持此语音操作",
+    "ja-JP": "この音声操作には対応していません",
+    "en-US": "Unsupported voice operation"
+  },
+  "voice.invalid_training_config": {
+    "zh-CN": "请选择角色，并将训练轮数设为 1 至 100",
+    "ja-JP": "キャラクターを選択し、エポック数を1から100に設定してください",
+    "en-US": "Select a character and set epochs between 1 and 100"
+  },
+  "voice.unsupported_archive": {
+    "zh-CN": "归档格式不受支持，或未读取到有效成员",
+    "ja-JP": "未対応のアーカイブ形式、または有効なファイルがありません",
+    "en-US": "Unsupported archive format or no valid members found"
+  },
+  "voice.incomplete_extraction": {
+    "zh-CN": "解包结果与归档清单不一致，请检查输出目录",
+    "ja-JP": "抽出結果がアーカイブ一覧と一致しません。出力先を確認してください",
+    "en-US": "Extracted files do not match the archive inventory. Check the output folder"
+  },
+  "voice.ambiguous_audio": {
+    "zh-CN": "发现同名语音，无法唯一关联对白",
+    "ja-JP": "同名の音声があり、台詞に一意に関連付けられません",
+    "en-US": "Duplicate audio names prevent unambiguous dialogue mapping"
+  },
+  "voice.no_mapping": {
+    "zh-CN": "未能建立有效的对白与语音映射，请查看解包报告",
+    "ja-JP": "有効な台詞と音声の対応がありません。抽出レポートを確認してください",
+    "en-US": "No valid dialogue and voice mapping found. Check the extraction report"
+  },
+  "voice.manifest_too_large": {
+    "zh-CN": "素材映射超过 64 MB，请按作品或角色拆分",
+    "ja-JP": "マッピングが64 MBを超えています。作品または話者ごとに分割してください",
+    "en-US": "The mapping exceeds 64 MB. Split it by work or speaker"
+  },
+  "voice.conflicting_transcripts": {
+    "zh-CN": "同一段音频对应不同台词，请先修正素材映射",
+    "ja-JP": "同じ音声に異なる台詞が割り当てられています。マッピングを修正してください",
+    "en-US": "The same audio has conflicting transcripts. Correct the material mapping first"
+  },
+  "voice.engine": {
+    "zh-CN": "语音引擎",
+    "ja-JP": "音声エンジン",
+    "en-US": "Voice engine"
+  },
+  "voice.gsv_phonemes": {
+    "zh-CN": "生成日语音素",
+    "ja-JP": "日本語音素を生成中",
+    "en-US": "Preparing Japanese phonemes"
+  },
+  "voice.gsv_hubert": {
+    "zh-CN": "提取语音特征",
+    "ja-JP": "音声特徴を抽出中",
+    "en-US": "Extracting audio features"
+  },
+  "voice.gsv_speaker": {
+    "zh-CN": "提取说话人特征",
+    "ja-JP": "話者特徴を抽出中",
+    "en-US": "Extracting speaker features"
+  },
+  "voice.gsv_semantic": {
+    "zh-CN": "提取语义编码",
+    "ja-JP": "意味コードを抽出中",
+    "en-US": "Extracting semantic codes"
+  },
+  "voice.gsv_gpt": {
+    "zh-CN": "训练 GPT",
+    "ja-JP": "GPT を学習中",
+    "en-US": "Training GPT"
+  },
+  "voice.gsv_sovits": {
+    "zh-CN": "训练 SoVITS",
+    "ja-JP": "SoVITS を学習中",
+    "en-US": "Training SoVITS"
+  },
+  "voice.incomplete_features": {
+    "zh-CN": "特征与语音清单不一致，请检查任务日志",
+    "ja-JP": "特徴と音声一覧が一致しません。ログを確認してください",
+    "en-US": "Features do not match the audio list. Check task logs"
+  },
+  "voice.incomplete_training": {
+    "zh-CN": "训练未生成完整模型，请检查任务日志",
+    "ja-JP": "学習モデルが不完全です。ログを確認してください",
+    "en-US": "Training did not produce complete models. Check task logs"
+  },
+  "companion.choose_model": {
+    "zh-CN": "选择已训练模型",
+    "ja-JP": "学習済みモデルを選択",
+    "en-US": "Select a trained model"
+  },
+  "companion.no_models": {
+    "zh-CN": "没有匹配的已训练模型",
+    "ja-JP": "対応する学習済みモデルがありません",
+    "en-US": "No matching trained models"
+  },
+  "companion.refresh_models": {
+    "zh-CN": "刷新已训练模型",
+    "ja-JP": "学習済みモデルを再読み込み",
+    "en-US": "Refresh trained models"
+  },
+  "companion.models_failed": {
+    "zh-CN": "读取模型失败，请刷新",
+    "ja-JP": "モデルの読み込みに失敗しました。再読み込みしてください",
+    "en-US": "Could not load models. Refresh to retry"
+  },
+  "companion.bound": {
+    "zh-CN": "已绑定语音模型",
+    "ja-JP": "音声モデルを設定しました",
+    "en-US": "Voice model bound"
+  },
+  "voice.download_models": {
+    "zh-CN": "下载基础模型",
+    "ja-JP": "ベースモデルをダウンロード",
+    "en-US": "Download base models"
+  },
+  "voice.weights_only": {
+    "zh-CN": "仅下载权重",
+    "ja-JP": "重みのダウンロードのみ",
+    "en-US": "Weights only"
+  },
+  "voice.download_check": {
+    "zh-CN": "正在校验模型文件",
+    "ja-JP": "モデルファイルを検証中",
+    "en-US": "Verifying model files"
+  },
+  "voice.downloading": {
+    "zh-CN": "正在下载模型文件",
+    "ja-JP": "モデルファイルをダウンロード中",
+    "en-US": "Downloading model files"
+  },
+  "voice.download_complete": {
+    "zh-CN": "基础模型权重已就绪",
+    "ja-JP": "ベースモデルの重みを用意しました",
+    "en-US": "Base model weights are ready"
+  },
+  "voice.download_failed": {
+    "zh-CN": "模型下载失败",
+    "ja-JP": "モデルのダウンロードに失敗しました",
+    "en-US": "Model download failed"
+  },
+  "voice.download_hash": {
+    "zh-CN": "模型文件校验失败",
+    "ja-JP": "モデルファイルの検証に失敗しました",
+    "en-US": "Model checksum mismatch"
+  },
+  "voice.download_size": {
+    "zh-CN": "模型文件大小不符",
+    "ja-JP": "モデルファイルのサイズが一致しません",
+    "en-US": "Model file size mismatch"
+  },
+  "voice.register": {
+    "zh-CN": "登记此训练输出目录",
+    "ja-JP": "この学習出力フォルダーを登録",
+    "en-US": "Register this training output folder"
+  },
+  "voice.registered": {
+    "zh-CN": "已登记训练输出目录",
+    "ja-JP": "学習出力フォルダーを登録しました",
+    "en-US": "Training output folder registered"
+  },
+  "voice.output_missing": {
+    "zh-CN": "找不到训练输出目录",
+    "ja-JP": "学習出力フォルダーが見つかりません",
+    "en-US": "Training output folder not found"
+  },
+  "voice.trained_model": {
+    "zh-CN": "模型文件",
+    "ja-JP": "モデルファイル",
+    "en-US": "Model file"
+  },
+  "game_library.path": {
+    "zh-CN": "GalGear 游戏库路径",
+    "ja-JP": "GalGear ライブラリのパス",
+    "en-US": "GalGear library path"
+  },
+  "game_library.path_hint": {
+    "zh-CN": "选择 catalog.json、其数据目录或含 portable.flag 的便携目录。留空可关闭联动。",
+    "ja-JP": "catalog.json、データフォルダー、または portable.flag を含むフォルダーを指定します。空欄で連携を解除します。",
+    "en-US": "Enter catalog.json, its data directory, or a portable folder containing portable.flag. Leave empty to disconnect."
+  },
+  "game_library.works": {
+    "zh-CN": "出演作品",
+    "ja-JP": "登場作品",
+    "en-US": "Appears in"
+  },
+  "game_library.no_works": {
+    "zh-CN": "来源资料中暂无出演作品。",
+    "ja-JP": "出典に登場作品の情報がありません。",
+    "en-US": "No works are available in the saved source data."
+  },
+  "game_library.failed": {
+    "zh-CN": "读取 GalGear 游戏库失败",
+    "ja-JP": "GalGear ライブラリを読み込めませんでした",
+    "en-US": "Could not read the GalGear library"
+  },
+  "game_library.configure": {
+    "zh-CN": "在设置的路径与工具中选择 GalGear 游戏库。",
+    "ja-JP": "設定のパスとツールで GalGear ライブラリを指定してください。",
+    "en-US": "Choose a GalGear library in Settings → Paths and tools."
+  },
+  "game_library.no_match": {
+    "zh-CN": "尚未关联已入库游戏",
+    "ja-JP": "登録済みゲームとの関連付けはありません",
+    "en-US": "No linked library game"
+  },
+  "game_library.linked_games": {
+    "zh-CN": "关联游戏",
+    "ja-JP": "関連ゲーム",
+    "en-US": "Linked games"
+  },
+  "game_library.unavailable": {
+    "zh-CN": "游戏目录不可用",
+    "ja-JP": "ゲームフォルダーが利用できません",
+    "en-US": "Game folder unavailable"
+  },
+  "game_library.changed": {
+    "zh-CN": "游戏库或关联已变化，请刷新后重新选择游戏",
+    "ja-JP": "ライブラリまたは関連付けが変更されました。更新してゲームを選び直してください",
+    "en-US": "The library or link changed. Refresh and select the game again."
+  },
+  "voice.skill_extract": {
+    "zh-CN": "AI 使用 GalExtract 解包",
+    "ja-JP": "AI で GalExtract を実行",
+    "en-US": "Extract with AI and GalExtract"
+  },
+  "voice.skill_hint": {
+    "zh-CN": "AI 解包复用 GalGear 宿主和 GalExtract，使用此应用配置的 OpenAI 或 DeepSeek。完成后核对说话人，再开始训练。",
+    "ja-JP": "AI 解凍は GalGear ホストと GalExtract を使用します。このアプリで OpenAI または DeepSeek を設定し、抽出後に話者を確認してください。",
+    "en-US": "AI extraction reuses the GalGear host and GalExtract with OpenAI or DeepSeek configured in this app. Verify the speaker before training."
+  },
+  "voice.skill_missing": {
+    "zh-CN": "未找到 GalExtract Skill，请安装到程序目录或设置 GALFRIENDS_GALGEAR_SKILL",
+    "ja-JP": "GalExtract Skill が見つかりません。アプリのフォルダーに配置するか GALFRIENDS_GALGEAR_SKILL を設定してください",
+    "en-US": "GalExtract Skill is missing. Install it beside the app or set GALFRIENDS_GALGEAR_SKILL."
+  },
+  "voice.agent_provider": {
+    "zh-CN": "GalGear 解包宿主目前支持 OpenAI 和 DeepSeek，请在 AI 设置中选择并配置",
+    "ja-JP": "GalGear 抽出ホストは OpenAI と DeepSeek に対応しています。AI 設定で選択してください",
+    "en-US": "The GalGear extraction host supports OpenAI and DeepSeek. Select and configure one in AI settings."
+  },
+  "voice.agent_missing": {
+    "zh-CN": "未找到 GalGear AI 宿主，请设置 GALFRIENDS_GALGEAR_HOST 为宿主源码目录",
+    "ja-JP": "GalGear AI ホストが見つかりません。GALFRIENDS_GALGEAR_HOST にホストのソースディレクトリを指定してください",
+    "en-US": "GalGear AI host was not found. Set GALFRIENDS_GALGEAR_HOST to its source directory."
+  },
+  "voice.skill_failed": {
+    "zh-CN": "AI 解包失败，请查看任务日志",
+    "ja-JP": "AI 解凍に失敗しました。タスクログを確認してください",
+    "en-US": "AI extraction failed. Check the task log."
+  },
+  "voice.skill_analyzing": {
+    "zh-CN": "AI 正在读取 Skill 并分析素材",
+    "ja-JP": "AI が Skill と素材を分析中",
+    "en-US": "AI is reading the Skill and analyzing assets"
+  },
+  "voice.skill_extracting": {
+    "zh-CN": "AI 正在运行解包与映射工具",
+    "ja-JP": "AI が解凍・マッピングツールを実行中",
+    "en-US": "AI is running extraction and mapping tools"
+  }
+
+}

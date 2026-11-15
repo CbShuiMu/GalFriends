@@ -1,0 +1,156 @@
+//! Stateless HTML primitives and formatting.
+use crate::icons;
+
+/// 右下角阶段提示的共用结构；key 标识任务，生命周期由实际任务结果驱动。
+pub(crate) fn progress_notice(key: &str, text: &str) -> String {
+    let text = esc(text);
+    format!(
+        r#"<div class="notice progress-notice" data-progress-notice="{}" role="status" aria-live="polite" aria-atomic="true"><span class="spinner" aria-hidden="true"></span><span class="progress-notice-viewport" title="{text}"><span class="progress-notice-line">{text}</span></span></div>"#,
+        esc(key)
+    )
+}
+
+pub(crate) fn esc(value: &str) -> String {
+    value
+        .replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
+        .replace('\'', "&#39;")
+}
+
+pub(crate) fn icon(name: &str) -> String {
+    if let Some(svg) = icons::google(name) {
+        return svg
+            .replacen(
+                "<svg",
+                r#"<svg class="icon google-icon" aria-hidden="true""#,
+                1,
+            )
+            .replace("fill=\"#1f1f1f\"", "fill=\"currentColor\"")
+            .replace("stroke=\"#1f1f1f\"", "stroke=\"currentColor\"");
+    }
+    let body = match name {
+        "back" => r#"<path d="M19 12H5m7-7-7 7 7 7"/>"#,
+        "top" => r#"<path d="m6 14 6-6 6 6M6 4h12"/>"#,
+        "trash" => r#"<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7m4-7v7"/>"#,
+        "star" => {
+            r#"<path d="m12 3 2.8 5.7 6.3.9-4.6 4.5 1.1 6.3-5.6-3-5.6 3 1.1-6.3L3 9.6l6.2-.9Z"/>"#
+        }
+        "star-filled" => {
+            r#"<path fill="currentColor" stroke="none" d="m12 2.5 2.94 5.96 6.58.95-4.76 4.64 1.12 6.55L12 17.51l-5.88 3.09 1.12-6.55L2.48 9.41l6.58-.95Z"/>"#
+        }
+        "trophy" => {
+            r#"<path d="M8 3h8v6a4 4 0 0 1-8 0ZM8 5H4v2a4 4 0 0 0 4 4m8-6h4v2a4 4 0 0 1-4 4m-4 2v5m-4 3h8m-7 0v-3h6v3"/>"#
+        }
+        "trophy-filled" => {
+            r#"<path fill-rule="evenodd" d="M7 2h10v2h4v4a5 5 0 0 1-4.35 4.96A5 5 0 0 1 13 15.9V18h4v4H7v-4h4v-2.1a5 5 0 0 1-3.65-2.94A5 5 0 0 1 3 8V4h4ZM7 6H5v2a3 3 0 0 0 2 2.83Zm10 4.83A3 3 0 0 0 19 8V6h-2Z"/>"#
+        }
+        "chevron" => r#"<path d="m7 10 5 5 5-5"/>"#,
+        "joystick" => {
+            r#"<path fill="currentColor" stroke="none" d="M6.8,13L12,16l5.2-3L13,10.58V14H11V10.58L6.8,13ZM11,8.27V7.85Q9.9,7.52 9.2,6.61T8.5,4.5q0-1.45 1.03-2.48T12,1t2.48,1.02T15.5,4.5q0,1.2-0.7,2.11Q14.1,7.52 13,7.85V8.27l7,4.03q0.48,0.28 0.74,0.74T21,14.05v1.9q0,0.55-0.26,1.01Q20.48,17.43 20,17.7l-7,4.03Q12.53,22 12,22t-1-0.27L4,17.7q-0.47-0.27-0.74-0.74T3,15.95v-1.9q0-0.55 0.26-1.01T4,12.3l7-4.03Zm0,9.45L5,14.27v1.68L12,20l7-4.05V14.27l-6,3.45Q12.53,18 12,18t-1-0.27ZM13.06,5.56Q13.5,5.13 13.5,4.5T13.06,3.44T12,3T10.94,3.44T10.5,4.5t0.44,1.06T12,6t1.06-0.44ZM12,20Z"/>"#
+        }
+        "games" => {
+            r#"<rect x="3" y="5" width="18" height="14" rx="4"/><path d="M7 10v4m-2-2h4m6-1h.01M18 14h.01"/>"#
+        }
+        "patches" => {
+            r#"<path d="M12 3v4m0 10v4M3 12h4m10 0h4"/><rect x="7" y="7" width="10" height="10" rx="3"/><path d="m10 12 1.5 1.5L14 11"/>"#
+        }
+        "settings" => {
+            r#"<path d="m9 3-1 3-3 1-2 3 2 2-1 3 3 2 3-1 2 2 3-1 1-3 3-1 1-3-2-2 1-3-3-2-3 1-2-2Z"/><circle cx="11" cy="11" r="3"/>"#
+        }
+        "about" => r#"<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/>"#,
+        "folder" => {
+            r#"<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>"#
+        }
+        "search" => r#"<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>"#,
+        "plus" => r#"<path d="M12 5v14M5 12h14"/>"#,
+        "refresh" => {
+            r#"<path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 7a7 7 0 0 1 12-2l2 3M4 16l2 3a7 7 0 0 0 12-2"/>"#
+        }
+        "arrow" => r#"<path d="M5 12h14m-5-5 5 5-5 5"/>"#,
+        "close" => r#"<path d="m6 6 12 12M6 18 18 6"/>"#,
+        "send" => r#"<path d="m3 3 18 9-18 9 4-9-4-9Zm4 9h14"/>"#,
+        "play" => r#"<path d="m9 5 11 7-11 7Z"/>"#,
+        "image" => {
+            r#"<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 7"/>"#
+        }
+        "check" => r#"<path d="m5 12 4 4L19 6"/>"#,
+        "disc" => {
+            r#"<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="m7 5 3 4m4 6 3 4"/>"#
+        }
+        "language" => {
+            r#"<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-5 5-5 13 0 18m0-18c5 5 5 13 0 18"/>"#
+        }
+        "heart" => r#"<path d="M20 5c-3-3-7-1-8 1-1-2-5-4-8-1-4 4 2 10 8 14 6-4 12-10 8-14Z"/>"#,
+        _ => r#"<path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"/>"#,
+    };
+    format!(
+        r#"<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{body}</svg>"#
+    )
+}
+
+pub(crate) fn brand() -> &'static str {
+    r#"<img src="assets/galfriends-logo.png" alt="GalFriends">"#
+}
+
+pub(crate) fn source_icon(source: &str) -> String {
+    let file = match source {
+        "bangumi" => "bangumi.ico",
+        "kungal" => "nextmoe.webp",
+        "vndb" => "vndb.ico",
+        "erogamescape" => "erogamescape.png",
+        _ => return String::new(),
+    };
+    format!(r#"<img class="source-icon" src="assets/sources/{file}" alt="">"#)
+}
+
+pub(crate) fn confirmation_actions(
+    confirm_action: &str,
+    cancel_action: &str,
+    confirm_label: &str,
+    cancel_label: &str,
+    busy: bool,
+) -> String {
+    format!(
+        r#"<footer class="dialog-actions"><button type="button" class="button primary danger" data-action="{}" {}>{}</button><button type="button" class="button secondary" data-action="{}" data-initial-focus {}>{}</button></footer>"#,
+        esc(confirm_action),
+        if busy { "disabled" } else { "" },
+        esc(confirm_label),
+        esc(cancel_action),
+        if busy { "disabled" } else { "" },
+        esc(cancel_label)
+    )
+}
+
+pub(crate) fn favorite_button(id: &str, active: bool, label: &str, disabled: bool) -> String {
+    format!(
+        r#"<button type="button" class="card-action favorite {}" data-action="favorite" data-value="{}" aria-pressed="{active}" aria-label="{}" title="{}" {}>{}</button>"#,
+        if active { "is-active" } else { "" },
+        esc(id),
+        esc(label),
+        esc(label),
+        if disabled { "disabled" } else { "" },
+        icon("heart")
+    )
+}
+
+pub(crate) fn icon_button(
+    action: &str,
+    value: &str,
+    label: &str,
+    symbol: &str,
+    class: &str,
+    disabled: bool,
+) -> String {
+    format!(
+        r#"<button type="button" class="button icon-only {}" data-action="{}" data-value="{}" title="{}" aria-label="{}" {}>{}</button>"#,
+        esc(class),
+        esc(action),
+        esc(value),
+        esc(label),
+        esc(label),
+        if disabled { "disabled" } else { "" },
+        icon(symbol)
+    )
+}

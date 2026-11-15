@@ -1,0 +1,15 @@
+[package]
+name = "galfriends"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+default-run = "galfriends"
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+[dependencies]
+tauri = { version = "2", features = [] }
+galfriends-core = { workspace = true, features = ["desktop"] }
+galfriends-i18n.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+open = "5"

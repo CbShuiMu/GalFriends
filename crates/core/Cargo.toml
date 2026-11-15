@@ -1,0 +1,24 @@
+[package]
+name = "galfriends-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+default = ["desktop"]
+desktop = ["dep:reqwest", "dep:tempfile", "dep:scraper", "dep:image", "dep:base64", "dep:sha2", "dep:getrandom", "dep:windows-sys"]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+galfriends-i18n.workspace = true
+sha2 = { version = "0.10", optional = true }
+getrandom = { version = "0.3", optional = true }
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls", "system-proxy"], optional = true }
+tempfile = { version = "3", optional = true }
+scraper = { version = "0.24", optional = true }
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp"], optional = true }
+base64 = { version = "0.22", optional = true }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security_Credentials"], optional = true }

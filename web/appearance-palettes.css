@@ -1,0 +1,272 @@
+/* Color palettes and light/dark modes are independent appearance preferences. */
+:root,
+[data-theme="light"] {
+  --canvas: #f9f0f6;
+  --canvas-glow: #ecc9df70;
+  --canvas-light: #ffffffb3;
+  --surface: #f6deeb;
+  --surface-raised: #fffafdde;
+  --surface-soft: #f7e5f080;
+  --surface-sidebar: #f7e8f1a8;
+  --surface-line: #cba8c344;
+  --surface-shadow: 0 8px 28px #76465e09, inset 0 1px 0 #ffffff80;
+  --button-bg: #fffafd80;
+  --button-color: #705769;
+  --button-line: #c7a1bb55;
+  --button-hover-bg: #e8bad2;
+  --button-hover-color: #873b66;
+  --button-hover-line: #bd89a8a6;
+  --focus-ring: #b8447980;
+  --toolbar-surface: #fae9f2;
+  --confirmed-bg: #deefe3;
+  --confirmed-color: #286442;
+  --confirmed-line: #8bb69a;
+  --confirmed-hover-bg: #c6e3d0;
+  --completion-bg: #f2ce68;
+  --completion-color: #5e450c;
+  --incomplete-bg: #e9e6eb;
+  --incomplete-color: #655e6b;
+  --segment-track: #ffffffa6;
+  --segment-line: #dca5bf80;
+  --segment-fill: #f6b8d1bf;
+  --detail-path: #f0dce775;
+  --detail-tag: #f0dce775;
+  --detail-utility: var(--surface);
+}
+
+[data-theme="dark"] {
+  --canvas: #18141d;
+  --canvas-glow: #75496824;
+  --canvas-light: #382b431f;
+  --surface: #352737;
+  --surface-raised: #2b2233ed;
+  --surface-soft: #49304866;
+  --surface-sidebar: #2a203399;
+  --surface-line: #aa83a233;
+  --surface-shadow: 0 8px 28px #09060d24, inset 0 1px 0 #ffffff0a;
+  --button-bg: #48364e80;
+  --button-color: #e1cede;
+  --button-line: #b28ba044;
+  --button-hover-bg: #6b455de6;
+  --button-hover-color: #fff0f8;
+  --button-hover-line: #d19bb7a6;
+  --focus-ring: #ed8ab899;
+  --toolbar-surface: #30222f;
+  --confirmed-bg: #254737;
+  --confirmed-color: #b0e6c3;
+  --confirmed-line: #518d69;
+  --confirmed-hover-bg: #315c45;
+  --completion-bg: #66511f;
+  --completion-color: #ffe296;
+  --incomplete-bg: #3e3945;
+  --incomplete-color: #c6bfce;
+  --segment-track: #352b3ca6;
+  --segment-line: #b78ba866;
+  --segment-fill: #915a78b3;
+  --detail-path: #49304866;
+  --detail-tag: #49304866;
+  --detail-utility: var(--surface);
+}
+
+/* Pearl-white glass with rose accents. The original pink palette stays intact. */
+[data-color-theme="white-pink"][data-theme="light"] {
+  --canvas: #fcfafc;
+  --canvas-glow: #f1c6dc55;
+  --canvas-light: #ffffffcc;
+  --surface: #f8e5ef;
+  --surface-raised: #fffdfbe8;
+  --surface-soft: #f5dce980;
+  --surface-sidebar: #ffffff8c;
+  --surface-line: #cfa9bf40;
+  --surface-shadow: 0 8px 28px #a16a840a, inset 0 1px 0 #ffffffcc;
+  --button-bg: #ffffff80;
+  --button-color: #775c6c;
+  --button-line: #d4b2c34d;
+  --button-hover-bg: #ecc5d9;
+  --button-hover-color: #913c65;
+  --button-hover-line: #ca95b0a6;
+  --focus-ring: #cf6d9d80;
+  --toolbar-surface: #fbeef5;
+  --segment-track: #ffffffb3;
+  --segment-line: #dca5bf70;
+  --segment-fill: #f4bad3bd;
+  --pink: #d56b9b;
+  --pink-dark: #ad4c79;
+  --pink-soft: #f6dce980;
+  --line: var(--surface-line);
+  --muted: #9b8594;
+  --detail-path: #f2e7ef66;
+  --detail-tag: #f5dce966;
+  --detail-utility: var(--surface);
+  --detail-nav-active: #fff9fc99;
+  --detail-nav-line: #e1b9cf66;
+  --palette-302a35: #38303a;
+  --palette-493c4c: #564858;
+  --palette-514554: #5b4e5d;
+  --palette-59485b: #655568;
+  --palette-918490: #9b8594;
+  --palette-d75c95: #d56b9b;
+  --palette-b84479: #ad4c79;
+  --palette-eee5ed: #eae2e9;
+  --palette-fff: #ffffff;
+  --palette-fbf7fa: #fcfafc;
+  --palette-fbf8fa: #fcfafc;
+  --palette-fcf9fb: #fcfafc;
+  --palette-fffafc: #fffdfd;
+  --palette-fffafd: #fffdfd;
+  --palette-f7f0f8: #faf6fa;
+  --palette-f5edf4: #faf5f8;
+}
+
+/* The same pearl-and-rose palette at night, with translucent smoky glass. */
+[data-color-theme="white-pink"][data-theme="dark"] {
+  --canvas: #1c1920;
+  --canvas-glow: #a2618126;
+  --canvas-light: #76606d14;
+  --surface: #3b2d39;
+  --surface-raised: #302833ed;
+  --surface-soft: #8d5b7833;
+  --surface-sidebar: #342c385e;
+  --surface-line: #e1bad42b;
+  --surface-shadow: 0 8px 28px #100a1224, inset 0 1px 0 #ffe5f20d;
+  --button-bg: #c5a7bc14;
+  --button-color: #e4cfdf;
+  --button-line: #d9b5cd33;
+  --button-hover-bg: #83546db3;
+  --button-hover-color: #ffebf6;
+  --button-hover-line: #e9accba6;
+  --focus-ring: #efa3c599;
+  --toolbar-surface: #352633;
+  --segment-track: #332a38a6;
+  --segment-line: #d7abc45c;
+  --segment-fill: #9b6687b3;
+  --pink: #efa3c5;
+  --pink-dark: #efa3c5;
+  --pink-soft: #8d5b7833;
+  --line: var(--surface-line);
+  --muted: #b8a1b2;
+  --detail-path: #b08aab14;
+  --detail-tag: #a96b8a26;
+  --detail-utility: var(--surface);
+  --detail-nav-active: #69465b33;
+  --detail-nav-line: #b57e9a66;
+  --palette-302a35: #f0e8f0;
+  --palette-493c4c: #d3c4d2;
+  --palette-514554: #d0c0cf;
+  --palette-59485b: #e0d2e0;
+  --palette-918490: #b8a1b2;
+  --palette-d75c95: #efa3c5;
+  --palette-b84479: #efa3c5;
+  --palette-eee5ed: #4c3e4d;
+  --palette-fff: #302833;
+  --palette-fbf7fa: #1c1920;
+  --palette-fbf8fa: #1c1920;
+  --palette-fcf9fb: #1c1920;
+  --palette-fffafc: #302833;
+  --palette-fffafd: #302833;
+  --palette-f7f0f8: #342b36;
+  --palette-f5edf4: #342b36;
+}
+
+[data-color-theme="white"][data-theme="light"] {
+  --canvas:#ffffff;--canvas-glow:transparent;--canvas-light:transparent;
+  --surface:#f4f5f7;--surface-raised:#ffffff;--surface-soft:#f5f6f8;--surface-sidebar:#ffffff;
+  --surface-line:#dfe2e8;--surface-shadow:0 4px 16px #27304706;
+  --button-bg:#ffffff;--button-color:#454a57;--button-line:#d9dde5;
+  --button-hover-bg:#edf0f5;--button-hover-color:#232936;--button-hover-line:#b9c1ce;
+  --toolbar-surface:#f4f5f7;--focus-ring:#bd467d80;
+  --segment-track:#eceef2;--segment-line:#dce0e7;--segment-fill:#fff;
+  --detail-path:#eceef3;--detail-tag:#eceef3;--detail-utility:#f4f5f7;
+  --pink:#ba467c;--pink-dark:#a23467;--pink-soft:#f5e6ee;--muted:#687080;--line:#dfe2e8;
+  --palette-302a35:#292e38;--palette-493c4c:#454a57;--palette-918490:#687080;
+  --palette-fff:#fff;--palette-fffafc:#fff;--palette-fffafd:#fff;--palette-fbf7fa:#fff;--palette-fbf8fa:#fff;
+}
+[data-color-theme="white"][data-theme="dark"] {
+  --canvas:#191c22;--canvas-glow:transparent;--canvas-light:transparent;
+  --surface:#252932;--surface-raised:#2b303a;--surface-soft:#303640;--surface-sidebar:#1e222a;
+  --surface-line:#3c424e;--button-bg:#303640;--button-color:#e1e5ed;--button-line:#48505e;
+  --button-hover-bg:#414956;--button-hover-color:#fff;--button-hover-line:#687386;
+  --toolbar-surface:#252932;--segment-track:#303640;--segment-line:#48505e;--segment-fill:#4b5462;
+  --detail-path:#303640;--detail-tag:#303640;--detail-utility:#252932;
+  --muted:#adb7c8;--line:#3c424e;
+}
+.app-shell[data-color-theme="white"] .nav-item.active{background:var(--surface);color:var(--pink-dark)}
+.app-shell[data-color-theme="white"] .nav-item:hover{background:var(--surface-soft)}
+.app-shell[data-color-theme="white"] .bar-search,.app-shell[data-color-theme="white"] .choice-trigger{background:var(--button-bg);border-color:var(--button-line)}
+
+/* Stroke-based supplied symbols keep their open geometry in dark mode too. */
+.google-icon[stroke]{fill:none!important}
+:root .app-shell[data-color-theme="white"] .nav-item:not(.active){background:transparent;border-color:transparent;box-shadow:none}
+
+
+:root .app-shell[data-theme] {
+  background:
+    radial-gradient(ellipse at 4% 4%, var(--canvas-light), transparent 55%),
+    radial-gradient(ellipse at 100% 100%, var(--canvas-glow), transparent 65%),
+    var(--canvas);
+}
+
+.app-shell[data-theme] .sidebar {
+  background: var(--surface-sidebar);
+  border-color: var(--surface-line);
+  backdrop-filter: blur(20px) saturate(115%);
+}
+
+.app-shell[data-theme] :is(.library-bar, .settings-card, .account-panel,
+  .collections-panel, .reading-card, .detail-card, .patch-intro, .save-history,
+  .folder-card, .about-hero, .empty-state) {
+  background: var(--surface);
+  border-color: var(--surface-line);
+  box-shadow: var(--surface-shadow);
+  /* Only custom backgrounds make these card surfaces translucent. */
+  backdrop-filter: var(--card-backdrop, none);
+}
+
+.app-shell[data-theme] :is(.library-dialog, .editor-dialog, .choice-popup,
+  .game-context-menu, .context-submenu, .toast, .download-notice, .action-menu > div) {
+  background: var(--surface-raised);
+  border-color: var(--surface-line);
+  backdrop-filter: blur(24px) saturate(115%);
+}
+
+.app-shell[data-theme] .detail-panel {
+  background: var(--canvas);
+}
+
+/* Modal surfaces use an opaque backing to avoid nesting backdrop filters over the home artwork. */
+.app-shell[data-theme] :is(.library-dialog, .editor-dialog) {
+  background: linear-gradient(var(--surface-raised), var(--surface-raised)), var(--canvas);
+  backdrop-filter: none;
+}
+
+.app-shell[data-color-theme="white-pink"] .detail-panel {
+  background:
+    radial-gradient(ellipse at 100% 0%, var(--canvas-glow), transparent 65%),
+    var(--canvas);
+}
+
+.app-shell[data-theme="light"] :is(.main-panel, .detail-panel) {
+  background: #fff;
+}
+
+.app-shell[data-theme] .detail-back-row {
+  background: transparent;
+}
+
+.app-shell[data-theme] :is(.bar-search, .path-entry input, .edit-field input,
+  .edit-field textarea, .choice-trigger) {
+  background: var(--button-bg);
+  border-color: var(--surface-line);
+}
+
+.app-shell[data-theme] :is(.choice-trigger:hover, .choice-trigger.open,
+  .choice-option:hover, .choice-option.active, .choice-option.selected) {
+  background: var(--surface-soft);
+}
+
+.app-shell[data-theme] .folder-face {
+  background: var(--surface);
+}
+
+.app-shell{--poster-shadow:0 0 12px #30263820,0 4px 10px #30263812}.app-shell[data-theme=dark]{--poster-shadow:0 0 13px #0005,0 4px 12px #0003}
+.app-shell[data-theme] .library-bar{box-shadow:var(--poster-shadow)}

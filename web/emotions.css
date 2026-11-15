@@ -1,0 +1,24 @@
+.emotion-workbench { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; align-items: start; max-width: 1280px; margin: 0 auto; }
+.emotion-toolbar { grid-column: 1; min-width: 0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 16px; background: var(--toolbar-surface); border-radius: 13px; }
+.emotion-toolbar select { min-width: 160px; max-width: 100%; flex: 1; }
+.emotion-toolbar .choice-control { flex: 1 1 160px; }
+.emotion-toolbar > button, .emotion-candidate button, .emotion-selected button { border-radius: 999px; }
+.emotion-workbench > p, .emotion-grid { grid-column: 1 / -1; }
+.emotion-workbench > p { margin-top: 16px; }
+.emotion-hint { color: var(--muted); font-size: .85em; line-height: 1.7; }
+.emotion-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 18px; margin-top: 20px; }
+.emotion-card { padding: 20px; border: 1px solid var(--surface-line); border-radius: 14px; background: var(--surface); min-width: 0; }
+.emotion-card h2 { font-size: 1.05em; margin: 0 0 16px; }
+.emotion-card p { overflow-wrap: anywhere; line-height: 1.7; }
+.emotion-candidate { padding: 14px 0; border-top: 1px solid var(--surface-line); }
+.emotion-candidate p { margin: 0 0 12px; }
+.emotion-candidate > div { display: flex; align-items: center; gap: 10px; }
+.emotion-candidate small { margin-right: auto; color: var(--muted); }
+.emotion-selected { border-radius: 12px; padding: 12px; background: var(--button-bg); margin-bottom: 14px; }
+.emotion-selected > span { font-size: .8em; font-weight: 600; }
+.emotion-selected p { margin: 8px 0; }
+.emotion-player { grid-column: 2; grid-row: 1; align-self: center; width: 100%; min-width: 0; }
+@media (max-width: 1000px) {
+  .emotion-workbench { grid-template-columns: minmax(0, 1fr); }
+  .emotion-player { grid-column: 1; grid-row: auto; margin-top: 12px; }
+}

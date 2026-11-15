@@ -1,0 +1,30 @@
+GalFriends is derived from GalGear and distributed under GPL-3.0-only.
+Retained GalGear components: shell, card and settings CSS, theme palettes, HTML/icon helpers,
+internationalization mechanism, focus/controller navigation, atomic persistence pattern,
+waifu2x command configuration, and the Erogamescape read-only query pattern.
+Google Material Symbols: Apache-2.0, see LICENSES.
+waifu2x-ncnn-vulkan: see tools/waifu2x/LICENSE and README.md.
+Character sample artwork is sourced from Bangumi character 76896 and belongs to its
+respective creators. Original URLs and credits are preserved in setsuna-album/album.json.
+The sample is a local development fixture, not a grant of redistribution rights.
+
+Source service icons (Bangumi, NextMoe/KUN Gal, VNDB, ErogameScape) are retained
+from GalGear for source identification; their marks belong to their respective owners.
+
+GalGear service configuration UI and OAuth/PKCE flow are adapted under GPL-3.0-only.
+OpenAI, DeepSeek, Qwen, and Kimi marks are retained from GalGear to identify services.
+
+Optional local foreground models are downloaded by scripts/setup-cutout.ps1, not bundled:
+SAM 2.1 Hiera Base Plus, Copyright Meta Platforms, Inc. and affiliates, Apache-2.0.
+ONNX conversion: onnx-community/sam2.1-hiera-base-plus-ONNX.
+Anime person detector: deepghs/anime_person_detection, model card declares MIT.
+Pinned revisions, checksums and upstream links: character_foreground.models.json
+and docs/artwork-cutout.md. No third-party Python implementation is vendored.
+
+Optional voice tools and weights are prepared in ignored tools/voice, not bundled:
+IndexTTS source and IndexTeam/IndexTTS-2.5 weights retain their upstream licenses.
+GalGear archive helpers are reused under GPL-3.0-only; GARbro and AdvHD WS2 tools
+retain their source archives, provenance and licenses. PHP retains its distribution license.
+Sources, pinned versions and adaptation boundaries: docs/voice-training.md.
+Game voices, scripts and locally trained adapters are private local artifacts and
+do not grant redistribution rights to the underlying game assets.

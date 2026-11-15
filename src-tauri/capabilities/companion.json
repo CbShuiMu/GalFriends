@@ -1,0 +1,1 @@
+{"identifier":"companion-windows","description":"桌面角色窗口的拖动、关闭和置顶","windows":["companion-*"],"permissions":["core:default","core:window:allow-start-dragging","core:window:allow-close","core:window:allow-set-always-on-top"]}

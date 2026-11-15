@@ -1,0 +1,57 @@
+/* GalGear settings workspace, tabs and pill segments. */
+:root { --ui-font:16px;font-size:var(--ui-font);line-height:1.55;font-weight:400; }
+[data-font-size="14"] { --ui-font:14px; }
+[data-font-size="18"] { --ui-font:18px; }
+.app-shell { font-size:var(--ui-font); }
+.preferences-workspace { display:grid;grid-template-columns:210px minmax(0,1fr);gap:36px;align-items:start;min-height:100%; }
+.preferences-nav { position:sticky;top:0;display:flex;flex-direction:column;gap:8px;padding:8px 22px 8px 0;border-right:1px solid var(--line); }
+/* GalGear styles.css 的无边框分类项及 appearance.css 的最终覆盖。 */
+.preference-tab { display:flex;align-items:center;gap:10px;position:relative;padding:14px 16px;border:0;border-radius:9px;background:var(--button-bg);text-align:left;font-size:var(--ui-font);line-height:1.6;color:var(--button-color);border-color:var(--button-line);box-shadow:none;transition:background-color .16s,color .16s,border-color .16s; }
+.preference-tab:hover:not(:disabled) { background:var(--button-hover-bg);color:var(--button-hover-color);border-color:var(--button-hover-line);box-shadow:none;transform:none; }
+.preference-tab.active { font-weight:650; }
+.preference-tab.active>span:first-child { text-decoration:underline;text-underline-offset:6px; }
+.preference-tab:focus-visible { outline:3px solid var(--focus-ring);outline-offset:3px; }
+.preferences-content { min-width:0;max-width:1000px; }
+.preferences-content .settings-card { margin-bottom:24px;padding:26px;border:1px solid var(--surface-line);border-radius:14px;box-shadow:none;background:var(--surface); }
+.preferences-content .settings-card h2 { margin:0;font-size:calc(var(--ui-font)*1.1429);font-weight:600;color:var(--ink); }
+.preferences-content .settings-card p { margin:6px 0 0;font-size:calc(var(--ui-font)*.9286);font-weight:400;line-height:1.75;color:var(--subtle);overflow-wrap:anywhere; }
+.preference-row { display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid var(--line);min-width:0; }
+.preference-row:last-child { border-bottom:0; }
+.preference-row h3,.preference-row label { margin:0;font-size:calc(var(--ui-font)*.9286);font-weight:500;color:var(--ink); }
+.segmented-control { position:relative;isolation:isolate;display:inline-grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);align-items:stretch;gap:0;padding:3px;min-width:0;max-width:100%;flex-shrink:1;border:1px solid var(--segment-line);border-radius:999px;background:var(--segment-track); }
+.segmented-thumb { position:absolute;top:3px;bottom:3px;left:0;z-index:0;width:0;border-radius:999px;background:var(--segment-fill);box-shadow:0 1px 5px #9a5e7c12;pointer-events:none; }
+.segment { position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:32px;height:auto;padding:6px 16px;border:0;border-radius:999px;background:transparent;color:var(--button-color);box-shadow:none;font-size:calc(var(--ui-font)*.8571);font-weight:500;line-height:1.5;white-space:nowrap;transition:color .16s; }
+.segment[aria-pressed="true"] { font-weight:650; }
+.segment:hover { color:var(--button-hover-color); }
+.segment:focus-visible { outline:2px solid var(--focus-ring);outline-offset:-3px; }
+.source-icon { width:16px;height:16px;object-fit:contain;flex-shrink:0; }
+.source-card-title { display:flex;align-items:center;gap:10px; }
+.source-card-title .source-icon { width:22px;height:22px; }
+.settings-path-entry { display:flex;align-items:center;gap:10px;margin-top:16px; }
+.settings-path-entry input { flex:1; }
+.preferences-content input { min-width:0;font-size:calc(var(--ui-font)*.9286);border:1px solid var(--button-line);background:var(--button-bg);color:var(--ink); }
+.preference-path { flex-direction:column;align-items:stretch;gap:10px; }
+.preference-path input,.tool-path { width:100%; }
+.tool-path { margin-top:16px; }
+.settings-card-heading { display:flex;align-items:center;gap:12px;flex-wrap:wrap; }
+.settings-card-heading .button { margin-left:auto; }
+.tool-status { color:var(--subtle);font-size:calc(var(--ui-font)*.8571); }
+.settings-environment-empty { display:flex;justify-content:space-between;align-items:center;gap:16px; }
+.settings-about-brand { display:flex;gap:18px;align-items:center;margin-bottom:20px; }
+.settings-about-brand>img { width:64px;height:64px;object-fit:contain; }
+.preferences-about p+p { margin-top:16px; }
+@media(max-width:1000px) {
+  .preferences-workspace { grid-template-columns:170px minmax(0,1fr);gap:24px; }
+  .preferences-nav { padding-right:16px; }
+  .preference-tab { padding:12px;font-size:calc(var(--ui-font)*.9); }
+  .preferences-content .settings-card { padding:20px; }
+}
+@media(max-width:760px) {
+  .preferences-workspace { grid-template-columns:minmax(0,1fr);gap:20px; }
+  .preferences-nav { position:static;flex-direction:row;flex-wrap:wrap;padding:0 0 14px;border-right:0;border-bottom:1px solid var(--line);gap:6px; }
+  .preference-tab { padding:8px 12px;font-size:calc(var(--ui-font)*.8); }
+  .segment { padding-inline:12px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .preference-tab,.segment { transition:none; }
+}

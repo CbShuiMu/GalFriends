@@ -1,0 +1,50 @@
+# 构建产物、下载工具和检查输出
+/target/
+/dist/
+/artifacts/
+/analysis/
+/src-tauri/gen/
+/tools/
+/Galgear-GalgameReverse-Skill/
+*.log
+
+# 本地运行数据、模型和生成的语音
+/characters/
+/gradio_outputs_voicedesign/
+/voice-output/
+/voice-models/
+gpt-sovits-v5turbo-*/
+gpt-sovits-v2pro-*/
+*.onnx
+*.ckpt
+*.pth
+*.safetensors
+*.wav
+
+# 本地角色样图，保留来源清单和修正参数
+/setsuna-album/*
+!/setsuna-album/album.json
+!/setsuna-album/keep.json
+/web/assets/setsuna/*
+!/web/assets/setsuna/.gitkeep
+
+# Python 环境、编辑器和系统文件
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# 本地环境变量与私钥
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12

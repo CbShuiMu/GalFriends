@@ -8,7 +8,7 @@
 
 Windows x64 · 简体中文 / 日本語 / English
 
-[快速上手](#快速上手) · [功能介绍](#功能介绍) · [数据存放位置](#数据存放位置) · [反馈问题](https://github.com/CbShuiMu/GalFriend/issues)
+[快速上手](#快速上手) · [功能介绍](#功能介绍) · [数据存放位置](#数据存放位置) · [反馈问题](https://github.com/CbShuiMu/GalFriends/issues)
 
 </div>
 
@@ -21,8 +21,8 @@ GalFriends 从 [GalGear](https://github.com/CbShuiMu/GalGear) 派生，沿用它
 在 PowerShell 中运行：
 
 ```powershell
-git clone https://github.com/CbShuiMu/GalFriend.git
-cd GalFriend
+git clone https://github.com/CbShuiMu/GalFriends.git
+cd GalFriends
 .\scripts\setup.ps1
 .\scripts\dev.ps1
 ```
@@ -64,6 +64,6 @@ cd GalFriend
 
 公开仓库保留神堂刹那的示例资料与[来源清单](setsuna-album/album.json)。本地开发样图、游戏素材、录音、模型权重和用户数据随各自的本地环境保存。若示例角色没有立绘，可通过在线搜索导入带立绘的角色。
 
-遇到问题时，可以在 [Issues](https://github.com/CbShuiMu/GalFriend/issues) 提供操作步骤、环境和脱敏后的报错。
+遇到问题时，可以在 [Issues](https://github.com/CbShuiMu/GalFriends/issues) 提供操作步骤、环境和脱敏后的报错。
 
 感谢 GalGear、waifu2x 及各数据源的开发者和维护者。项目采用 [GPL-3.0-only](LICENSE)，第三方组件和本地样本的来源见 [NOTICE](NOTICE)。

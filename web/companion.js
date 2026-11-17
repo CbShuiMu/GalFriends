@@ -20,6 +20,10 @@ function applyDisplayPreferences(payload) {
 }
 const nativeWindow = () => window.__TAURI__.window.getCurrentWindow();
 window.GalFriendsBridge = {
+  report_panic(message) {
+    if (window.GalFriendsDiagnostics) void window.GalFriendsDiagnostics.panic(message);
+    else console.error(message);
+  },
   render(html) {
     const active = document.activeElement;
     const key = active?.id || active?.dataset.action || deferredFocus;
@@ -58,10 +62,11 @@ window.GalFriendsBridge = {
       if (node) { node.scrollTop = top; node.scrollLeft = left; }
     }
     nativeWindow().isAlwaysOnTop?.().then(pinned=>document.querySelector('[data-native=pin]')?.setAttribute('aria-pressed',String(pinned)));
+    window.GalFriendsDiagnostics?.viewApplied('companion', document.querySelector('.pet-profile') ? 'settings' : 'none');
   },
   request(id, command, payload) {
     queueMicrotask(async () => {
-      try { const result = await window.__TAURI__.core.invoke(command, JSON.parse(payload)); ui.companion_resolve(id,true,JSON.stringify(result ?? null)); }
+      try { const result = await (window.GalFriendsDiagnostics?.invoke || window.__TAURI__.core.invoke)(command, JSON.parse(payload)); ui.companion_resolve(id,true,JSON.stringify(result ?? null)); }
       catch (error) { ui.companion_resolve(id,false,typeof error === 'string' ? error : String(error)); }
     });
   },
@@ -112,4 +117,10 @@ installChoices();
 await init();
 // 先订阅再请求资料，覆盖窗口打开时恰好切换设置的情况。
 await window.__TAURI__.event.listen('display-preferences-changed', event => applyDisplayPreferences(event.payload));
+await window.__TAURI__.event.listen('companion-artwork-changed', event => {
+  ui.companion_artwork_changed(event.payload);
+  const image = document.querySelector('.pet-art');
+  if (image) image.src = event.payload;
+});
 ui.companion_start();startGamepad();
+window.GalFriendsDiagnostics?.ready();

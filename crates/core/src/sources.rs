@@ -97,7 +97,7 @@ fn response(r: RequestBuilder) -> Result<Vec<u8>, String> {
     }
     Ok(bytes)
 }
-fn request(r: RequestBuilder) -> Result<Value, String> {
+pub(crate) fn request(r: RequestBuilder) -> Result<Value, String> {
     serde_json::from_slice(&response(r)?).map_err(|e| e.to_string())
 }
 fn array<'a>(v: &'a Value, key: &str) -> Result<&'a Vec<Value>, String> {

@@ -4,6 +4,8 @@ mod bridge;
 mod companion;
 mod detail_tags;
 mod emotions;
+mod expression_scans;
+mod expressions;
 mod game_library;
 mod icons;
 mod import_progress;
@@ -17,6 +19,7 @@ mod tag_fetch;
 mod view;
 mod voice;
 mod widgets;
+pub use library::{library_drag_ids, library_marquee};
 use serde_json::json;
 use state::{APP, Page};
 use wasm_bindgen::prelude::wasm_bindgen;
@@ -24,6 +27,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 /// 初始化页面并读取桌面角色库。
 #[wasm_bindgen]
 pub fn start() {
+    bridge::install_panic_hook();
     APP.with(|s| {
         let mut a = s.borrow_mut();
         requests::send(&mut a, requests::Kind::Load, "load_library", json!({}));
@@ -53,6 +57,9 @@ pub fn dispatch(action: &str, value: &str) {
                     | "voice-cancel"
                     | "voice-download-close"
                     | "emotion-cancel"
+                    | "expression-scan-pause"
+                    | "update-dismiss"
+                    | "update-cancel-install"
             )
         {
             return;
@@ -63,6 +70,7 @@ pub fn dispatch(action: &str, value: &str) {
             return;
         }
         if library::actions::handle(&mut a, action, value)
+            || expressions::handle(&mut a, action, value)
             || preferences::handle(&mut a, action, value)
             || detail_tags::handle(&mut a, action, value)
             || emotions::handle(&mut a, action, value)
@@ -74,12 +82,11 @@ pub fn dispatch(action: &str, value: &str) {
         }
         match action {
             "companion-open" => {
-                let id = a.selected.clone();
                 requests::send(
                     &mut a,
                     requests::Kind::Open,
                     "companion_open",
-                    json!({"id":id}),
+                    json!({"id":value}),
                 );
             }
             "nav" => {
@@ -204,14 +211,6 @@ pub fn dispatch(action: &str, value: &str) {
                     json!({"id":id}),
                 );
             }
-            "favorite" => {
-                let id = if value.is_empty() {
-                    a.selected.clone()
-                } else {
-                    value.into()
-                };
-                requests::mutate(&mut a, "favorite", &id, "");
-            }
             "art" => {
                 artwork_selection::select(&mut a, value);
             }
@@ -280,18 +279,20 @@ pub fn input_changed(name: &str, value: &str) {
                 view::render(&mut a);
             }
             "sort" => {
-                a.library_ui.sort = match value {
-                    "name" => library::state::Sort::Name,
-                    "source" => library::state::Sort::Source,
-                    _ => library::state::Sort::Added,
-                };
+                library::actions::handle(&mut a, "sort-pick", value);
                 view::render(&mut a);
             }
             "proxy" => a.proxy_draft = value.into(),
+            "release-page" => a.preferences.updates.draft = Some(value.into()),
             "collection-name" => a.collection_draft = value.into(),
             "folder-query" => {
-                if let library::state::Panel::Collections { query } = &mut a.library_ui.panel {
+                if let library::state::Panel::Collections { query, .. } = &mut a.library_ui.panel {
                     *query = value.into();
+                    view::render(&mut a);
+                }
+            }
+            "tag-query" => {
+                if library::set_tag_query(&mut a, value) {
                     view::render(&mut a);
                 }
             }
@@ -318,4 +319,5 @@ pub fn input_changed(name: &str, value: &str) {
         }
     });
 }
+pub use preferences::updates::update_progress;
 pub use responses::resolve;

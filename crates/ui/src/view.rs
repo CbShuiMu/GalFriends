@@ -7,7 +7,9 @@ use crate::{
     state::{App, Page},
     widgets::{brand, confirmation_actions, esc, icon, icon_button},
 };
+use galfriends_core::updates::VERSION;
 pub(crate) fn render(a: &mut App) {
+    crate::expressions::refresh_pending(a);
     // 导航或后台响应若在主题保存中重绘，完成时需恢复整页的禁用状态。
     if a.pending
         .is_some_and(|(_, kind)| matches!(kind, Kind::Theme))
@@ -42,7 +44,7 @@ fn html(a: &App) -> String {
         )
     };
     let mut h = format!(
-        r#"<div class="app-shell" data-theme="{}" data-language="{}" data-color-theme="{}" data-font-size="{}"><aside class="sidebar"><div class="brand"><span class="brand-mark">{}</span></div><nav class="navigation">{}{}{}{}{}</nav><div class="sidebar-bottom">{}{}{}<div class="sidebar-version"><span>v0.1.0</span></div></div></aside><main class="main-panel" tabindex="-1" aria-label="{}"><div class="page-scroll {}" data-page="{}">"#,
+        r#"<div class="app-shell" data-theme="{}" data-language="{}" data-color-theme="{}" data-font-size="{}"><aside class="sidebar"><div class="brand"><span class="brand-mark">{}</span></div><nav class="navigation">{}{}{}{}{}</nav><div class="sidebar-bottom">{}{}{}<div class="sidebar-version"><span>v{VERSION}</span></div></div></aside><main class="main-panel" tabindex="-1" aria-label="{}"><div class="page-scroll {}" data-page="{}">"#,
         esc(&a.library.settings.theme),
         esc(&a.library.settings.language),
         esc(&a.library.settings.color_theme),
@@ -85,14 +87,19 @@ fn html(a: &App) -> String {
         h.push_str("</div>");
         return h;
     }
+    let dialog_start = h.len();
     if a.search_open {
         h.push_str(&pages::search(a));
     }
     h.push_str(&library::panel(a));
     h.push_str(&crate::detail_tags::dialog(a));
+    h.push_str(&crate::expressions::dialog(a));
     h.push_str(&crate::voice::download_dialog(a));
     if a.confirm_remove {
         h.push_str(&format!(r#"<div class="editor-overlay"><section class="editor-dialog small-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-title"><h2 id="confirm-title">{}</h2><p>{}</p>{}</section></div>"#,a.t("remove"),a.t("remove_hint"),confirmation_actions("confirm-remove", "cancel-remove", a.t("confirm"), a.t("cancel"), a.pending.is_some())));
+    }
+    if h.len() == dialog_start {
+        h.push_str(&crate::preferences::updates::dialog(a));
     }
     h.push_str(&notices(a));
     h.push_str("</div>");
@@ -114,7 +121,7 @@ fn notices(a: &App) -> String {
     } else if a.pending.is_some_and(|(_, kind)| {
         !matches!(
             kind,
-            Kind::Theme | Kind::Selection | Kind::Favorite | Kind::BatchFavorite
+            Kind::Theme | Kind::Selection | Kind::Favorite | Kind::BatchFavorite | Kind::WorkFolder
         )
     }) {
         h.push_str(&format!(
@@ -124,6 +131,11 @@ fn notices(a: &App) -> String {
                     .is_some_and(|(_, kind)| matches!(kind, Kind::Artwork))
                 {
                     "artwork_processing"
+                } else if a
+                    .pending
+                    .is_some_and(|(_, kind)| matches!(kind, Kind::ExpressionApply))
+                {
+                    "expression.replacing"
                 } else {
                     "loading"
                 }
@@ -138,7 +150,9 @@ fn notices(a: &App) -> String {
         ));
     }
     h.push_str(&crate::emotions::notices(a));
+    h.push_str(&crate::expression_scans::notices(a));
     h.push_str(&crate::voice::notices(a));
+    h.push_str(&crate::preferences::updates::notice(a));
     if h.is_empty() {
         h
     } else {

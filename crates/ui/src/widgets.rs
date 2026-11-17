@@ -125,7 +125,7 @@ pub(crate) fn confirmation_actions(
 
 pub(crate) fn favorite_button(id: &str, active: bool, label: &str, disabled: bool) -> String {
     format!(
-        r#"<button type="button" class="card-action favorite {}" data-action="favorite" data-value="{}" aria-pressed="{active}" aria-label="{}" title="{}" {}>{}</button>"#,
+        r#"<button type="button" class="card-action favorite {}" data-action="collection-picker" data-value="{}" aria-haspopup="dialog" aria-label="{}" title="{}" {}>{}</button>"#,
         if active { "is-active" } else { "" },
         esc(id),
         esc(label),

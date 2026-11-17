@@ -5,6 +5,10 @@ use wasm_bindgen::prelude::wasm_bindgen;
 pub fn resolve(id: u32, success: bool, payload: &str) {
     APP.with(|s| {
         let mut a = s.borrow_mut();
+        if crate::expression_scans::resolve(&mut a, id, success, payload) {
+            view::render(&mut a);
+            return;
+        }
         if crate::game_library::resolve(&mut a, id, success, payload) {
             view::render(&mut a);
             return;
@@ -25,6 +29,10 @@ pub fn resolve(id: u32, success: bool, payload: &str) {
             view::render(&mut a);
             return;
         }
+        if crate::preferences::updates::resolve(&mut a, id, success, payload) {
+            view::render(&mut a);
+            return;
+        }
         let Some((expected, kind)) = a.pending else {
             return;
         };
@@ -33,6 +41,16 @@ pub fn resolve(id: u32, success: bool, payload: &str) {
         }
         a.pending = None;
         a.notice_revision = a.notice_revision.wrapping_add(1);
+        if matches!(kind, Kind::ExpressionPreview | Kind::ExpressionApply) {
+            crate::expressions::resolve(
+                &mut a,
+                matches!(kind, Kind::ExpressionApply),
+                success,
+                payload,
+            );
+            view::render(&mut a);
+            return;
+        }
         if matches!(kind, Kind::Theme) {
             crate::preferences::theme::resolve(&mut a, success, payload);
             crate::tag_fetch::schedule(&mut a);
@@ -49,16 +67,29 @@ pub fn resolve(id: u32, success: bool, payload: &str) {
                 return Err(payload.into());
             }
             match kind {
+                Kind::LibraryOrder => {
+                    a.library.settings.library_order =
+                        serde_json::from_str(payload).map_err(|e| e.to_string())?;
+                }
+                Kind::ExpressionPreview | Kind::ExpressionApply => unreachable!(),
+                Kind::WorkFolder if payload == "null" => {}
                 Kind::Favorite | Kind::BatchFavorite => {
                     let update: galfriends_core::characters::FavoriteUpdate =
                         serde_json::from_str(payload).map_err(|e| e.to_string())?;
                     update.apply(&mut a.library);
                     if matches!(kind, Kind::BatchFavorite) {
                         a.library_ui.checked.clear();
+                    } else if matches!(
+                        a.library_ui.panel,
+                        crate::library::state::Panel::Collections { single: true, .. }
+                    ) {
+                        a.library_ui.panel = crate::library::state::Panel::Closed;
                     }
                 }
                 Kind::Load
                 | Kind::Save
+                | Kind::SaveReleasePage
+                | Kind::WorkFolder
                 | Kind::Remove
                 | Kind::Import
                 | Kind::Artwork
@@ -66,13 +97,27 @@ pub fn resolve(id: u32, success: bool, payload: &str) {
                 | Kind::Folder
                 | Kind::Tags
                 | Kind::TagSource => {
+                    let startup = !a.loaded;
+                    let previous_release_page = a.library.settings.release_page.clone();
                     let previous_game_library = a.library.settings.galgear_library_path.clone();
                     let previous_proxy = a.library.settings.proxy.clone();
                     a.library = serde_json::from_str(payload).map_err(|e| e.to_string())?;
                     a.loaded = true;
+                    if a.library.settings.release_page != previous_release_page {
+                        a.preferences.updates.reset_release();
+                    }
+                    if matches!(kind, Kind::SaveReleasePage) {
+                        a.preferences.updates.draft = None;
+                    }
+                    if startup {
+                        crate::requests::check_app_update(&mut a, true);
+                        crate::requests::check_skill_update(&mut a);
+                    } else if a.library.settings.galgear_library_path != previous_game_library {
+                        crate::requests::check_skill_update(&mut a);
+                    }
                     if a.library.settings.galgear_library_path != previous_game_library {
                         a.game_library.draft = None;
-                        if a.voice.pending.is_none() && !a.voice.input.game_id.is_empty() {
+                        if a.voice.pending.is_none() && !a.voice.input.catalog_path.is_empty() {
                             crate::game_library::clear_source(&mut a);
                         }
                         crate::game_library::load(&mut a);
@@ -148,7 +193,18 @@ pub fn resolve(id: u32, success: bool, payload: &str) {
             Ok(())
         })();
         if let Err(error) = result {
-            a.error = Some(error);
+            a.error = Some(match error.as_str() {
+                "game_library.invalid_folder"
+                | "game_library.changed"
+                | "voice.character_in_use"
+                | "expression.scan_remove"
+                | "library.order_invalid_characters"
+                | "library.order_invalid_destination"
+                | "library.order_not_custom"
+                | "game_library.unavailable"
+                | "update.invalid_page" => a.t(&error).into(),
+                _ => error,
+            });
         }
         crate::tag_fetch::schedule(&mut a);
         view::render(&mut a);

@@ -27,7 +27,7 @@ pub(crate) async fn update_character_tags(
     let settings = library.settings.clone();
     drop(library);
     let credentials = app.state::<AppState>().credentials_path.clone();
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("update_character_tags", move || {
         let client =
             |source| crate::connections::catalog_client(&credentials, &settings.proxy, source);
         let result = if let Some(source_id) = &source_id {

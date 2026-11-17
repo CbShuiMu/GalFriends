@@ -1,10 +1,13 @@
-//! 出演作品与游戏目录的异步只读视图，训练输入由用户显式选择。
+//! 出演作品、目录关联与训练游戏选择。
 use crate::{
     bridge, requests,
     state::{App, Page},
     widgets::{esc, icon_button},
 };
-use galfriends_core::game_library::{self, Catalog};
+use galfriends_core::{
+    characters::Character,
+    game_library::{self, Catalog, LOCAL_GAME_PREFIX, Work},
+};
 use serde_json::json;
 
 #[derive(Default)]
@@ -87,6 +90,14 @@ pub(crate) fn handle(a: &mut App, action: &str, value: &str) -> bool {
             }
         }
         "work-open" => requests::send(a, requests::Kind::Open, "open_work", json!({"id":value})),
+        "work-link-folder" | "work-open-folder" if a.page == Page::Detail => {
+            let (kind, command) = if action == "work-link-folder" {
+                (requests::Kind::WorkFolder, "choose_work_folder")
+            } else {
+                (requests::Kind::Open, "open_work_folder")
+            };
+            requests::send(a, kind, command, json!({"id":a.selected,"workId":value}));
+        }
         "game-library-settings" => {
             a.page = Page::Settings;
             crate::preferences::handle(a, "settings-section", "paths");
@@ -104,22 +115,34 @@ pub(crate) fn input(a: &mut App, name: &str, value: &str) -> bool {
     false
 }
 
+fn linked_game<'a>(a: &'a App, id: &str) -> Option<(&'a str, &'a str)> {
+    a.library
+        .characters
+        .iter()
+        .find(|character| character.id == a.voice.input.character_id)
+        .and_then(|character| {
+            if let Some(work_id) = id.strip_prefix(LOCAL_GAME_PREFIX) {
+                return game_library::work_folder(character, work_id).map(|folder| (folder, ""));
+            }
+            let catalog = a.game_library.catalog.as_ref()?;
+            game_library::linked_games(character, catalog)
+                .into_iter()
+                .find(|game| game.id == id && game.available)
+                .map(|game| (game.folder.as_str(), catalog.path.as_str()))
+        })
+}
+
+pub(crate) fn has_selected_game(a: &App) -> bool {
+    let input = &a.voice.input;
+    linked_game(a, &input.game_id)
+        .is_some_and(|(folder, path)| folder == input.game_dir && path == input.catalog_path)
+}
+
 pub(crate) fn select_game(a: &mut App, id: &str) {
-    let game = a.game_library.catalog.as_ref().and_then(|catalog| {
-        a.library
-            .characters
-            .iter()
-            .find(|character| character.id == a.voice.input.character_id)
-            .and_then(|character| {
-                game_library::linked_games(character, catalog)
-                    .into_iter()
-                    .find(|game| game.id == id && game.available)
-                    .map(|game| (game.id.clone(), game.folder.clone(), catalog.path.clone()))
-            })
-    });
+    let game = linked_game(a, id).map(|(folder, path)| (folder.to_owned(), path.to_owned()));
     clear_source(a);
-    if let Some((id, folder, path)) = game {
-        a.voice.input.game_id = id;
+    if let Some((folder, path)) = game {
+        a.voice.input.game_id = id.into();
         a.voice.input.game_dir = folder;
         a.voice.input.catalog_path = path;
     }
@@ -151,23 +174,49 @@ fn status(a: &App) -> &'static str {
 pub(crate) fn voice_select(a: &App) -> String {
     let busy = a.voice.pending.is_some();
     let mut html = format!(
-        r#"<label class="voice-field"><span>{}</span><select data-input="voice-linked-game" {}><option value="">{}</option>"#,
+        r#"<label class="voice-field"><span>{}</span><select data-input="voice-linked-game" data-choice-allow-empty {}>"#,
         a.t("game_library.linked_games"),
-        if busy { "disabled" } else { "" },
-        a.t("voice.choose")
+        if busy { "disabled" } else { "" }
     );
     let mut count = 0;
-    if let Some(catalog) = &a.game_library.catalog
-        && let Some(character) = a
-            .library
-            .characters
-            .iter()
-            .find(|c| c.id == a.voice.input.character_id)
+    if let Some(character) = a
+        .library
+        .characters
+        .iter()
+        .find(|c| c.id == a.voice.input.character_id)
     {
-        for game in game_library::linked_games(character, catalog) {
+        for work in game_library::works(character) {
+            if character.work_folders.contains_key(&work.id) {
+                count += 1;
+                let id = format!("{LOCAL_GAME_PREFIX}{}", work.id);
+                let name = work_name(a, &work);
+                html.push_str(&format!(
+                    r#"<option value="{}" {}>{}</option>"#,
+                    esc(&id),
+                    if id == a.voice.input.game_id {
+                        "selected"
+                    } else {
+                        ""
+                    },
+                    esc(if name.is_empty() { &work.id } else { name }),
+                ));
+            }
+        }
+        for game in a
+            .game_library
+            .catalog
+            .as_ref()
+            .into_iter()
+            .flat_map(|catalog| game_library::linked_games(character, catalog))
+        {
             count += 1;
+            let unavailable = if game.available {
+                String::new()
+            } else {
+                format!(" · {}", a.t("game_library.unavailable"))
+            };
             html.push_str(&format!(
-                r#"<option value="{}" {} {}>{} · {}{}</option>"#,
+                r#"<option value="{}" {} {}>{}{unavailable}</option>"#,
                 esc(&game.id),
                 if game.id == a.voice.input.game_id {
                     "selected"
@@ -176,12 +225,6 @@ pub(crate) fn voice_select(a: &App) -> String {
                 },
                 if game.available { "" } else { "disabled" },
                 esc(&game.title),
-                esc(&game.folder),
-                if game.available {
-                    ""
-                } else {
-                    a.t("game_library.unavailable")
-                }
             ));
         }
     }
@@ -189,8 +232,12 @@ pub(crate) fn voice_select(a: &App) -> String {
     if count == 0 {
         html.push_str(&format!("<p>{}</p>", status(a)));
     }
-    html.push_str(&format!(
-        r#"<div class="voice-actions">{}{}</div>"#,
+    html
+}
+
+pub(crate) fn voice_tools(a: &App) -> String {
+    format!(
+        r#"<div class="voice-tools">{}{}</div>"#,
         icon_button(
             "game-library-settings",
             "",
@@ -205,10 +252,60 @@ pub(crate) fn voice_select(a: &App) -> String {
             a.t("refresh"),
             "refresh",
             "icon-button",
-            a.game_library.pending.is_some() || busy
+            a.game_library.pending.is_some() || a.voice.pending.is_some()
         )
-    ));
-    html
+    )
+}
+
+fn work_name<'a>(a: &App, work: &'a Work) -> &'a str {
+    if a.library.settings.language == "zh-CN" && !work.translated_name.is_empty() {
+        &work.translated_name
+    } else {
+        &work.name
+    }
+}
+
+fn work_controls(a: &App, character: &Character, work: &Work) -> String {
+    let manual = character.work_folders.contains_key(&work.id);
+    let automatic = a
+        .game_library
+        .catalog
+        .as_ref()
+        .and_then(|catalog| game_library::work_installation(work, catalog));
+    let linked = manual || automatic.is_some();
+    let can_open = manual || automatic.is_some_and(|game| game.available);
+    let busy = a.pending.is_some();
+    let link = icon_button(
+        "work-link-folder",
+        &work.id,
+        a.t(if linked {
+            "game_library.linked_folder"
+        } else {
+            "game_library.pick_folder"
+        }),
+        "link",
+        if linked {
+            "icon-button work-linked"
+        } else {
+            "icon-button"
+        },
+        busy,
+    );
+    let open = icon_button(
+        "work-open-folder",
+        &work.id,
+        a.t(if can_open {
+            "game_library.open_folder"
+        } else if linked {
+            "game_library.unavailable"
+        } else {
+            "game_library.no_match"
+        }),
+        "folder_open",
+        "icon-button",
+        busy || !can_open,
+    );
+    format!(r#"<div class="work-controls">{link}{open}</div>"#)
 }
 
 pub(crate) fn detail(a: &App) -> String {
@@ -233,11 +330,7 @@ pub(crate) fn detail(a: &App) -> String {
     }
     html.push_str(r#"<div class="character-work-grid">"#);
     for work in works {
-        let name = if a.library.settings.language == "zh-CN" && !work.translated_name.is_empty() {
-            &work.translated_name
-        } else {
-            &work.name
-        };
+        let name = work_name(a, &work);
         let cover = if work.cover_url.is_empty() {
             format!(
                 r#"<span class="work-cover work-cover-empty" aria-hidden="true">{}</span>"#,
@@ -259,6 +352,7 @@ pub(crate) fn detail(a: &App) -> String {
         } else {
             html.push_str(&format!(r#"<button type="button" class="work-title" data-action="work-open" data-value="{}" title="{}">{}</button>"#, esc(&work.site_id), esc(name), esc(name)));
         }
+        html.push_str(&work_controls(a, character, &work));
         html.push_str("</article>");
     }
     html.push_str("</div></section>");
@@ -267,7 +361,7 @@ pub(crate) fn detail(a: &App) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{resolve, select_game};
+    use super::{resolve, select_game, voice_select};
     use crate::state::App;
     use galfriends_core::{
         characters::{Character, Snapshot, Source},
@@ -293,7 +387,7 @@ mod tests {
             id: "character".into(),
             snapshots: vec![Snapshot {
                 source: Source::Kungal,
-                data: serde_json::json!({"appearances":[{"work":{"id":"1","medium":"galgame"}}]}),
+                data: serde_json::json!({"appearances":[{"work":{"id":"1","medium":"galgame","display_name":"Local game"}}]}),
                 id: "1".into(),
                 url: String::new(),
             }],
@@ -321,9 +415,23 @@ mod tests {
         assert_eq!(app.voice.input.catalog_path, "catalog");
         assert!(app.voice.input.manifest.is_empty());
         assert!(app.voice.input.speaker.is_empty());
+        let catalog_select = voice_select(&app);
+        assert!(catalog_select.contains(">title</option>"));
+        assert!(!catalog_select.contains("folder"));
         app.game_library.catalog.as_mut().unwrap().games[0].available = false;
         select_game(&mut app, "game");
         assert!(app.voice.input.game_id.is_empty());
         assert!(app.voice.input.game_dir.is_empty());
+
+        app.game_library.catalog = None;
+        let character = &mut app.library.characters[0];
+        super::game_library::set_work_folder(character, "1".into(), "local folder".into()).unwrap();
+        select_game(&mut app, "local:1");
+        assert_eq!(app.voice.input.game_id, "local:1");
+        assert_eq!(app.voice.input.game_dir, "local folder");
+        assert!(app.voice.input.catalog_path.is_empty());
+        let local_select = voice_select(&app);
+        assert!(local_select.contains(">Local game</option>"));
+        assert!(!local_select.contains("local folder"));
     }
 }

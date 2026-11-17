@@ -5,6 +5,7 @@ use crate::{
     widgets::{confirmation_actions, esc, icon, icon_button},
 };
 use galfriends_core::collections::accepts_characters;
+use std::{collections::BTreeSet, fmt::Write};
 
 pub(super) fn children(a: &App) -> Vec<&String> {
     if a.library_ui.show_favorites {
@@ -149,7 +150,11 @@ pub(super) fn page(a: &App) -> String {
     }
     for name in children(a) {
         let selected = a.library_ui.checked_folders.contains(name);
-        h.push_str(&format!(r#"<article class="folder-card {}"><button class="folder-face" data-action="{}" data-value="{}" aria-pressed="{}">{}<strong>{}</strong></button></article>"#,if selected {"is-selected"}else{""},if a.library_ui.batch {"folder-select"}else{"folder-open"},esc(name),selected,icon("folder"),esc(name)));
+        write!(h, r#"<article class="folder-card {}" data-folder-id="{}"><button class="folder-face" data-action="{}" data-value="{}" {}>{}<strong>{}</strong>{}</button></article>"#,
+            if selected { "is-selected" } else { "" }, esc(name),
+            if a.library_ui.batch { "folder-select" } else { "folder-open" }, esc(name),
+            if a.library_ui.batch { format!(r#"aria-pressed="{selected}""#) } else { String::new() },
+            icon("folder"), esc(name), super::selection::check()).unwrap();
     }
     h.push_str("</div>");
     if !a.collection.is_empty() || a.library_ui.show_favorites {
@@ -158,21 +163,31 @@ pub(super) fn page(a: &App) -> String {
     h.push_str("</section>");
     h
 }
-pub(super) fn picker(a: &App, query: &str) -> String {
+pub(super) fn picker(a: &App, query: &str, ids: &BTreeSet<String>, single: bool) -> String {
     let busy = a.pending.is_some();
     let disabled = if busy { "disabled" } else { "" };
     let selected = a
         .t("collection_selected_count")
-        .replace("{count}", &a.library_ui.checked.len().to_string());
-    let mut h = format!(
-        r#"<div class="editor-overlay folder-picker-overlay"><section class="editor-dialog library-dialog folder-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="folder-picker-title"><header><h2 id="folder-picker-title">{}</h2><button type="button" class="icon-button" data-action="library-panel-close" title="{}" aria-label="{}" {disabled}>{}</button></header><div class="folder-picker-body"><p class="muted">{selected}</p><label class="edit-field"><span>{}</span><input id="folder-query" data-input="folder-query" type="search" value="{}" autocomplete="off" aria-controls="folder-picker-options" data-initial-focus></label><div id="folder-picker-options" class="folder-picker">"#,
-        a.t("in_collection"),
-        a.t("close"),
-        a.t("close"),
-        icon("close"),
+        .replace("{count}", &ids.len().to_string());
+    let mut h = super::dialog_start(a, "in_collection", busy);
+    write!(
+        h,
+        r#"<p class="muted">{selected}</p><label class="edit-field"><span>{}</span><input id="folder-query" data-input="folder-query" inputmode="search" value="{}" autocomplete="off" aria-controls="folder-picker-options" data-initial-focus></label><div id="folder-picker-options" class="folder-picker">"#,
         a.t("query"),
         esc(query),
-    );
+    ).unwrap();
+    if single && let Some(c) = a.library.characters.iter().find(|c| ids.contains(&c.id)) {
+        let action = a.t(if c.favorite {
+            "unfavorite_action"
+        } else {
+            "favorite"
+        });
+        let label = format!("{} · {action}", a.t("starred"));
+        if label.to_lowercase().contains(&query.trim().to_lowercase()) {
+            write!(h, r#"<button type="button" class="button folder-picker-option {}" data-action="collection-star" {disabled}>{}<span>{}</span></button>"#,
+                if c.favorite { "is-starred" } else { "" }, icon("heart"), esc(&label)).unwrap();
+        }
+    }
     let query = query.trim().to_lowercase();
     let mut options: Vec<_> = a
         .library
@@ -202,7 +217,7 @@ pub(super) fn picker(a: &App, query: &str) -> String {
     }
     for (path, name) in options {
         h.push_str(&format!(
-            r#"<button type="button" class="button folder-picker-option" data-action="batch-collect" data-value="{}" {disabled}>{}<span>{}</span></button>"#,
+            r#"<button type="button" class="button folder-picker-option" data-action="collection-pick" data-value="{}" {disabled}>{}<span>{}</span></button>"#,
             esc(name),
             icon("folder_special"),
             esc(&path),

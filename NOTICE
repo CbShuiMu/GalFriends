@@ -1,4 +1,6 @@
 GalFriends is derived from GalGear and distributed under GPL-3.0-only.
+Runtime diagnostics (session logs, privacy redaction, frontend and native crash observation)
+are adapted from GalGear under GPL-3.0-only.
 Retained GalGear components: shell, card and settings CSS, theme palettes, HTML/icon helpers,
 internationalization mechanism, focus/controller navigation, atomic persistence pattern,
 waifu2x command configuration, and the Erogamescape read-only query pattern.

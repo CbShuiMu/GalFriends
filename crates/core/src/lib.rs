@@ -9,10 +9,12 @@ pub mod companion;
 pub mod connections;
 pub mod game_library;
 pub mod library_ops;
+pub mod library_order;
 pub mod preferences;
 #[cfg(feature = "desktop")]
 pub mod sources;
 #[cfg(feature = "desktop")]
 pub mod store;
 pub mod tags;
+pub mod updates;
 pub mod voice;

@@ -13,3 +13,19 @@ galfriends-i18n.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 open = "5"
+tempfile = "3"
+# Windows 原生文件夹选择器，沿用 GalGear 的 rfd 依赖。
+rfd = { version = "0.16", default-features = false }
+# 沿用 Tauri 依赖树已有库，记录本地时间、分级日志与边界脱敏。
+log = "0.4"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+regex = "1"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+rfd = { version = "0.16", default-features = false, features = ["gtk3"] }
+
+[target.'cfg(windows)'.dependencies]
+# 复用 Tauri 的 WebView2 绑定，原生故障不依赖页面 IPC。
+webview2-com = "0.38"
+windows-core = "0.61"
+windows-sys = { version = "0.61", features = ["Win32_System_Diagnostics_Debug", "Win32_System_Kernel", "Win32_System_SystemInformation", "Win32_Storage_FileSystem", "Win32_System_IO", "Win32_System_LibraryLoader", "Win32_System_Threading", "Win32_UI_WindowsAndMessaging"] }

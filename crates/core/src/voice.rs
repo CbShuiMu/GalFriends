@@ -96,7 +96,7 @@ pub struct TrainedModel {
     pub label: String,
 }
 
-/// 用户明确选择的素材、角色和输出位置；不会从游戏名推断角色身份。
+/// 用户选择的训练素材和角色。输出位置由桌面端根据当前角色资料目录决定。
 #[derive(Clone, Default, Deserialize, Serialize)]
 pub struct Input {
     #[serde(default)]
@@ -108,7 +108,6 @@ pub struct Input {
     pub game_id: String,
     #[serde(default)]
     pub catalog_path: String,
-    pub output_dir: String,
     pub manifest: String,
     pub speaker: String,
     pub language: String,
@@ -121,6 +120,14 @@ pub struct Progress {
     pub stage: String,
     pub current: u32,
     pub total: u32,
+}
+
+/// 工作台接收的进度和训练器输出，下载继续使用单独的阶段进度。
+#[derive(Deserialize, Serialize)]
+#[serde(untagged)]
+pub enum Update {
+    Log { log: String },
+    Phase(Progress),
 }
 
 /// 素材中实际观察到的姓名和独立音频数，不根据文件名前缀猜姓名。

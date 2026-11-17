@@ -40,6 +40,24 @@
 .settings-about-brand { display:flex;gap:18px;align-items:center;margin-bottom:20px; }
 .settings-about-brand>img { width:64px;height:64px;object-fit:contain; }
 .preferences-about p+p { margin-top:16px; }
+.preference-tab[data-value="updates"] { flex-wrap:wrap; }
+.preferences-nav .version-pill,.update-badges { margin-left:auto; }
+.update-badges { display:flex;gap:8px;flex-wrap:wrap; }
+.update-card .settings-card-heading { margin-bottom:16px; }
+.update-card label { display:block;color:var(--subtle);font-size:calc(var(--ui-font)*.9286);margin-bottom:6px; }
+.update-card input { display:block;width:100%; }
+.update-actions { display:flex;gap:8px;flex-wrap:wrap;margin-top:12px; }
+.update-card .update-actions .button { min-height:40px;font-size:var(--ui-font); }
+.preferences-content .update-card p { margin-top:12px; }
+.editor-dialog.update-dialog { display:flex;flex-direction:column;width:680px;max-height:100%;overflow:hidden; }
+.update-dialog-body { min-height:0;overflow:auto;overscroll-behavior:contain;overflow-wrap:anywhere;scrollbar-width:thin; }
+.update-dialog-body:focus-visible { outline:2px solid var(--focus-ring);outline-offset:-2px; }
+.update-dialog-body p { color:var(--subtle);line-height:1.8; }
+.update-dialog .dialog-actions,.update-dialog header { flex-shrink:0; }
+.update-notes { margin:16px 0;padding:16px;border:1px solid var(--surface-line);border-radius:10px;background:var(--surface); }
+.update-notes h3 { font-size:var(--ui-font);margin:0 0 12px; }
+.update-notes div { white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere; }
+.update-overlay { padding:clamp(12px,4vw,30px); }
 @media(max-width:1000px) {
   .preferences-workspace { grid-template-columns:170px minmax(0,1fr);gap:24px; }
   .preferences-nav { padding-right:16px; }

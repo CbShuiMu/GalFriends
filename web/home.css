@@ -40,3 +40,71 @@
 @media(max-height:760px){.character-home{--home-poster-height:116px;--home-selected-height:180px}.home-copy h1{font-size:32px;margin-bottom:12px}.home-description{-webkit-line-clamp:3;margin-bottom:16px}}
 @media(max-height:640px){.character-home{--home-poster-height:100px;--home-selected-height:154px;gap:12px}.home-copy h1{font-size:28px}.home-copy .button{height:38px}}
 @media(prefers-reduced-motion:reduce){:root .app-shell[data-theme] .home-game{transition:none}}
+
+.home-empty {
+  display: flex;
+  height: 100%;
+  overflow-y: auto;
+  padding: clamp(24px, 5vh, 56px) clamp(16px, 4vw, 48px);
+  text-align: center;
+  background: radial-gradient(ellipse at 50% 44%, var(--surface), transparent 58%), var(--canvas);
+}
+
+.home-empty-content {
+  width: min(100%, 30em);
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+
+.home-empty-art {
+  --home-art-paper: color-mix(in srgb, var(--canvas) 75%, var(--surface));
+  --home-art-wash: color-mix(in srgb, var(--pink) 15%, var(--surface));
+  --home-art-line: color-mix(in srgb, var(--pink) 45%, var(--surface));
+  --home-art-silhouette: color-mix(in srgb, var(--pink-dark) 67%, var(--surface));
+  display: block;
+  width: min(100%, clamp(220px, 55vh, 350px));
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.home-empty-frame { filter: drop-shadow(0 5px 7px color-mix(in srgb, var(--ink) 18%, transparent)); }
+
+.home-empty h1 {
+  margin: 0;
+  color: var(--ink);
+  font-size: calc(var(--ui-font) * 1.85);
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.home-empty p {
+  max-width: 29em;
+  margin: 12px 0 24px;
+  color: var(--button-color);
+  font-size: calc(var(--ui-font) * .9375);
+  line-height: 1.75;
+  text-wrap: balance;
+}
+
+.home-empty .home-empty-search {
+  --button-bg: color-mix(in srgb, var(--pink) 16%, var(--surface));
+  --button-line: color-mix(in srgb, var(--pink) 34%, var(--surface));
+  --button-hover-bg: color-mix(in srgb, var(--pink) 27%, var(--surface));
+  --button-hover-line: color-mix(in srgb, var(--pink) 52%, var(--surface));
+  --button-color: color-mix(in srgb, var(--pink-dark) 40%, var(--ink));
+  --button-hover-color: var(--button-color);
+  height: auto;
+  min-height: 44px;
+  max-width: 100%;
+  gap: 8px;
+  padding: 9px 20px;
+  white-space: normal;
+  font-size: calc(var(--ui-font) * .9);
+  font-weight: 600;
+}
+
+.home-empty-search > .icon { width: 18px; height: 18px; flex: none; }
+.home-empty-search:focus-visible { outline-color: var(--pink-dark); }

@@ -16,7 +16,35 @@ use std::{
         atomic::{AtomicBool, Ordering},
     },
 };
+use tauri::Emitter;
 use tauri::{Manager, WebviewUrl, WebviewWindow, WebviewWindowBuilder};
+
+pub(crate) fn refresh_artwork(app: &tauri::AppHandle, id: &str) {
+    let result = (|| -> Result<(), String> {
+        let artwork = profile(app, id)?.artwork;
+        let state = app.state::<Sessions>();
+        let labels = {
+            let mut entries = state.entries.lock().map_err(|e| e.to_string())?;
+            let mut labels = Vec::new();
+            for (label, session) in entries
+                .iter_mut()
+                .filter(|(_, session)| session.profile.id == id)
+            {
+                session.profile.artwork.clone_from(&artwork);
+                labels.push(label.clone());
+            }
+            labels
+        };
+        for label in labels {
+            app.emit_to(label, "companion-artwork-changed", &artwork)
+                .map_err(|e| e.to_string())?;
+        }
+        Ok(())
+    })();
+    if let Err(error) = result {
+        log::warn!("companion_artwork_refresh_failed {error}");
+    }
+}
 
 #[derive(Default)]
 pub(crate) struct Sessions {
@@ -43,13 +71,13 @@ impl Drop for Session {
 }
 
 fn binding_path(app: &tauri::AppHandle, id: &str) -> Result<PathBuf, String> {
-    Ok(storage::binding_path(
+    storage::binding_path(
         app.state::<AppState>()
             .path
             .parent()
             .ok_or("companion.failed")?,
         id,
-    ))
+    )
 }
 
 fn profile(app: &tauri::AppHandle, id: &str) -> Result<Profile, String> {
@@ -124,6 +152,7 @@ pub(crate) async fn companion_open(
         .build();
     match created {
         Ok(window) => {
+            crate::diagnostics::watch_window(&window);
             let handle = app.clone();
             window.on_window_event(move |event| {
                 if matches!(event, tauri::WindowEvent::Focused(true))
@@ -177,7 +206,7 @@ pub(crate) async fn companion_models(
 ) -> Result<Vec<TrainedModel>, String> {
     let profile = companion_profile(app.clone(), window)?;
     let file = crate::voice::catalog_file(&app)?;
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("companion_models", move || {
         catalog::models(&file, &profile.id, engine, &profile.voice)
     })
     .await
@@ -193,7 +222,7 @@ pub(crate) async fn companion_bind(
 ) -> Result<galfriends_core::companion::VoiceModels, String> {
     let profile = companion_profile(app.clone(), window.clone())?;
     let label = window.label().to_owned();
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("companion_bind", move || {
         let sessions = app.state::<Sessions>();
         let _transaction = sessions.bindings.lock().map_err(|_| "companion.failed")?;
         let state = app.state::<AppState>();
@@ -280,7 +309,7 @@ pub(crate) async fn companion_chat(
     let label = window.label().to_owned();
     let (profile, history, cancel) = begin(&app, &label)?;
     let handle = app.clone();
-    let result = tauri::async_runtime::spawn_blocking(move || {
+    let result = crate::diagnostics::spawn_background("companion_chat", move || {
         let (service, proxy, path) = {
             let state = handle.state::<AppState>();
             let library = state.library.lock().map_err(|_| "companion.failed")?;
@@ -313,7 +342,7 @@ pub(crate) async fn companion_speak(
     let (profile, history, cancel) = begin(&app, &label)?;
     let handle = app.clone();
     let worker_cancel = cancel.clone();
-    let result = tauri::async_runtime::spawn_blocking(move || {
+    let result = crate::diagnostics::spawn_background("companion_speak", move || {
         // 语音文本只来自本窗口最后一条已验证的日语回复，前端不能传入中文替代。
         let reply = &history.last().ok_or("companion.no_reply")?.reply;
         speech::synthesize(&handle, &profile, reply, worker_cancel)

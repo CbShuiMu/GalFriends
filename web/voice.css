@@ -2,8 +2,17 @@
 .voice-runtime,.voice-runtime>div{display:flex;align-items:center;gap:16px}
 .voice-runtime{justify-content:space-between}.voice-runtime>div{flex-wrap:wrap}.voice-runtime .icon{color:var(--palette-c07b9f)}
 .voice-status{font-size:.85em;color:var(--palette-a0899b)}
-.voice-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.voice-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 .voice-columns>.settings-card{min-width:0}
+.voice-columns h2{margin:0}
+.voice-game,.voice-console{display:flex;flex-direction:column}
+.voice-game>.voice-actions{margin-top:auto;padding-top:20px}
+.voice-card-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.voice-card-header>.voice-tools{display:flex;gap:8px;flex:none}
+.voice-console-window{display:flex;flex:1;flex-direction:column;margin-top:12px;border:1px solid var(--surface-line);border-radius:9px;background:var(--canvas);overflow:hidden}
+.voice-console-window pre{flex:1;height:0;min-height:9rem;margin:0;padding:12px;overflow:auto;scrollbar-gutter:stable;white-space:pre-wrap;overflow-wrap:anywhere;font:.84em/1.5 "Cascadia Mono",Consolas,monospace}
+.voice-console-window pre:focus-visible{outline-offset:-3px}
+.voice-console-status{border-bottom:1px solid var(--surface-line);padding:8px 12px;font-size:.8em;color:var(--subtle);overflow-wrap:anywhere}
 .voice-field{display:flex;flex-direction:column;gap:9px;margin-top:20px;min-width:0;font-size:.88em}
 .voice-field input,.voice-field select,.voice-runtime select{width:100%;min-width:0;border:1px solid var(--palette-e9dfe7);border-radius:12px;padding:10px 12px;background:var(--palette-fcfafc);color:inherit;font:inherit}
 .voice-runtime select{width:auto;max-width:100%}
@@ -19,4 +28,4 @@
 .voice-download-options .button{width:100%;height:auto;min-height:42px;padding:8px 14px;justify-content:space-between;gap:8px;text-align:start;white-space:normal}
 .voice-download-options small:not(:empty){display:block;color:var(--subtle)}
 .voice-path{overflow-wrap:anywhere}
-@media(max-width:1100px){.voice-columns{grid-template-columns:1fr}.voice-options{gap:12px}}
+@media(max-width:1050px){.voice-columns{grid-template-columns:1fr;gap:0}.voice-options{gap:12px}}

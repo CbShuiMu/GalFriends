@@ -7,33 +7,16 @@ use crate::{
 use serde_json::json;
 
 pub(crate) fn handle(a: &mut App, action: &str, value: &str) -> bool {
-    if super::collection_actions::handle(a, action, value) {
+    if super::order::handle(a, action, value)
+        || super::collection_actions::handle(a, action, value)
+        || super::tag_filter::handle(a, action, value)
+    {
         return true;
     }
     match action {
         "sort-toggle" => a.library_ui.sort_open = !a.library_ui.sort_open,
         "sort-close" => a.library_ui.sort_open = false,
-        "sort-pick" => {
-            a.library_ui.sort = match value {
-                "name" => super::state::Sort::Name,
-                "source" => super::state::Sort::Source,
-                _ => super::state::Sort::Added,
-            };
-            a.library_ui.sort_open = false;
-        }
-        "sort-direction" => a.library_ui.descending = !a.library_ui.descending,
-        "tag-filter-open" => a.library_ui.panel = Panel::Tags,
         "library-panel-close" => a.library_ui.panel = Panel::Closed,
-        "tag-toggle" => {
-            if !a.library_ui.tags.remove(value) {
-                a.library_ui.tags.insert(value.into());
-            }
-            a.library_ui.checked.clear();
-        }
-        "tag-clear" => {
-            a.library_ui.tags.clear();
-            a.library_ui.checked.clear();
-        }
         "batch-toggle" => {
             a.library_ui.batch = !a.library_ui.batch;
             a.library_ui.checked.clear();
@@ -54,26 +37,14 @@ pub(crate) fn handle(a: &mut App, action: &str, value: &str) -> bool {
             a.library_ui.checked.clear();
             a.library_ui.checked_folders.clear();
         }
-        "batch-collection" => {
-            if !a.library_ui.checked.is_empty() {
-                a.library_ui.panel = Panel::Collections {
-                    query: String::new(),
-                };
-            }
-        }
         "batch-remove" => a.confirm_remove = !a.library_ui.checked.is_empty(),
-        "batch-favorite"
-        | "batch-unfavorite"
-        | "batch-collect"
-        | "batch-detach"
-        | "batch-confirm-remove" => {
+        "batch-favorite" | "batch-unfavorite" | "batch-detach" | "batch-confirm-remove" => {
             if a.library_ui.checked.is_empty() {
                 return true;
             }
             let operation = match action {
                 "batch-favorite" => "favorite",
                 "batch-unfavorite" => "unfavorite",
-                "batch-collect" => "collect",
                 "batch-detach" => "detach",
                 _ => "remove",
             };

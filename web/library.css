@@ -18,14 +18,25 @@
 .card-title{display:block;max-width:100%;padding:5px 12px;border:1px solid #fff9;border-radius:999px;background:#fffafde8;box-shadow:0 2px 8px #39233812;text-align:left;color:inherit;font:inherit;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;pointer-events:auto}
 .card-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:16px;border-top:1px solid #FFFFFF33;flex-shrink:0}.card-action{display:grid;place-items:center;width:44px;height:44px;flex:0 1 44px;padding:10px;border:1px solid transparent;border-radius:9px;background:none;pointer-events:auto}.card-action>.icon{width:23px;height:23px}.card-action.favorite{color:#EF4444}.card-action.finished{color:#F2C653}.card-action.delete{color:#FF7387}.card-action.favorite:hover{background:#EF444424;border-color:#EF444466}.card-action.finished:hover{background:#F2C65324;border-color:#F2C65366}.card-action.delete:hover{background:#FF738724;border-color:#FF738766}.card-action.favorite.is-active>.icon{fill:currentColor}.card-action.finished.is-active>.icon{fill:currentColor;stroke:none}
 
+.card-action.companion { color: light-dark(#2563eb, #93c5fd); background: light-dark(#eff6fff2, #1e314bf2); border-color: light-dark(#93c5fd99, #60a5fa66); }
+.card-action.companion:hover:not(:disabled) { background: light-dark(#dbeafe, #28466b); border-color: light-dark(#60a5fa, #93c5fd); }
 .card-rail .card-actions{position:absolute;right:0;bottom:0;flex-direction:column;gap:2px;width:var(--card-actions-width);margin:0;padding:16px 0 8px;border:0;background:radial-gradient(ellipse 100% 100% at right bottom,#17111aa6,transparent 100%)}
 .card-heading,.card-actions{opacity:0;translate:0 7px;transition:opacity .14s,translate .14s}
 .game-card:not(.is-selectable):focus-within .card-overlay{opacity:1;visibility:visible;transition-delay:0s}
 .game-card:not(.is-selectable):focus-within :is(.card-heading,.card-actions){opacity:1;translate:0}
 .game-card:not(.is-selectable):focus-within .card-actions{transition-delay:.08s}
 @media(hover:hover){.game-card:not(.is-selectable):hover .card-overlay{opacity:1;visibility:visible;transition-delay:0s}.game-card:not(.is-selectable):hover :is(.card-heading,.card-actions){opacity:1;translate:0}.game-card:hover .card-actions{transition-delay:.08s}}
-.game-card.selected .poster{outline:2px solid var(--pink);outline-offset:4px}.game-face:focus-visible{outline:3px solid var(--pink);outline-offset:5px}
-.library-page:has(.selecting) .game-card.selected:after{content:'✓';position:absolute;top:10px;right:10px;display:grid;place-items:center;width:24px;height:24px;background:var(--pink-dark);border:2px solid var(--surface-raised);border-radius:50%;color:white;font-size:14px;pointer-events:none}
+.game-face:focus-visible{outline:3px solid var(--pink);outline-offset:5px}
+.game-card.is-selected .poster{outline:3px solid var(--pink);outline-offset:2px}
+.selection-check{position:absolute;top:12px;right:12px;display:none;place-items:center;width:24px;height:24px;border:2px solid var(--palette-dba1bd);border-radius:7px;background:var(--palette-fffafc);box-shadow:0 2px 8px var(--palette-592d4510);pointer-events:none}
+.library-page:has(.library-bar.selecting) .selection-check,.marquee-selecting .selection-check{display:grid}
+.selection-check>.icon{visibility:hidden;width:18px;height:18px}
+.is-selected .selection-check{background:var(--pink-dark);border-color:var(--pink-dark);color:white}
+.is-selected .selection-check>.icon{visibility:visible}
+.library-page:has(.selecting) :is(.game-face,.folder-face),.marquee-selecting :is(.library-page,.game-face,.folder-face){cursor:crosshair}
+.library-page :is(.game-grid,.folder-grid),.marquee-selecting{user-select:none}
+.marquee-selecting .game-card .card-overlay{display:none}
+.marquee-box{position:fixed;z-index:19;pointer-events:none;border:1px solid var(--pink-dark);background:#d75c9526;border-radius:3px}
 @media(max-width:900px){.library-stats{display:none}.bar-controls{justify-content:flex-start;flex-wrap:wrap}.library-bar select{max-width:140px}}
 @media(prefers-reduced-motion:reduce){.card-overlay,.card-heading,.card-actions,.game-card .poster>img,.bar-search,.bar-search input,.sort-direction{transition:none;translate:0}}
 
@@ -47,6 +58,7 @@
 /* GalGear choice-control structure, with Rust retaining the selected sort. */
 .choice-control{position:relative;min-width:0;max-width:100%;flex:0 0 auto}.choice-trigger{display:flex;align-items:center;gap:9px;width:100%;border:1px solid var(--button-line);border-radius:7px;background:var(--button-bg);color:var(--button-color);padding:8px 11px;min-width:0;min-height:38px;font-size:calc(var(--ui-font)*.9286);line-height:1.5;text-align:left}.choice-trigger>.icon{width:16px;height:16px;margin-left:auto}.choice-copy{display:flex;flex:1;min-width:0}.choice-copy>span{white-space:nowrap}.choice-trigger.open{border-color:var(--pink);box-shadow:0 0 0 3px var(--wash)}.choice-popup{position:fixed;display:flex;flex-direction:column;min-width:0;z-index:70;padding:5px;background:var(--surface-raised);border:1px solid var(--surface-line);border-radius:10px;box-shadow:0 8px 26px var(--palette-59405420);overflow:auto}.choice-option{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:9px 10px;border:0;border-radius:6px;background:none;color:var(--ink);font-size:calc(var(--ui-font)*.9286);line-height:1.5;min-height:36px;flex-shrink:0;text-align:left}.choice-check{width:16px;min-height:16px}.choice-check>.icon{width:16px;height:16px}.choice-option.selected{background:var(--pink-soft);color:var(--pink-dark)}.choice-option:is(:hover,:focus-visible){background:var(--button-hover-bg);color:var(--button-hover-color)}
 .library-bar .tag-filter-trigger{height:34px;min-height:34px;padding:7px 12px;font-size:calc(var(--ui-font)*.78);white-space:nowrap}
+.app-shell .library-bar .tag-filter-trigger.active{border-color:var(--pink-dark);color:var(--pink-dark)}
 
 /* GalGear 的工具栏字号比例与排序触发器；菜单文本使用标准 choice 字号。 */
 .choice-copy>span{overflow:hidden;text-overflow:ellipsis}
@@ -54,3 +66,183 @@
 .choice-check{flex-shrink:0}
 .choice-trigger:disabled{opacity:.65;cursor:default}
 .library-bar .choice-trigger{width:auto;min-width:80px;min-height:34px;padding:7px 9px;font-size:calc(var(--ui-font)*.78);line-height:1.3;gap:5px}.library-bar .choice-copy{max-width:145px}.library-bar .button{font-size:calc(var(--ui-font)*.78);line-height:1.3}.choice-option:focus-visible{outline-offset:-2px}
+
+/* GalGear 的长按拾起、让位与整组落下；卡片保持角色库的 3:4 比例。 */
+.sort-direction.is-hidden{max-width:0;opacity:0;transform:scale(.75);pointer-events:none;overflow:hidden}
+.game-grid[data-custom-sort=true] .game-card{touch-action:none}
+.reorder-stack{position:fixed;left:0;top:0;z-index:140;pointer-events:none;aspect-ratio:3/4}
+.reorder-stack>.game-card{position:absolute;inset:0;transform:translateX(calc(var(--stack-index)*12px));box-shadow:0 8px 24px #0003}
+.reorder-stack .card-overlay,.reorder-flight .card-overlay{display:none}
+.game-grid>.reorder-landing{visibility:hidden}
+.reorder-flight{position:fixed;z-index:140;pointer-events:none;transform-origin:top left;margin:0}
+.game-grid>.game-card[hidden]{display:none}
+
+/* GalGear 的库弹窗使用固定页首、独立滚动内容和右下角关闭按钮。 */
+.editor-overlay.library-overlay {
+  background: var(--palette-46304035);
+  backdrop-filter: none;
+}
+
+.editor-dialog.library-dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(520px, 100%);
+  max-height: calc(100dvh - 60px);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 24px 70px var(--palette-59405425);
+}
+
+.app-shell[data-theme] .editor-dialog.library-dialog {
+  background: linear-gradient(var(--surface-raised), var(--surface-raised)), var(--canvas);
+  backdrop-filter: none;
+}
+
+.library-dialog > header,
+.library-dialog > footer {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-color: var(--surface-line);
+  border-style: solid;
+  border-width: 0;
+}
+
+.library-dialog > header {
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom-width: 1px;
+}
+
+.library-dialog h2 {
+  font-size: calc(var(--ui-font) * 1.15);
+  font-weight: 600;
+}
+
+.library-dialog-body {
+  min-height: 0;
+  padding: 20px 24px 24px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  font-size: calc(var(--ui-font) * .9);
+  line-height: 1.8;
+}
+
+.library-dialog-body > p {
+  margin-bottom: 18px;
+}
+
+.library-dialog-body .edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0;
+  color: var(--button-color);
+  font-size: calc(var(--ui-font) * .8571);
+}
+
+.library-dialog-body > .edit-field:first-child,
+.tag-search .edit-field {
+  margin-top: 0;
+}
+
+.library-dialog-body input {
+  min-width: 0;
+  border: 1px solid var(--surface-line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--button-color);
+  line-height: 1.5;
+}
+
+.library-dialog :is(input, button):focus-visible {
+  outline-color: var(--focus-ring);
+}
+
+.library-dialog .button {
+  height: auto;
+  min-height: 32px;
+  font-size: calc(var(--ui-font) * .9286);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.library-dialog > footer {
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  border-top-width: 1px;
+}
+
+.tag-search-results {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding: 6px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--palette-fffafc);
+  box-shadow: 0 8px 24px var(--palette-59405425);
+}
+.tag-search:focus-within .tag-search-results { display: block; }
+.tag-search-results > p { padding: 8px 10px; }
+.app-shell .library-dialog .tag-search-option {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: transparent;
+  text-align: left;
+}
+
+.tag-filter-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  max-height: 25vh;
+  overflow: auto;
+}
+.selected-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 4px 5px 4px 12px;
+  border: 1px solid var(--palette-dba1bd);
+  border-radius: 18px;
+  background: var(--palette-f7f0f8);
+  color: var(--pink-dark);
+  line-height: 1.5;
+}
+.selected-tag > span { min-width: 0; overflow-wrap: anywhere; }
+.selected-tag > .icon-button {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  color: inherit;
+}
+.library-dialog-body > .tag-filter-help {
+  margin: 16px 0 0;
+  font-size: calc(var(--ui-font) * .78);
+  line-height: 1.6;
+}
+
+.library-dialog > footer .button {
+  padding: 7px 13px;
+}
+
+@media (max-width: 560px) {
+  .editor-overlay.library-overlay { padding: 16px; }
+  .editor-dialog.library-dialog { max-height: calc(100dvh - 32px); }
+  .library-dialog > header,
+  .library-dialog-body,
+  .library-dialog > footer { padding-inline: 18px; }
+}

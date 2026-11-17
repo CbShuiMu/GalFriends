@@ -4,11 +4,14 @@ import os
 from pathlib import Path
 import stat
 import subprocess
+import sys
 import uuid
 
+PROTOCOL_OUTPUT = sys.stdout
 
 def emit(event, data):
-    print(json.dumps({"event": event, "data": data}, ensure_ascii=False), flush=True)
+    print(json.dumps({"event": event, "data": data}, ensure_ascii=False),
+          file=PROTOCOL_OUTPUT, flush=True)
 
 
 def progress(stage, current=0, total=0):

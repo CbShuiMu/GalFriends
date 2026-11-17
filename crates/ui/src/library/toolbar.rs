@@ -1,8 +1,8 @@
 use crate::{
-    library::{query, state::Sort},
     state::App,
     widgets::{esc, icon, icon_button},
 };
+use galfriends_core::library_order::Sort;
 
 pub(super) fn render(a: &App, count: usize) -> String {
     let busy = a.pending.is_some();
@@ -38,7 +38,7 @@ pub(super) fn render(a: &App, count: usize) -> String {
         ));
         h.push_str("<span class=\"bar-spacer\"></span>");
         h.push_str(&b(
-            "batch-collection",
+            "collection-picker",
             "in_collection",
             "folder_special",
             "secondary",
@@ -95,21 +95,25 @@ pub(super) fn render(a: &App, count: usize) -> String {
             "secondary",
             busy,
         ));
-        h.push_str("<span class=\"sort-direction\">");
+        h.push_str(if a.library.settings.library_order.sort == Sort::Custom {
+            "<span class=\"sort-direction is-hidden\" inert aria-hidden=\"true\">"
+        } else {
+            "<span class=\"sort-direction\">"
+        });
         h.push_str(&b(
             "sort-direction",
-            if a.library_ui.descending {
+            if a.library.settings.library_order.descending {
                 "sort_ascending"
             } else {
                 "sort_descending"
             },
-            if a.library_ui.descending {
+            if a.library.settings.library_order.descending {
                 "arrow_downward"
             } else {
                 "arrow_upward"
             },
             "quiet",
-            false,
+            busy,
         ));
         h.push_str("</span>");
         h.push_str(&sort_control(a));
@@ -123,18 +127,20 @@ fn sort_control(a: &App) -> String {
         (Sort::Added, "added", "sort_added"),
         (Sort::Name, "name", "sort_name"),
         (Sort::Source, "source", "sort_source"),
+        (Sort::Custom, "custom", "sort_custom"),
     ];
     let current = items
         .iter()
-        .find(|(sort, _, _)| *sort == a.library_ui.sort)
+        .find(|(sort, _, _)| *sort == a.library.settings.library_order.sort)
         .map(|(_, _, label)| a.t(label))
         .unwrap_or_default();
     let open = a.library_ui.sort_open;
     let mut h = format!(
-        r#"<div class="choice-control"><button type="button" id="library-sort" class="choice-trigger {}" role="combobox" aria-label="{}" aria-expanded="{}" aria-haspopup="listbox" aria-controls="sort-options" data-action="sort-toggle"><span class="choice-copy"><span>{}</span></span>{}</button>"#,
+        r#"<div class="choice-control"><button type="button" id="library-sort" class="choice-trigger {}" role="combobox" aria-label="{}" aria-expanded="{}" aria-haspopup="listbox" aria-controls="sort-options" data-action="sort-toggle" {}><span class="choice-copy"><span>{}</span></span>{}</button>"#,
         if open { "open" } else { "" },
         a.t("sort"),
         open,
+        if a.pending.is_some() { "disabled" } else { "" },
         current,
         icon("chevron")
     );
@@ -144,40 +150,11 @@ fn sort_control(a: &App) -> String {
             a.t("sort")
         ));
         for (sort, value, label) in items {
-            let selected = a.library_ui.sort == sort;
+            let selected = a.library.settings.library_order.sort == sort;
             h.push_str(&format!(r#"<button class="choice-option {}" role="option" aria-selected="{}" data-action="sort-pick" data-value="{}">{}<span class="choice-check">{}</span></button>"#,if selected {"selected"}else{""},selected,value,a.t(label),if selected {icon("check")}else{String::new()}));
         }
         h.push_str("</div>");
     }
     h.push_str("</div>");
-    h
-}
-pub(super) fn tag_panel(a: &App) -> String {
-    let mut h = format!(
-        r#"<div class="editor-overlay"><section class="editor-dialog small-dialog" role="dialog" aria-modal="true" aria-labelledby="library-panel-title"><header class="section-heading"><h2 id="library-panel-title">{}</h2>{}</header>"#,
-        a.t("filter_tags"),
-        icon_button(
-            "library-panel-close",
-            "",
-            a.t("close"),
-            "close",
-            "quiet",
-            false
-        )
-    );
-    h.push_str(&format!(
-        r#"<p class="muted">{} · {}</p><div class="tag-filter-options">"#,
-        a.library.settings.effective_tag_source().key(),
-        a.t("safe_tags")
-    ));
-    let available = query::available_tags(a);
-    for tag in &available {
-        let selected = a.library_ui.tags.contains(*tag);
-        h.push_str(&format!(r#"<button class="filter-chip {}" data-action="tag-toggle" data-value="{}" aria-pressed="{}">{}</button>"#,if selected {"selected"}else{""},esc(tag),selected,esc(tag)));
-    }
-    if available.is_empty() {
-        h.push_str(&format!("<p class=\"muted\">{}</p>", a.t("no_tags")));
-    }
-    h.push_str("</div></section></div>");
     h
 }

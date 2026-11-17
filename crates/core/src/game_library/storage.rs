@@ -9,6 +9,25 @@ use std::{
     path::{Path, PathBuf},
 };
 
+/// 仅接受存在的绝对目录。逐级检查，防止通过上级链接跳出所选路径。
+pub fn validate_work_folder(path: &Path) -> Result<&str, String> {
+    let invalid = || "game_library.invalid_folder".to_owned();
+    if !path.is_absolute()
+        || path
+            .components()
+            .any(|part| part == std::path::Component::ParentDir)
+    {
+        return Err(invalid());
+    }
+    for entry in path.ancestors().filter(|entry| entry.is_absolute()) {
+        crate::archive::check_entry(entry).map_err(|_| invalid())?;
+    }
+    if !path.is_dir() {
+        return Err(invalid());
+    }
+    path.to_str().ok_or_else(invalid)
+}
+
 #[derive(Default, Deserialize)]
 #[serde(default)]
 struct Metadata {
@@ -236,6 +255,44 @@ fn project(entry: &Entry, metadata: Option<&Metadata>, edit: Option<&Edit>) -> G
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn selected_folder_survives_library_reload_and_rejects_missing_paths() {
+        use crate::characters::{Character, Library, Snapshot};
+        let root = tempfile::tempdir().unwrap();
+        let folder = root.path().join("Game Directory");
+        std::fs::create_dir(&folder).unwrap();
+        let folder = validate_work_folder(&folder).unwrap().to_owned();
+        let mut character = Character {
+            id: "kungal:9".into(),
+            snapshots: vec![Snapshot {
+                source: Source::Kungal,
+                id: "9".into(),
+                url: String::new(),
+                data: serde_json::json!({"appearances":[{"work":{"id":"42","medium":"galgame"}}]}),
+            }],
+            ..Default::default()
+        };
+        assert!(
+            super::super::set_work_folder(&mut character, "43".into(), folder.clone()).is_err()
+        );
+        super::super::set_work_folder(&mut character, "42".into(), folder.clone()).unwrap();
+        let library_path = root.path().join("characters/library.json");
+        let library = Library {
+            characters: vec![character],
+            ..Default::default()
+        };
+        crate::store::save(&library_path, &library).unwrap();
+        let reloaded = crate::store::load(&library_path).unwrap();
+        assert_eq!(
+            super::super::work_folder(&reloaded.characters[0], "42"),
+            Some(folder.as_str())
+        );
+        assert!(validate_work_folder(&root.path().join("missing")).is_err());
+        assert!(
+            validate_work_folder(&root.path().join("Game Directory/../Game Directory")).is_err()
+        );
+    }
+
     #[test]
     fn portable_and_installed_read_the_same_format_and_honor_saved_edits() {
         let root = tempfile::tempdir().unwrap();

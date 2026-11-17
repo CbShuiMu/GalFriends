@@ -5,9 +5,44 @@ use crate::{
     state::App,
 };
 use serde_json::json;
+use std::collections::BTreeSet;
 
 pub(super) fn handle(a: &mut App, action: &str, value: &str) -> bool {
     match action {
+        "collection-picker" => {
+            let single = !value.is_empty();
+            let ids = if !single {
+                a.library_ui.checked.clone()
+            } else if a.library.characters.iter().any(|c| c.id == value) {
+                BTreeSet::from([value.into()])
+            } else {
+                return true;
+            };
+            if !ids.is_empty() {
+                a.library_ui.panel = Panel::Collections {
+                    query: String::new(),
+                    ids,
+                    single,
+                };
+            }
+        }
+        "collection-pick" => {
+            if let Panel::Collections { ids, .. } = &a.library_ui.panel
+                && galfriends_core::collections::accepts_characters(&a.library, value)
+            {
+                let payload = json!({"operation":"collect","ids":ids,"collection":value});
+                requests::send(a, Kind::Batch, "batch_characters", payload);
+            }
+        }
+        "collection-star" => {
+            if let Panel::Collections {
+                ids, single: true, ..
+            } = &a.library_ui.panel
+                && let Some(id) = ids.first().cloned()
+            {
+                requests::mutate(a, "favorite", &id, "");
+            }
+        }
         "folder-open" | "favorites-open" => {
             a.collection = if action == "folder-open" {
                 value.into()

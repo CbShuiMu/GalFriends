@@ -36,7 +36,7 @@ pub(crate) async fn enhance_artwork(app: tauri::AppHandle, id: String) -> Result
     let dev = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..");
     let engine =
         crate::preferences::waifu2x_directory(&resources).ok_or("waifu2x not installed")?;
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("enhance_artwork", move || {
         let transparent = if let Some(bytes) = galfriends_core::artwork::png_data(&art.url)? {
             Some(bytes)
         } else if let Some(file) = art.url.strip_prefix("assets/setsuna/") {
@@ -98,13 +98,21 @@ pub(crate) fn update(
     let mut guard = s.library.lock().map_err(|e| e.to_string())?;
     let mut next = guard.clone()?;
     f(&mut next)?;
+    if !next.settings.library_order.custom_order.is_empty()
+        || next.settings.library_order.sort == galfriends_core::library_order::Sort::Custom
+    {
+        galfriends_core::library_order::reconcile(
+            &mut next.settings.library_order,
+            &next.characters,
+        );
+    }
     store::save_changes(&s.path, guard.as_ref().map_err(Clone::clone)?, &next)?;
     *guard = Ok(next.clone());
     Ok(next)
 }
 #[tauri::command]
 pub(crate) async fn load_library(app: tauri::AppHandle) -> Result<Library, String> {
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("load_library", move || {
         let state = app.state::<AppState>();
         if !state.path.exists() {
             update(&state, |_| Ok(()))
@@ -126,7 +134,7 @@ pub(crate) async fn search_characters(
 ) -> Result<Vec<Candidate>, String> {
     let proxy = read(&app.state::<AppState>())?.settings.proxy;
     let path = app.state::<AppState>().credentials_path.clone();
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("search_characters", move || {
         sources::search(
             &crate::connections::catalog_client(&path, &proxy, source)?,
             source,
@@ -170,7 +178,7 @@ pub(crate) async fn import_character(
         galfriends_i18n::Language::from_code(&library.settings.language).unwrap_or_default();
     let resources = app.path().resource_dir().map_err(|e| e.to_string())?;
     let path = app.state::<AppState>().credentials_path.clone();
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("import_character", move || {
         let progress = |stage| {
             if let Some(channel) = &on_progress {
                 // 窗口关闭或旧前端不接收通知时，仍完成原子导入；结果由命令响应确认。
@@ -232,7 +240,7 @@ pub(crate) async fn mutate_library(
         "theme" | "color_theme" | "language" | "font_size"
     );
     let handle = app.clone();
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("mutate_library", move || {
         if action == "favorite" {
             let state = app.state::<AppState>();
             let mut guard = state.library.lock().map_err(|e| e.to_string())?;
@@ -291,7 +299,15 @@ pub(crate) async fn mutate_library(
                     sources::client(&value)?;
                     l.settings.proxy = value;
                 }
+                "release_page" => {
+                    l.settings.release_page = galfriends_core::updates::release_page(&value)
+                        .map_err(|error| error.key)?;
+                }
                 "remove" => {
+                    app.state::<crate::expressions::tasks::Tasks>()
+                        .ensure_can_remove(std::slice::from_ref(&id))?;
+                    app.state::<crate::voice::Tasks>()
+                        .ensure_can_remove(std::slice::from_ref(&id))?;
                     library_ops::apply_batch(l, BatchOperation::Remove, &[id], "")?;
                 }
                 "collection" => {
@@ -340,7 +356,7 @@ pub(crate) async fn batch_characters(
     ids: Vec<String>,
     collection: String,
 ) -> Result<MutationResult, String> {
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("batch_characters", move || {
         if matches!(
             operation,
             BatchOperation::Favorite | BatchOperation::Unfavorite
@@ -357,6 +373,11 @@ pub(crate) async fn batch_characters(
             .map(MutationResult::Favorites);
         }
         update(&app.state::<AppState>(), |l| {
+            if matches!(operation, BatchOperation::Remove) {
+                app.state::<crate::expressions::tasks::Tasks>()
+                    .ensure_can_remove(&ids)?;
+                app.state::<crate::voice::Tasks>().ensure_can_remove(&ids)?;
+            }
             library_ops::apply_batch(l, operation, &ids, &collection)
         })
         .map(|library| MutationResult::Library(Box::new(library)))
@@ -371,7 +392,7 @@ pub(crate) async fn save_collection(
     name: String,
     parent: String,
 ) -> Result<Library, String> {
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("save_collection", move || {
         update(&app.state::<AppState>(), |l| {
             galfriends_core::collections::save(l, original.as_deref(), &name, &parent)
         })
@@ -384,7 +405,7 @@ pub(crate) async fn delete_collections(
     app: tauri::AppHandle,
     names: Vec<String>,
 ) -> Result<Library, String> {
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("delete_collections", move || {
         update(&app.state::<AppState>(), |l| {
             galfriends_core::collections::remove(l, &names)
         })

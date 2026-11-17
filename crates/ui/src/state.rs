@@ -28,6 +28,8 @@ pub(crate) struct App {
     pub tag_fetch: crate::tag_fetch::State,
     pub tag_source_target: Option<String>,
     pub artwork_selection: crate::artwork_selection::State,
+    pub expressions: crate::expressions::State,
+    pub expression_scans: crate::expression_scans::State,
     pub import_progress: galfriends_core::characters::ImportProgress,
     pub collection: String,
     pub search_open: bool,
@@ -55,10 +57,10 @@ impl App {
             .or_else(|| self.library.characters.first())
     }
     pub fn t(&self, key: &str) -> &'static str {
-        tr(
-            Language::from_code(&self.library.settings.language).unwrap_or_default(),
-            key,
-        )
+        tr(self.language(), key)
+    }
+    pub fn language(&self) -> Language {
+        Language::from_code(&self.library.settings.language).unwrap_or_default()
     }
 }
 thread_local! {pub(crate) static APP:RefCell<App>=RefCell::new(App::default());}

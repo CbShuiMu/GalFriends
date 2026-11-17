@@ -1,20 +1,18 @@
-//! 角色库的筛选、排序和多选草稿，不进入持久化模型。
+//! 角色库的筛选、多选和工具栏弹层草稿；排序保存在共用库设置中。
 use std::collections::BTreeSet;
 
-#[derive(Default, PartialEq, Eq)]
-pub(crate) enum Sort {
-    #[default]
-    Added,
-    Name,
-    Source,
-}
 #[derive(Default, PartialEq, Eq)]
 pub(crate) enum Panel {
     #[default]
     Closed,
-    Tags,
+    Tags {
+        selected: BTreeSet<String>,
+        query: String,
+    },
     Collections {
         query: String,
+        ids: BTreeSet<String>,
+        single: bool,
     },
     FolderEdit {
         original: Option<String>,
@@ -27,8 +25,6 @@ pub(crate) enum Panel {
 }
 #[derive(Default)]
 pub(crate) struct State {
-    pub sort: Sort,
-    pub descending: bool,
     pub tags: BTreeSet<String>,
     pub batch: bool,
     pub checked: BTreeSet<String>,

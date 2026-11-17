@@ -7,19 +7,19 @@ pub(super) fn page(a: &App) -> String {
         return String::new();
     };
     let mut h = format!(
-        r#"<header class="detail-heading">{}{}</header><div class="character-detail reference-detail" data-detail-game="{}"><aside class="detail-art">"#,
+        r#"<header class="detail-heading">{}</header><div class="character-detail reference-detail" data-detail-game="{}"><aside class="detail-art">"#,
         icon_button("back", "", a.t("back"), "back", "quiet", false),
-        icon_button(
-            "companion-open",
-            "",
-            a.t("companion.open"),
-            "mic",
-            "quiet",
-            a.pending.is_some()
-        ),
         esc(&c.id)
     );
     if let Some(art) = a.artwork_selection.artwork(c) {
+        h.push_str(&icon_button(
+            "expression-open",
+            "",
+            a.t("expression.replace"),
+            "face",
+            "detail-expression-button",
+            a.pending.is_some(),
+        ));
         h.push_str(&format!(
             r#"<img src="{}" alt="{}"><p class="muted">{}</p>"#,
             esc(art.enhanced.as_deref().unwrap_or(&art.url)),
@@ -47,7 +47,19 @@ pub(super) fn page(a: &App) -> String {
             a.pending.is_some(),
         ));
     }
-    h.push_str(&format!(r#"</aside><div class="profile-content"><h1>{}</h1><section><h2>{}</h2><dl class="aliases">"#,esc(&c.name),a.t("aliases")));
+    h.push_str(&format!(
+        r#"</aside><div class="profile-content"><div class="profile-heading"><h1>{}</h1>{}</div><section><h2>{}</h2><dl class="aliases">"#,
+        esc(&c.name),
+        icon_button(
+            "companion-open",
+            &c.id,
+            a.t("companion.open"),
+            "mic",
+            "quiet",
+            a.pending.is_some()
+        ),
+        a.t("aliases")
+    ));
     for alias in &c.aliases {
         if !alias.name.is_empty() {
             h.push_str(&format!(

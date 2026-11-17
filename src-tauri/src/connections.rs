@@ -69,7 +69,7 @@ pub(crate) fn catalog_client(
 #[tauri::command]
 pub(crate) async fn connection_statuses(app: tauri::AppHandle) -> Result<Vec<Status>, Message> {
     let path = app.state::<AppState>().credentials_path.clone();
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("connection_statuses", move || {
         Service::ALL
             .into_iter()
             .map(|s| credentials::status(&path, s))
@@ -92,7 +92,7 @@ pub(crate) async fn connection_action(
         .settings;
     let path = app.state::<AppState>().credentials_path.clone();
     let cancelled = app.state::<Tasks>().begin(service)?;
-    let result = tauri::async_runtime::spawn_blocking(move || {
+    let result = crate::diagnostics::spawn_background("connection_action", move || {
         if action == "clear" {
             oauth::transaction(|| credentials::clear(&path, service))?;
             return Ok(Reply {

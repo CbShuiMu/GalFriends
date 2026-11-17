@@ -3,6 +3,7 @@ use crate::{
     state::App,
     widgets::{brand, esc, icon, icon_button, source_icon},
 };
+use galfriends_core::updates::VERSION;
 
 pub(crate) fn render(a: &App) -> String {
     let section = a.preferences.section;
@@ -16,9 +17,18 @@ pub(crate) fn render(a: &App) -> String {
         Section::Display,
         Section::System,
         Section::Paths,
+        Section::Updates,
         Section::About,
     ] {
-        html.push_str(&format!(r#"<button class="preference-tab {}" data-action="settings-section" data-value="{}" {} {}><span>{}</span></button>"#,
+        let update_badge = if item == Section::Updates && super::updates::has_update(a) {
+            format!(
+                r#"<span class="version-pill">{}</span>"#,
+                a.t("update.pending")
+            )
+        } else {
+            String::new()
+        };
+        html.push_str(&format!(r#"<button class="preference-tab {}" data-action="settings-section" data-value="{}" {} {}><span>{}</span>{update_badge}</button>"#,
             if item == section { "active" } else { "" }, item.key(),
             if item == section { "aria-current=\"page\"" } else { "" },
             disabled(a), a.t(item.label())));
@@ -30,6 +40,7 @@ pub(crate) fn render(a: &App) -> String {
             Section::Display => display(a),
             Section::System => system(a),
             Section::Paths => paths(a),
+            Section::Updates => super::updates::settings(a),
             Section::About => about(a),
         }));
     html
@@ -196,7 +207,7 @@ fn paths(a: &App) -> String {
 
 fn about(a: &App) -> String {
     format!(
-        r#"<section class="settings-card preferences-about"><div class="settings-about-brand">{}<div><h2>GalFriends</h2><p>0.1.0</p></div></div><p>{}</p><p>{}</p><p>{}</p></section>"#,
+        r#"<section class="settings-card preferences-about"><div class="settings-about-brand">{}<div><h2>GalFriends</h2><p>{VERSION}</p></div></div><p>{}</p><p>{}</p><p>{}</p></section>"#,
         brand(),
         a.t("about_text"),
         a.t("credits"),
@@ -221,6 +232,7 @@ mod tests {
                 Section::Display,
                 Section::System,
                 Section::Paths,
+                Section::Updates,
                 Section::About,
             ] {
                 app.preferences.section = section;

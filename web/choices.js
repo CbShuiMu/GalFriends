@@ -41,6 +41,10 @@ function symbol(path) {
 export function enhanceChoices() {
   for (const select of document.querySelectorAll('.voice-workbench select[data-input], .emotion-toolbar select[data-input], .pet-profile select[data-input]')) {
     if (select.closest(controlSelector)) continue;
+    // 无占位选项时，浏览器会自动选中第一项。以 Rust 输出的选中状态为准。
+    if (select.hasAttribute('data-choice-allow-empty') && ![...select.options].some(option => option.defaultSelected)) {
+      select.selectedIndex = -1;
+    }
     const labels = [...select.labels];
     const label = select.getAttribute('aria-label') || labels.map(node =>
       (node.querySelector(':scope > span') || node).textContent.trim()).join(' ');

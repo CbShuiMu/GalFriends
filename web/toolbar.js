@@ -21,9 +21,34 @@ function positionSort() {
   const trigger=document.querySelector('#library-sort'),popup=document.querySelector('#sort-options');
   positionChoice(trigger,popup);
 }
+
+export function positionTagSearch() {
+  const search = document.activeElement?.closest('.tag-search');
+  const input = search?.querySelector('input');
+  const results = search?.querySelector('.tag-search-results');
+  if (!results) return;
+  // GalGear 的候选浮层固定定位，避免被弹窗正文裁切。
+  const rect = input.getBoundingClientRect();
+  const limit = Math.min(240, innerHeight * .35);
+  const below = innerHeight - rect.bottom - 12;
+  const above = rect.top - 12;
+  results.style.width = `${rect.width}px`;
+  results.style.left = `${rect.left}px`;
+  results.style.maxHeight = `${limit}px`;
+  const height = results.getBoundingClientRect().height;
+  const openBelow = below >= height || below >= above;
+  results.style.maxHeight = `${Math.max(0, Math.min(height, openBelow ? below : above))}px`;
+  results.style.top = `${openBelow ? rect.bottom + 6 : rect.top - results.offsetHeight - 6}px`;
+}
+
 export function installToolbar(dispatch) {
   window.addEventListener('resize',positionSort);
   document.addEventListener('scroll',positionSort,true);
+  window.addEventListener('resize', positionTagSearch);
+  document.addEventListener('focusin', positionTagSearch);
+  document.addEventListener('scroll', event => {
+    if (!event.target.matches?.('.tag-search-results')) positionTagSearch();
+  }, true);
   document.addEventListener('pointerover', event => {
     const menu=event.target.closest?.('.add-menu');
     if (menu && event.pointerType!=='touch' && !menu.contains(event.relatedTarget)) setAddMenuExpanded(menu,true);
@@ -52,6 +77,17 @@ export function installToolbar(dispatch) {
     if(document.querySelector('#sort-options') && !event.target.closest('.choice-control')) dispatch('sort-close','');
   });
   document.addEventListener('keydown',event=>{
+    const search = event.target.closest('.tag-search');
+    if (search && !event.isComposing && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      const options = [...search.querySelectorAll('.tag-search-option')];
+      if (!options.length) return;
+      const index = options.indexOf(event.target);
+      const next = index < 0 ? (event.key === 'ArrowDown' ? 0 : options.length - 1)
+        : (index + (event.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length;
+      options[next].focus();
+      event.preventDefault();
+      return;
+    }
     if(document.querySelector('[role=dialog]')) return;
     if(event.key==='Escape') {
       if(document.querySelector('#sort-options')) {event.preventDefault();dispatch('sort-close','');return;}

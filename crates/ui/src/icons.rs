@@ -2,6 +2,12 @@
 
 pub(super) fn google(name: &str) -> Option<&'static str> {
     Some(match name {
+        "pause" => {
+            r#"<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>"#
+        }
+        "face" => {
+            include_str!("../../../src-tauri/icons/face_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
+        }
         "voice_chat" => include_str!(
             "../../../src-tauri/icons/voice_chat_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
         ),
@@ -42,6 +48,12 @@ pub(super) fn google(name: &str) -> Option<&'static str> {
         "download" => include_str!(
             "../../../src-tauri/icons/download_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
         ),
+        "upload" => include_str!(
+            "../../../src-tauri/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+        ),
+        "linked_services" => include_str!(
+            "../../../src-tauri/icons/linked_services_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+        ),
         "gamepad" => include_str!(
             "../../../src-tauri/icons/gamepad_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
         ),
@@ -59,6 +71,9 @@ pub(super) fn google(name: &str) -> Option<&'static str> {
         }
         "folder_open" => include_str!(
             "../../../src-tauri/icons/folder_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+        ),
+        "link" => include_str!(
+            "../../../src-tauri/icons/link_2_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
         ),
         "update" => include_str!(
             "../../../src-tauri/icons/update_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"

@@ -6,13 +6,11 @@ use std::{
     io::Write,
     path::{Path, PathBuf},
 };
+mod directories;
+pub use directories::character_directory;
 
 fn digest(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
-}
-
-pub(crate) fn character_directory(root: &Path, id: &str) -> PathBuf {
-    root.join(format!("character-{}", digest(id.as_bytes())))
 }
 
 /// 拒绝符号链接及 Windows 重解析点，避免归档写入外部位置。
@@ -45,7 +43,7 @@ fn directory(path: &Path) -> Result<(), String> {
 }
 
 /// 保存完整角色版本（含别名、来源原始响应、图片地址及超分数据）。
-/// 身份与内容摘要作为路径，不使用外部姓名/ID 作为文件名；原有版本永不覆盖。
+/// 目录通过身份摘要区分，归档使用内容摘要；原有版本永不覆盖。
 /// 调用方应在当前角色库原子提交前调用；失败不能发布新库。
 pub fn prepare(root: &Path, characters: &[Character]) -> Result<(), String> {
     directory(root)?;
@@ -55,10 +53,15 @@ pub fn prepare(root: &Path, characters: &[Character]) -> Result<(), String> {
     Ok(())
 }
 
+pub(crate) fn migrate_directories(root: &Path, characters: &[Character]) -> Result<(), String> {
+    for character in characters {
+        directories::prepare(root, character, true)?;
+    }
+    Ok(())
+}
+
 pub(crate) fn save_character(root: &Path, character: &Character) -> Result<String, String> {
-    directory(root)?;
-    let folder = character_directory(root, &character.id);
-    directory(&folder)?;
+    let folder = ensure_character_directory(root, character)?;
     let bytes = serde_json::to_vec_pretty(character).map_err(|e| e.to_string())?;
     let hash = digest(&bytes);
     let path = folder.join(format!("profile-{hash}.json"));
@@ -81,12 +84,23 @@ pub(crate) fn save_character(root: &Path, character: &Character) -> Result<Strin
     Ok(hash)
 }
 
+/// 为已确认的角色准备档案目录。调用方应与角色删除共用事务。
+pub fn ensure_character_directory(root: &Path, character: &Character) -> Result<PathBuf, String> {
+    for ancestor in root.ancestors() {
+        check_entry(ancestor)?;
+    }
+    directory(root)?;
+    let folder = directories::prepare(root, character, false)?;
+    directory(&folder)?;
+    Ok(folder)
+}
+
 pub(crate) fn read_character(root: &Path, id: &str, hash: &str) -> Result<Character, String> {
     if hash.len() != 64 || !hash.bytes().all(|b| b.is_ascii_hexdigit()) {
         return Err("Invalid character profile digest".into());
     }
     check_entry(root)?;
-    let folder = character_directory(root, id);
+    let folder = character_directory(root, id)?;
     check_entry(&folder)?;
     let path = folder.join(format!("profile-{hash}.json"));
     check_entry(&path)?;
@@ -108,7 +122,7 @@ pub(crate) fn removal_paths(root: &Path, ids: &[String]) -> Result<Vec<PathBuf>,
     let paths: Vec<_> = ids
         .iter()
         .map(|id| character_directory(&root, id))
-        .collect();
+        .collect::<Result<_, _>>()?;
     for path in &paths {
         validate_tree(&root, path)?;
     }
@@ -134,7 +148,7 @@ fn validate_tree(root: &Path, path: &Path) -> Result<(), String> {
 
 pub(crate) fn remove(root: &Path, ids: &[String]) -> Result<(), String> {
     for path in removal_paths(root, ids)? {
-        // 只删除由身份摘要构造且已验证在根目录内的目录，不读取记录中的任意图片路径。
+        // 只删除按角色身份解析且已验证的目录，不读取记录中的任意媒体路径。
         let result = if path.is_dir() {
             fs::remove_dir_all(&path)
         } else {
@@ -154,8 +168,52 @@ pub(crate) fn remove(root: &Path, ids: &[String]) -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-    use super::prepare;
-    use crate::characters::sample;
+    use super::{character_directory, digest, prepare};
+    use crate::{characters::sample, store};
+    use std::fs;
+
+    #[test]
+    fn startup_renames_legacy_archive_without_rewriting_versions_or_merging_homonyms() {
+        let dir = tempfile::tempdir().unwrap();
+        let root = dir.path();
+        let path = root.join("library.json");
+        let mut library = store::load(&path).unwrap();
+        let first = &library.characters[0];
+        let first_id = first.id.clone();
+        let second_id = "different:1".to_owned();
+        library.characters.push(crate::characters::Character {
+            id: second_id.clone(),
+            ..first.clone()
+        });
+        store::save(&path, &library).unwrap();
+
+        let first_directory = character_directory(root, &first_id).unwrap();
+        let second_directory = character_directory(root, &second_id).unwrap();
+        let legacy = root.join(format!("character-{}", digest(first_id.as_bytes())));
+        assert_ne!(first_directory, legacy);
+        assert_ne!(first_directory, second_directory);
+        fs::rename(&first_directory, &legacy).unwrap();
+        let index = fs::read(&path).unwrap();
+        assert_eq!(
+            store::load_for_migration(&path, &root.join("absent")).unwrap(),
+            library
+        );
+        assert_eq!(fs::read(&path).unwrap(), index);
+        assert!(!legacy.exists());
+        assert_eq!(
+            character_directory(root, &first_id).unwrap(),
+            first_directory
+        );
+
+        let voice = first_directory.join("voice");
+        fs::create_dir(&voice).unwrap();
+        fs::write(voice.join("training.log"), "fixture").unwrap();
+        let mut next = library.clone();
+        next.characters.remove(0);
+        store::save_changes(&path, &library, &next).unwrap();
+        assert!(!first_directory.exists());
+        assert!(second_directory.exists());
+    }
     #[test]
     fn versions_keep_complete_data_and_untrusted_identity_stays_inside_root() {
         let dir = tempfile::tempdir().unwrap();

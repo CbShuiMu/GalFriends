@@ -43,8 +43,8 @@ pub fn label(id: &str) -> String {
 }
 
 /// 绑定属于角色专属目录，删除角色时随既有归档清理，不追踪外部模型目录。
-pub fn binding_path(root: &Path, id: &str) -> std::path::PathBuf {
-    crate::archive::character_directory(root, id).join("voice-model.json")
+pub fn binding_path(root: &Path, id: &str) -> Result<std::path::PathBuf, String> {
+    Ok(crate::archive::character_directory(root, id)?.join("voice-model.json"))
 }
 
 /// 验证角色身份、正式训练标记和固定文件名；拒绝重解析路径。

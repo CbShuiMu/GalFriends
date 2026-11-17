@@ -13,7 +13,7 @@ try {
     Copy-Item web/index.html,web/styles.css,web/theme.css,web/characters.css,web/shell.css,web/appearance-palettes.css,web/preferences.css,web/connections.css,web/character-tags.css,web/detail-tag-reorder.js,web/press-gesture.js,web/preferences.js,web/library.css,web/collections.css,web/bridge.js,web/transitions.js,web/home.css,web/home.js,web/home-backdrop.js,web/home-render.js,web/theme-transition.js,web/toolbar.js,web/navigation.js,web/gamepad.js -Destination dist -Force
     Copy-Item web/voice.css,web/emotions.css -Destination dist -Force
     Copy-Item web/companion.html,web/companion.js,web/companion.css -Destination dist -Force
-    Copy-Item web/progress-notice.js,web/choices.js -Destination dist -Force
+    Copy-Item web/progress-notice.js,web/choices.js,web/library-selection.js,web/library-reorder.js -Destination dist -Force
     Copy-Item web/assets -Destination dist -Recurse -Force
 } finally { Pop-Location }
 

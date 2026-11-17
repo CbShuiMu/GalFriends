@@ -1,4 +1,314 @@
 {
+  "expression.scan_queued": {
+    "zh-CN": "表情提取已排队",
+    "ja-JP": "表情抽出を待機中",
+    "en-US": "Expression extraction queued"
+  },
+  "expression.scan_indexing": {
+    "zh-CN": "正在查询本地游戏表情",
+    "ja-JP": "ローカルゲームの表情を検索中",
+    "en-US": "Checking local game expressions"
+  },
+  "expression.scan_extracting": {
+    "zh-CN": "正在提取表情",
+    "ja-JP": "表情を抽出中",
+    "en-US": "Extracting expressions"
+  },
+  "expression.scan_complete": {
+    "zh-CN": "表情查询完成",
+    "ja-JP": "表情の検索が完了しました",
+    "en-US": "Expression scan complete"
+  },
+  "expression.scan_empty": {
+    "zh-CN": "尚未关联可用的本地游戏",
+    "ja-JP": "利用可能なローカルゲームが未関連です",
+    "en-US": "No available local games are linked"
+  },
+  "expression.scan_unsupported": {
+    "zh-CN": "未发现可提取的 PNA 表情资源",
+    "ja-JP": "抽出可能な PNA 表情素材がありません",
+    "en-US": "No supported PNA expression resources found"
+  },
+  "expression.scan_failed": {
+    "zh-CN": "表情查询未全部完成，已保留进度；下次打开时重试",
+    "ja-JP": "表情検索が未完了です。進行状況を保存し、次回再試行します",
+    "en-US": "Expression scan incomplete. Progress saved; retry on next open"
+  },
+  "expression.scan_paused": {
+    "zh-CN": "已暂停表情提取，进度已保存",
+    "ja-JP": "表情抽出を一時停止しました。進行状況は保存済みです",
+    "en-US": "Expression extraction paused; progress saved"
+  },
+  "expression.scan_pause": {
+    "zh-CN": "暂停表情提取",
+    "ja-JP": "表情抽出を一時停止",
+    "en-US": "Pause expression extraction"
+  },
+  "expression.scan_pausing": {
+    "zh-CN": "正在暂停表情提取",
+    "ja-JP": "表情抽出を一時停止中",
+    "en-US": "Pausing expression extraction"
+  },
+  "expression.scan_remove": {
+    "zh-CN": "请先在表情窗口暂停提取，再删除角色",
+    "ja-JP": "表情ウィンドウで抽出を一時停止してからキャラクターを削除してください",
+    "en-US": "Pause extraction in the expression dialog before deleting this character"
+  },
+  "expression.scan_no_reference": {
+    "zh-CN": "没有可用于匹配的已保存立绘",
+    "ja-JP": "照合に使用できる保存済み立ち絵がありません",
+    "en-US": "No saved artwork is available for matching"
+  },
+  "prefs.updates": {
+    "zh-CN": "更新",
+    "ja-JP": "更新",
+    "en-US": "Updates"
+  },
+  "update.release_page": {
+    "zh-CN": "GitHub Releases 页面",
+    "ja-JP": "GitHub Releases ページ",
+    "en-US": "GitHub Releases page"
+  },
+  "update.pending": {
+    "zh-CN": "待更新",
+    "ja-JP": "更新あり",
+    "en-US": "Update available"
+  },
+  "update.invalid_page": {
+    "zh-CN": "请输入有效的 GitHub Releases 页面地址。",
+    "ja-JP": "有効な GitHub Releases ページの URL を入力してください。",
+    "en-US": "Enter a valid GitHub Releases page URL."
+  },
+  "update.invalid_version": {
+    "zh-CN": "无法识别版本号。",
+    "ja-JP": "バージョン番号を認識できません。",
+    "en-US": "The version could not be recognized."
+  },
+  "update.checking": {
+    "zh-CN": "正在检查更新…",
+    "ja-JP": "更新を確認中…",
+    "en-US": "Checking for updates…"
+  },
+  "update.check_failed": {
+    "zh-CN": "检查应用更新失败：{detail}",
+    "ja-JP": "アプリの更新を確認できませんでした：{detail}",
+    "en-US": "Couldn't check for app updates: {detail}"
+  },
+  "update.install_failed": {
+    "zh-CN": "安装更新失败：{detail}",
+    "ja-JP": "更新をインストールできませんでした：{detail}",
+    "en-US": "Couldn't install the update: {detail}"
+  },
+  "update.invalid_asset": {
+    "zh-CN": "下载的 EXE 未通过文件大小、格式或 SHA-256 校验。",
+    "ja-JP": "ダウンロードした EXE のサイズ、形式、または SHA-256 が一致しません。",
+    "en-US": "The downloaded EXE failed size, format or SHA-256 verification."
+  },
+  "update.unavailable": {
+    "zh-CN": "此版本没有适用于本应用的可校验 Windows x64 EXE。",
+    "ja-JP": "このリリースには検証可能な Windows x64 EXE がありません。",
+    "en-US": "This release has no verifiable Windows x64 EXE for this app."
+  },
+  "update.busy": {
+    "zh-CN": "已有更新正在处理。",
+    "ja-JP": "別の更新を処理しています。",
+    "en-US": "An update is already in progress."
+  },
+  "update.voice_busy": {
+    "zh-CN": "语音任务正在运行，请等它结束后再更新应用。",
+    "ja-JP": "音声タスクの完了後にアプリを更新してください。",
+    "en-US": "Wait for the voice task to finish before updating the app."
+  },
+  "update.skill_busy": {
+    "zh-CN": "Skill 正在使用或更新，请稍后重试。",
+    "ja-JP": "Skill を使用中または更新中です。後でやり直してください。",
+    "en-US": "The Skill is in use or being updated. Try again later."
+  },
+  "update.skill_install_failed": {
+    "zh-CN": "安装 Skill 失败：{detail}",
+    "ja-JP": "Skill をインストールできませんでした：{detail}",
+    "en-US": "Couldn't install the Skill: {detail}"
+  },
+  "update.skill_installed": {
+    "zh-CN": "Skill 已更新。",
+    "ja-JP": "Skill を更新しました。",
+    "en-US": "Skill updated."
+  },
+  "update.skill_current": {
+    "zh-CN": "Skill 已是最新版本。",
+    "ja-JP": "Skill はすでに最新バージョンです。",
+    "en-US": "The Skill is up to date."
+  },
+  "update.downloading": {
+    "zh-CN": "正在下载…",
+    "ja-JP": "ダウンロード中…",
+    "en-US": "Downloading…"
+  },
+  "update.verifying": {
+    "zh-CN": "正在校验 EXE…",
+    "ja-JP": "EXE を検証中…",
+    "en-US": "Verifying the EXE…"
+  },
+  "update.extracting": {
+    "zh-CN": "正在校验并解压 Skill…",
+    "ja-JP": "Skill を検証して展開中…",
+    "en-US": "Verifying and extracting the Skill…"
+  },
+  "update.installing": {
+    "zh-CN": "正在安装 Skill…",
+    "ja-JP": "Skill をインストール中…",
+    "en-US": "Installing the Skill…"
+  },
+  "update.restarting": {
+    "zh-CN": "正在退出并重启 GalFriends…",
+    "ja-JP": "GalFriends を再起動中…",
+    "en-US": "Restarting GalFriends…"
+  },
+  "update.cancelling": {
+    "zh-CN": "正在取消更新…",
+    "ja-JP": "更新を取り消しています…",
+    "en-US": "Cancelling the update…"
+  },
+  "update.cancelled": {
+    "zh-CN": "已取消更新。",
+    "ja-JP": "更新を取り消しました。",
+    "en-US": "Update cancelled."
+  },
+  "update.skill_failed": {
+    "zh-CN": "检查 Skill 版本失败：{detail}",
+    "ja-JP": "Skill のバージョンを確認できませんでした：{detail}",
+    "en-US": "Couldn't check the Skill version: {detail}"
+  },
+  "update.skill_repository": {
+    "zh-CN": "仓库地址",
+    "ja-JP": "リポジトリの URL",
+    "en-US": "Repository URL"
+  },
+  "update.skill_missing": {
+    "zh-CN": "未安装",
+    "ja-JP": "未インストール",
+    "en-US": "Not installed"
+  },
+  "update.skill_local": {
+    "zh-CN": "本地副本",
+    "ja-JP": "ローカルコピー",
+    "en-US": "Local copy"
+  },
+  "update.skill_unknown": {
+    "zh-CN": "版本未知",
+    "ja-JP": "バージョン不明",
+    "en-US": "Unknown version"
+  },
+  "update.skill_help": {
+    "zh-CN": "启动时检查版本，点击「更新」下载并安装最新 Skill。",
+    "ja-JP": "起動時にバージョンを確認します。「更新」で最新の Skill をインストールできます。",
+    "en-US": "Versions are checked at startup. Select Update to install the latest Skill."
+  },
+  "update.latest": {
+    "zh-CN": "最新版本：{version}",
+    "ja-JP": "最新バージョン：{version}",
+    "en-US": "Latest version: {version}"
+  },
+  "update.current": {
+    "zh-CN": "当前已是最新版本。",
+    "ja-JP": "すでに最新バージョンです。",
+    "en-US": "You're up to date."
+  },
+  "update.no_releases": {
+    "zh-CN": "此仓库暂无可用的发行版本。",
+    "ja-JP": "このリポジトリに利用可能なリリースはありません。",
+    "en-US": "This repository has no available releases."
+  },
+  "update.notes": {
+    "zh-CN": "更新说明",
+    "ja-JP": "リリースノート",
+    "en-US": "Release notes"
+  },
+  "update.no_notes": {
+    "zh-CN": "此版本未提供更新说明。",
+    "ja-JP": "このバージョンにリリースノートはありません。",
+    "en-US": "No release notes are available for this version."
+  },
+  "update.download_hint": {
+    "zh-CN": "下载并校验完成后，GalFriends 会自动替换 EXE 并重启。",
+    "ja-JP": "ダウンロードと検証の後、EXE を置き換えて GalFriends を再起動します。",
+    "en-US": "After download and verification, GalFriends will replace the EXE and restart."
+  },
+  "update.later": {
+    "zh-CN": "稍后处理",
+    "ja-JP": "後で",
+    "en-US": "Later"
+  },
+  "update.download": {
+    "zh-CN": "立即更新",
+    "ja-JP": "今すぐ更新",
+    "en-US": "Update now"
+  },
+  "expression.replace": {
+    "zh-CN": "替换表情",
+    "ja-JP": "表情を変更",
+    "en-US": "Replace expression"
+  },
+  "expression.original_hint": {
+    "zh-CN": "选择游戏原始表情，确认后替换到当前立绘。",
+    "ja-JP": "ゲームの元の表情を選択し、確定すると現在の立ち絵に適用されます。",
+    "en-US": "Choose an original game expression. Confirm to apply it to the current artwork."
+  },
+  "expression.materials_update": {
+    "zh-CN": "这些旧表情素材尚未保存原始缩略图，请用离线工具重新归档。",
+    "ja-JP": "この素材には元の表情のサムネイルがありません。オフラインツールで再登録してください。",
+    "en-US": "These older assets have no saved original thumbnails. Register them again with the offline tool."
+  },
+  "expression.empty": {
+    "zh-CN": "这个角色还没有已保存的表情差分。离线提取完成后会自动出现在这里。",
+    "ja-JP": "このキャラクターには保存済みの表情差分がありません。オフライン抽出が完了すると、ここに表示されます。",
+    "en-US": "This character has no saved expressions yet. They will appear here after offline extraction."
+  },
+  "expression.no_match": {
+    "zh-CN": "已保存的表情差分与当前立绘姿势不匹配，请切换同姿势立绘后重试。",
+    "ja-JP": "保存済みの表情差分は現在のポーズに合いません。同じポーズの立ち絵に切り替えてください。",
+    "en-US": "The saved expressions do not match this pose. Switch to artwork with a matching pose and try again."
+  },
+  "expression.apply": {
+    "zh-CN": "确认并替换表情",
+    "ja-JP": "確定して表情を適用",
+    "en-US": "Confirm and replace expression"
+  },
+  "expression.replacing": {
+    "zh-CN": "正在替换表情…",
+    "ja-JP": "表情を置き換えています…",
+    "en-US": "Replacing expression…"
+  },
+  "expression.variant": {
+    "zh-CN": "表情",
+    "ja-JP": "表情",
+    "en-US": "Expression"
+  },
+  "expression.changed": {
+    "zh-CN": "立绘已变更，请重新打开表情选择窗口。",
+    "ja-JP": "立ち絵が変更されました。表情の選択画面を開き直してください。",
+    "en-US": "The artwork changed. Reopen the expression selection dialog."
+  },
+  "diagnostics.init_failed": {
+    "zh-CN": "无法在安装目录的 logs 文件夹创建运行日志。程序将继续运行，但本次故障可能无法追溯。请检查目录写入权限和磁盘空间。{detail}",
+    "ja-JP": "インストール先の logs フォルダーにログを作成できません。アプリは続行しますが、障害の記録が残らない可能性があります。書き込み権限と空き容量を確認してください。{detail}",
+    "en-US": "Cannot create a log in the installation directory's logs folder. The app will continue, but diagnostic records may be unavailable. Check write permissions and disk space. {detail}"
+  },
+  "diagnostics.write_failed": {
+    "zh-CN": "运行日志写入失败，后续诊断信息可能丢失。请检查安装目录的写入权限和磁盘空间。{detail}",
+    "ja-JP": "ログの書き込みに失敗しました。以降の診断情報が失われる可能性があります。書き込み権限と空き容量を確認してください。{detail}",
+    "en-US": "Writing the runtime log failed. Further diagnostic records may be lost. Check write permissions and disk space. {detail}"
+  },
+  "diagnostics.startup_failed": {
+    "zh-CN": "GalFriends 启动失败，请查看安装目录 logs 中本次启动的日志。{detail}",
+    "ja-JP": "GalFriends を起動できませんでした。インストール先の logs フォルダーで今回のログを確認してください。{detail}",
+    "en-US": "GalFriends failed to start. Check this session's log in the installation directory's logs folder. {detail}"
+  },
+  "diagnostics.webview_exited": {
+    "zh-CN": "界面引擎（Microsoft Edge WebView2）已异常退出，当前窗口无法继续使用。后台任务可能仍在运行，请等待正在进行的写入完成后，关闭 GalFriends 再重新打开。未保存的界面编辑可能丢失。若反复出现，请更新或修复 WebView2，并提供本次运行日志及 Windows 应用程序错误记录。",
+    "ja-JP": "画面エンジン（Microsoft Edge WebView2）が異常終了したため、このウィンドウは使用できません。バックグラウンド処理が続いている可能性があります。書き込みの完了を待ち、GalFriends を終了して再起動してください。未保存の編集は失われる場合があります。繰り返す場合は WebView2 の更新または修復を行い、実行ログと Windows のアプリケーションエラー記録をお送りください。",
+    "en-US": "The interface engine (Microsoft Edge WebView2) has exited unexpectedly. This window can no longer be used. Background tasks may still be running; wait for any writes to finish, then close GalFriends and reopen it. Unsaved edits may be lost. If this recurs, update or repair WebView2 and provide this session log and the Windows Application Error record."
+  },
   "emotion.recommended": {
     "zh-CN": "参考音频推荐已完成。",
     "ja-JP": "参照音声の推薦が完了しました。",
@@ -289,10 +599,15 @@
     "ja-JP": "すべてのキャラクター",
     "en-US": "All characters"
   },
-  "empty": {
-    "zh-CN": "这里还没有角色。搜索并添加你喜欢的角色。",
-    "ja-JP": "まだキャラクターがいません。検索して追加してください。",
-    "en-US": "No characters yet. Search and add a character."
+  "home.empty_title": {
+    "zh-CN": "角色库还是空的",
+    "ja-JP": "まだキャラクターがいません",
+    "en-US": "No characters yet"
+  },
+  "home.empty_description": {
+    "zh-CN": "搜索喜欢的角色，把资料和立绘添加到角色库。",
+    "ja-JP": "好きなキャラクターを検索して、プロフィールや立ち絵をライブラリに追加できます。",
+    "en-US": "Find a favorite character and add their profile and artwork to your library."
   },
   "source": {
     "zh-CN": "资料来源",
@@ -629,6 +944,31 @@
     "ja-JP": "タグで絞り込み",
     "en-US": "Filter traits"
   },
+  "tag_filter.search": {
+    "zh-CN": "搜索并添加标签",
+    "ja-JP": "タグを検索して追加",
+    "en-US": "Search and add tags"
+  },
+  "tag_filter.no_match": {
+    "zh-CN": "没有匹配的标签",
+    "ja-JP": "一致するタグがありません",
+    "en-US": "No matching tags"
+  },
+  "tag_filter.selected": {
+    "zh-CN": "已选标签",
+    "ja-JP": "選択したタグ",
+    "en-US": "Selected tags"
+  },
+  "tag_filter.remove": {
+    "zh-CN": "取消标签：{name}",
+    "ja-JP": "タグを解除：{name}",
+    "en-US": "Remove tag: {name}"
+  },
+  "tag_filter.help": {
+    "zh-CN": "确认后显示同时包含全部已选标签的角色。",
+    "ja-JP": "確認後、選択したすべてのタグを含むキャラクターを表示します。",
+    "en-US": "Confirm to show characters matching all selected tags."
+  },
   "clear_filters": {
     "zh-CN": "清除筛选",
     "ja-JP": "絞り込みを解除",
@@ -643,6 +983,31 @@
     "zh-CN": "排序",
     "ja-JP": "並び順",
     "en-US": "Sort"
+  },
+  "sort_custom": {
+    "zh-CN": "自定排序",
+    "ja-JP": "カスタム順",
+    "en-US": "Custom order"
+  },
+  "library.order_invalid_characters": {
+    "zh-CN": "所选角色已变更，请刷新角色库后重试。",
+    "ja-JP": "選択したキャラクターが変更されています。ライブラリを更新して再試行してください。",
+    "en-US": "The selected characters have changed. Refresh the library and try again."
+  },
+  "library.order_invalid_destination": {
+    "zh-CN": "排序位置已变更，请刷新角色库后重试。",
+    "ja-JP": "移動先が変更されています。ライブラリを更新して再試行してください。",
+    "en-US": "The reorder destination has changed. Refresh the library and try again."
+  },
+  "library.order_not_custom": {
+    "zh-CN": "请先切换为自定排序。",
+    "ja-JP": "先にカスタム順に切り替えてください。",
+    "en-US": "Switch to custom order first."
+  },
+  "library_reorder_hint": {
+    "zh-CN": "长按卡片拖动排序，或聚焦后按 Alt＋左右方向键移动",
+    "ja-JP": "カードを長押しして並べ替え、またはフォーカスして Alt＋左右キーで移動",
+    "en-US": "Hold a card to reorder, or focus it and press Alt + Left/Right"
   },
   "sort_added": {
     "zh-CN": "添加顺序",
@@ -1295,24 +1660,34 @@
     "en-US": "Check runtime"
   },
   "voice.source": {
-    "zh-CN": "游戏语音素材",
-    "ja-JP": "ゲームの音声素材",
-    "en-US": "Game voice material"
+    "zh-CN": "游戏关联",
+    "ja-JP": "ゲーム連携",
+    "en-US": "Game links"
   },
   "voice.source_hint": {
-    "zh-CN": "选择游戏和独立输出目录。自动解包当前支持 AdvHD，保留原始语音与脚本引用。",
-    "ja-JP": "ゲームと専用の出力先を指定します。自動抽出は現在 AdvHD に対応し、原音声と参照を保持します。",
-    "en-US": "Choose the game and a separate output folder. Automatic extraction currently supports AdvHD and preserves source audio and references."
+    "zh-CN": "选择关联游戏以解包语音。自动解包当前支持 AdvHD。",
+    "ja-JP": "音声を抽出する関連ゲームを選択します。自動抽出は現在 AdvHD に対応します。",
+    "en-US": "Select a linked game to extract its voice clips. Automatic extraction currently supports AdvHD."
   },
-  "voice.game": {
-    "zh-CN": "游戏目录",
-    "ja-JP": "ゲームフォルダー",
-    "en-US": "Game folder"
+  "voice.console": {
+    "zh-CN": "训练日志",
+    "ja-JP": "学習ログ",
+    "en-US": "Training log"
   },
-  "voice.output": {
-    "zh-CN": "输出目录",
-    "ja-JP": "出力フォルダー",
-    "en-US": "Output folder"
+  "voice.console_idle": {
+    "zh-CN": "等待开始训练",
+    "ja-JP": "学習開始を待機中",
+    "en-US": "Waiting for training to start"
+  },
+  "voice.console_cancelled": {
+    "zh-CN": "训练已取消",
+    "ja-JP": "学習をキャンセルしました",
+    "en-US": "Training cancelled"
+  },
+  "voice.character_in_use": {
+    "zh-CN": "此角色的语音素材正在处理或训练，请等任务结束后再删除。",
+    "ja-JP": "このキャラクターの音声を処理中です。タスク終了後に削除してください。",
+    "en-US": "This character has an active voice task. Delete the character after the task ends."
   },
   "voice.extract": {
     "zh-CN": "解包并识别说话人",
@@ -1348,11 +1723,6 @@
     "zh-CN": "素材中的说话人 · 语音数",
     "ja-JP": "素材の話者・音声数",
     "en-US": "Source speaker · clips"
-  },
-  "voice.choose": {
-    "zh-CN": "请选择",
-    "ja-JP": "選択してください",
-    "en-US": "Choose"
   },
   "voice.language": {
     "zh-CN": "原配音语言",
@@ -1635,9 +2005,9 @@
     "en-US": "Model file size mismatch"
   },
   "voice.register": {
-    "zh-CN": "登记此训练输出目录",
-    "ja-JP": "この学習出力フォルダーを登録",
-    "en-US": "Register this training output folder"
+    "zh-CN": "登记旧模型目录",
+    "ja-JP": "以前のモデルフォルダーを登録",
+    "en-US": "Register an existing model folder"
   },
   "voice.registered": {
     "zh-CN": "已登记训练输出目录",
@@ -1699,15 +2069,35 @@
     "ja-JP": "ゲームフォルダーが利用できません",
     "en-US": "Game folder unavailable"
   },
+  "game_library.pick_folder": {
+    "zh-CN": "选择本地游戏目录",
+    "ja-JP": "ローカルのゲームフォルダーを選択",
+    "en-US": "Choose a local game folder"
+  },
+  "game_library.linked_folder": {
+    "zh-CN": "已关联游戏目录，点击更换",
+    "ja-JP": "ゲームフォルダーは関連付け済みです。クリックして変更",
+    "en-US": "Game folder linked. Click to change it"
+  },
+  "game_library.open_folder": {
+    "zh-CN": "打开游戏目录",
+    "ja-JP": "ゲームフォルダーを開く",
+    "en-US": "Open the game folder"
+  },
+  "game_library.invalid_folder": {
+    "zh-CN": "该游戏目录不存在或无法访问，请重新选择",
+    "ja-JP": "ゲームフォルダーが見つからないかアクセスできません。選び直してください",
+    "en-US": "The game folder is missing or inaccessible. Choose it again."
+  },
   "game_library.changed": {
     "zh-CN": "游戏库或关联已变化，请刷新后重新选择游戏",
     "ja-JP": "ライブラリまたは関連付けが変更されました。更新してゲームを選び直してください",
     "en-US": "The library or link changed. Refresh and select the game again."
   },
   "voice.skill_extract": {
-    "zh-CN": "AI 使用 GalExtract 解包",
-    "ja-JP": "AI で GalExtract を実行",
-    "en-US": "Extract with AI and GalExtract"
+    "zh-CN": "音频提取",
+    "ja-JP": "音声抽出",
+    "en-US": "Extract audio"
   },
   "voice.skill_hint": {
     "zh-CN": "AI 解包复用 GalGear 宿主和 GalExtract，使用此应用配置的 OpenAI 或 DeepSeek。完成后核对说话人，再开始训练。",

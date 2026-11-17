@@ -1,10 +1,16 @@
 # 日语角色声音训练
 
-左侧 `mic` 导航进入独立声音工作台。选择 IndexTTS 2.5、GPT-SoVITS v5Turbo 或 GPT-SoVITS v2Pro，再选择角色、游戏目录与游戏之外的输出目录。解包并读取素材映射后，**手动选择脚本中的说话人**，再训练该角色。当前只开放日语，后台拒绝中文或语言不一致的映射。角色库身份与游戏目录独立，GalGear 联动按出演作品的来源 ID 或用户明确关联选择安装条目。切换引擎重新检查对应环境，各引擎模型独立保存。
+左侧 `mic` 导航进入独立声音工作台。选择 IndexTTS 2.5、GPT-SoVITS v5Turbo 或 GPT-SoVITS v2Pro，再在「游戏关联」选择角色及关联游戏。程序从手动关联或 GalGear 安装条目读取游戏路径。点击 upload 图标的「音频提取」启动 AI 提取。映射 JSON 下方的 linked_services 按钮「解包并识别说话人」优先读取已填入的映射，映射为空时也会调用 AI 提取。
+
+完成后自动填入映射路径和「素材中的说话人 · 语音数」。仅有一个说话人时自动选中，多人结果需要手动选择。重新读取同一映射时保留仍有效的选择。核对结果后可开始训练。当前只开放日语，后台拒绝中文或语言不一致的映射。切换引擎重新检查对应环境，各引擎模型独立保存。
 
 顶部的下载按钮提供 IndexTTS 2.5、GPT-SoVITS v5Turbo、GPT-SoVITS v2Pro 与 Irodori-TTS v4.1 Small 的基础权重。安装到 `tools/voice/`，先校验已有文件再下载缺失或损坏的文件，下载完成后核对大小和 SHA-256。取消按钮在顶部，已完成校验的文件可在重试时复用。训练所需的源码和 Python 环境仍由下文的准备脚本配置。Irodori 目前只提供权重下载。
 
-成功训练后自动登记输出目录，供悬浮角色选择。升级前的训练可在这里填写原输出目录，再点击输出目录下方的登记按钮。目录本身和直接子目录中的完整模型可供选择。
+语音素材、训练任务和模型自动保存到可执行文件旁的 `characters/<罗马字>--<身份摘要>/voice/`。已完成模型会直接出现在悬浮角色的模型列表中。「游戏关联」右下角的文件夹加号可通过系统目录选择器登记旧训练结果，支持选择模型本身或包含模型的上一级目录。
+
+AI 生成的对白与语音映射保存在该角色目录的 `voice/skill-extract-<任务ID>/dialogue-voice.json`，与本次音频、脚本副本及提取报告一起保留。验证文件成功后，界面回填这个本地 JSON 的路径。
+
+「训练日志」显示当前阶段、可用的步数，以及训练器实时输出。IndexTTS 每轮输出训练和验证损失，GPT-SoVITS 同时保留各阶段的完整磁盘日志。界面保留最近一段输出，向上滚动可查看已显示的日志；导航离开后回到工作台可继续查看当前训练。
 
 ## GPT-SoVITS v5Turbo
 
@@ -19,7 +25,7 @@
 
 依次调用官方音素、HuBERT、语义特征脚本，以及 `s1_train.py`、`s2_train_v3_lora.py`；每个特征阶段核对完整样本集合，任何漏项或重复项都失败。默认两阶段各 3 轮，GPT batch 4，SoVITS batch 2、LoRA rank 16 和梯度检查点，适配 8 GB GPU。GPT 的官方语速/音素长度筛选可能进一步减少数据，`gpt-dataset.json` 记录实际保留与排除的文件，`model.json` 分别记录 GPT 和 SoVITS 的样本数。官方训练器默认不执行独立验证集评估，完成训练不等于已经证明泛化或主观音色质量。
 
-Windows 单卡通过轻量入口调用官方 GPT `main`，将 Lightning 策略设为单设备并显式指定 sampler 的 `num_replicas=1, rank=0`，避免上游对单卡也建立 Gloo 通信。模型、损失、优化器和训练循环保持官方实现。上游 i18n 不支持跨盘相对路径，因此临时工作目录放在源码同盘的 `tools/voice/gpt-sovits-work/`，最终数据和模型仍位于用户选择的输出目录；不修改第三方源码。
+Windows 单卡通过轻量入口调用官方 GPT `main`，将 Lightning 策略设为单设备并显式指定 sampler 的 `num_replicas=1, rank=0`，避免上游对单卡也建立 Gloo 通信。模型、损失、优化器和训练循环保持官方实现。上游 i18n 不支持跨盘相对路径，因此临时工作目录放在源码同盘的 `tools/voice/gpt-sovits-work/`，最终数据和模型位于角色的 `voice/` 目录。
 
 完整产物为 `gpt.ckpt`、`sovits.pth`、`reference.wav`、对应 `reference.txt` 与 `model.json`。元数据固定格式 `galfriends-gpt-sovits-v5turbo-v1`，记录角色 ID、日语、来源提交、权重哈希及数据量。每阶段日志与 `job.json` 保留在任务目录，取消清理进程树，不覆盖旧模型。桌面角色窗口可分别绑定各引擎，见 [桌面角色陪伴](desktop-companion.md)。
 
@@ -49,7 +55,7 @@ Windows 单卡通过轻量入口调用官方 GPT `main`，将 Lightning 策略�
 
 当前自动适配 **AdvHD 1.9 的单字节 WS2 指令布局**，支持的实际样本为 Nightmare×Sisters。它不是所有 Galgame 的通用解包承诺。固定读取器逐条读取完整指令，未知操作码导致该脚本失败，不通过搜索字节猜台词。读取器空编码误走 UTF-16 的问题由调用层 `SingleByteReader` 修正，第三方源码保持不变。
 
-每次任务在指定输出目录创建全新的 `extract-随机ID/`，按归档保留 `raw/Voice`、`raw/Rio`、`raw/Rio1`、`raw/Script`。提取前检查所有成员名，拒绝路径穿越、重复成员、符号链接及 Windows 重解析点；核对 GARbro stderr、实际文件清单，不以其退出码独自判成功。原游戏与存档不写入，中文补丁目录不读取。
+每次任务在角色的 `voice/` 下创建全新的 `extract-随机ID/`，按归档保留 `raw/Voice`、`raw/Rio`、`raw/Rio1`、`raw/Script`。提取前检查所有成员名，拒绝路径穿越、重复成员、符号链接及 Windows 重解析点；核对 GARbro stderr、实际文件清单，不以其退出码独自判成功。原游戏与存档不写入，中文补丁目录不读取。
 
 `dialogue-voice.json` 保存 `schema: 1`、`game_dir`、`asset_root`、`original_language: ja`、`entries` 及失败脚本清单。每条记录包含原日文台词、说话人、日语语音路径、原生消息 ID、脚本 SHA-256 和消息/姓名/语音指令偏移。语音来自实际 `0x28` 指令，姓名来自 `0x15`，台词来自 `0x14`；每次消息消耗后清除语音引用。双人共同署名单独列出，由用户明确选择，不混入单角色语料。
 
@@ -78,15 +84,15 @@ cargo clippy -p galfriends-ui --target wasm32-unknown-unknown --locked -- -D war
 cargo build -p galfriends --locked
 ```
 
-所有普通测试使用临时夹具；真实解包/训练只处理用户明确指定的游戏和输出目录。原始语音和模型产物不随源码或发行包分发。
+所有普通测试使用临时夹具；真实解包处理用户选择的关联游戏，训练写入对应角色目录。原始语音和模型产物不随源码或发行包分发。
 
 ## 使用 GalExtract 的 AI 解包
 
-先在设置 → 路径与工具保存 GalGear 的 `catalog.json` 或数据目录。安装版通常位于 `%APPDATA%/com.galgear.desktop`，便携版位于程序旁 `data/`。详情页相册下显示鲲 Gal 出演作品，并通过作品来源 ID 或鲲 Gal 封面内容摘要自动关联安装。训练页选择角色和关联游戏，再输入游戏目录之外的输出目录，点击 AI 解包按钮。
+先在设置 → 路径与工具保存 GalGear 的 `catalog.json` 或数据目录。安装版通常位于 `%APPDATA%/com.galgear.desktop`，便携版位于程序旁 `data/`。详情页相册下显示鲲 Gal 出演作品，并通过作品来源 ID 或鲲 Gal 封面内容摘要自动关联安装。训练页选择角色和关联游戏后，点击「音频提取」。
 
 此入口复用 GalGear AI 宿主，使用 GalFriends 的 AI 设置和独立凭据。目前上游工具宿主支持 OpenAI、DeepSeek；需要已保存密钥和模型。凭据仅经标准输入传给 worker，不读取 GalGear 用户配置。无需安装或登录 Codex CLI。
 
-GalExtract 来自 [Galgear-GalgameReverse-Skill](https://github.com/CbShuiMu/Galgear-GalgameReverse-Skill)。将仓库放在 GalFriends 或便携版 GalGear 目录下，或用 `GALFRIENDS_GALGEAR_SKILL` 指定含 `SKILL.md` 的 `GalgameResourceExtract` 目录。用 `GALFRIENDS_GALGEAR_HOST` 指定 GalGear 的 `crates/core/src/ai_summary` 目录（需保留同目录依赖模块）。开发环境默认查找同级 GalGear。技能、工具与宿主保持原样；当前依赖源码形式的宿主，未配置发行包集成。
+GalExtract 来自 [Galgear-GalgameReverse-Skill](https://github.com/CbShuiMu/Galgear-GalgameReverse-Skill)。可在「设置 → 更新 → Skill」安装独立副本，应用优先使用 EXE 旁的 `GalFriends-Skills/`。未安装独立副本时，仍可用 `GALFRIENDS_GALGEAR_SKILL` 指定含 `SKILL.md` 的 `GalgameResourceExtract` 目录，或从关联的便携版 GalGear 及开发目录查找。用 `GALFRIENDS_GALGEAR_HOST` 指定 GalGear 的 `crates/core/src/ai_summary` 目录（需保留同目录依赖模块）。当前仍依赖源码形式的宿主。
 
 每次创建 `skill-extract-*`，保存任务说明、工具调用审计、失败诊断、资源、`extraction-report.json` 与 `dialogue-voice.json`。AI 读取技能和真实文件后选择宿主工具；AdvHD 1.9 可选择已验证的 WS2 适配器，其他引擎可调用固定归档工具与无文件/网络访问的纯解析器。不能执行任意 shell 或游戏程序。通用解析接口要求原文、姓名、语音引用的字节证据，暂不能表达的编码或跨文件关系须保留为未解决项，不能按文件顺序猜配。
 

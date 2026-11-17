@@ -89,7 +89,7 @@ pub(crate) async fn emotion_page(
     id: Option<String>,
 ) -> Result<PageData, String> {
     main_window(&window)?;
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("emotion_page", move || {
         let (targets, selected) = {
             let sessions = app.state::<Sessions>();
             let entries = sessions.entries.lock().map_err(|_| "companion.failed")?;
@@ -139,7 +139,7 @@ pub(crate) async fn emotion_recommend(
     }
     // 排队前登记取消标记，避免后台线程池繁忙时漏掉用户取消。
     let task = TaskGuard(app.clone());
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("emotion_recommend", move || {
         let _task = task;
         let profile = target(&app, &id)?;
         let config = load(&app, &profile)?;
@@ -209,7 +209,7 @@ pub(crate) async fn emotion_choose(
     candidate_id: String,
 ) -> Result<Configuration, String> {
     main_window(&window)?;
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("emotion_choose", move || {
         let profile = target(&app, &id)?;
         let config = load(&app, &profile)?;
         let candidate = config
@@ -242,7 +242,7 @@ pub(crate) async fn emotion_preview(
     candidate_id: String,
 ) -> Result<String, String> {
     main_window(&window)?;
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("emotion_preview", move || {
         let profile = target(&app, &id)?;
         let config = load(&app, &profile)?;
         let candidate = config

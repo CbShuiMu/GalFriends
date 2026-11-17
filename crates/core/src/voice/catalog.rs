@@ -10,6 +10,13 @@ use std::{
     path::{Component, Path, PathBuf},
 };
 
+/// 游戏语音素材、训练任务和模型都放在角色归档的 voice 子目录中。
+pub fn output_directory(root: &Path, id: &str) -> Result<PathBuf, String> {
+    let directory = crate::archive::character_directory(root, id)?.join("voice");
+    checked_absolute(&directory)?;
+    Ok(directory)
+}
+
 /// 调用方串行化登记；旧安装没有清单时从空清单开始。
 pub fn register(file: &Path, output: &Path) -> Result<(), String> {
     checked_absolute(output)?;
@@ -42,6 +49,10 @@ pub fn models(
     bindings: &VoiceModels,
 ) -> Result<Vec<TrainedModel>, String> {
     let mut roots: BTreeSet<_> = storage::read_output_roots(file)?.into_iter().collect();
+    roots.insert(output_directory(
+        file.parent().ok_or("voice.output_missing")?,
+        id,
+    )?);
     let mut candidates = BTreeSet::<PathBuf>::new();
     for path in bindings.models.values().map(Path::new) {
         if let Some(parent) = path.parent()
@@ -135,5 +146,8 @@ mod tests {
                 .unwrap()
                 .is_empty()
         );
+        let managed = super::output_directory(root, "character").unwrap();
+        fixture(&managed, "managed", "character", false);
+        assert_eq!(labels(&VoiceModels::default()), ["managed", "complete"]);
     }
 }

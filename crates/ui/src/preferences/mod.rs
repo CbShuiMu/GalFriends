@@ -2,6 +2,7 @@
 mod connection_view;
 pub(crate) mod connections;
 pub(crate) mod theme;
+pub(crate) mod updates;
 mod view;
 use crate::{requests, state::App};
 use galfriends_core::preferences::Environment;
@@ -16,6 +17,7 @@ pub(crate) enum Section {
     Display,
     System,
     Paths,
+    Updates,
     About,
 }
 impl Section {
@@ -26,6 +28,7 @@ impl Section {
             Self::Display => "display",
             Self::System => "system",
             Self::Paths => "paths",
+            Self::Updates => "updates",
             Self::About => "about",
         }
     }
@@ -36,6 +39,7 @@ impl Section {
             Self::Display => "prefs.display",
             Self::System => "prefs.system",
             Self::Paths => "prefs.paths",
+            Self::Updates => "prefs.updates",
             Self::About => "about",
         }
     }
@@ -46,11 +50,12 @@ pub(crate) struct State {
     pub connections: connections::State,
     pub section: Section,
     pub environment: Option<Environment>,
+    pub updates: updates::State,
     pub theme_needs_full_render: bool,
 }
 
 pub(crate) fn handle(a: &mut App, action: &str, value: &str) -> bool {
-    if connections::handle(a, action, value) {
+    if connections::handle(a, action, value) || updates::handle(a, action) {
         return true;
     }
     match action {
@@ -60,6 +65,7 @@ pub(crate) fn handle(a: &mut App, action: &str, value: &str) -> bool {
                 "ai" => Section::Ai,
                 "system" => Section::System,
                 "paths" => Section::Paths,
+                "updates" => Section::Updates,
                 "about" => Section::About,
                 _ => Section::Display,
             };

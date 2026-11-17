@@ -67,7 +67,8 @@ export function playTransition(previous) {
   }
   if (modalKey && modalKey !== previous.modalKey) {
     animate(modal, [{opacity:0},{opacity:1}], {duration:180,easing:'ease-out'});
-    animate(modal.querySelector('.editor-dialog'), [{transform:'translateY(12px) scale(.985)'},{transform:'translateY(0) scale(1)'}], {duration:240,easing:ease});
+    // 库弹窗内的固定定位候选框使用视口坐标。
+    animate(modal.querySelector('.editor-dialog:not(.library-dialog)'), [{transform:'translateY(12px) scale(.985)'},{transform:'translateY(0) scale(1)'}], {duration:240,easing:ease});
   } else if (!modal && previous.modal) {
     document.getElementById('app').append(previous.modal);
     temporary.push(previous.modal);

@@ -1,0 +1,457 @@
+use super::{SessionLog, initialize_at, privacy::Redactor};
+use log::Level;
+use std::{fs, process::Command, sync::Arc};
+
+#[test]
+fn sessions_never_overwrite_existing_logs() {
+    let root = tempfile::tempdir().unwrap();
+    let directory = root.path().join("logs");
+    let first = SessionLog::create(&directory, "2026-11-06_120000_123").unwrap();
+    first
+        .write(Level::Info, "galfriends::test", "original session")
+        .unwrap();
+    let original = fs::read(&first.path).unwrap();
+    let second = SessionLog::create(&directory, "2026-11-06_120000_123").unwrap();
+    assert_ne!(first.path, second.path);
+    assert_eq!(fs::read(&first.path).unwrap(), original);
+    assert_eq!(
+        first.path.file_name().unwrap(),
+        "galfriends_2026-11-06_120000_123.log"
+    );
+}
+
+#[test]
+fn concurrent_records_remain_independent_json_lines() {
+    let root = tempfile::tempdir().unwrap();
+    let logger = Arc::new(SessionLog::create(root.path(), "parallel").unwrap());
+    std::thread::scope(|scope| {
+        for index in 0..8 {
+            let logger = logger.clone();
+            scope.spawn(move || {
+                for item in 0..25 {
+                    logger
+                        .write(
+                            Level::Info,
+                            "galfriends::test",
+                            &format!("thread={index} item={item}\nnext line"),
+                        )
+                        .unwrap();
+                }
+            });
+        }
+    });
+    let content = fs::read_to_string(&logger.path).unwrap();
+    assert_eq!(content.lines().count(), 200);
+    for line in content.lines() {
+        let record: serde_json::Value = serde_json::from_str(line).unwrap();
+        assert!(record["message"].as_str().unwrap().ends_with("\nnext line"));
+    }
+}
+
+#[test]
+fn credentials_urls_and_personal_paths_are_redacted() {
+    let redactor = Redactor::new().unwrap();
+    let input = "Authorization: Bearer auth-value\nCookie: session=cookie-value\nurl=https://user:pass@example.com/api?sig=signed-value\naccess_token=token-value password=\"long secret\" api_key='api-value'\nC:\\Users\\Alice\\AppData\\Local user@example.com\n中文错误: os error 5";
+    let output = redactor.clean(input);
+    for secret in [
+        "auth-value",
+        "cookie-value",
+        "signed-value",
+        "token-value",
+        "long secret",
+        "api-value",
+        "Alice",
+        "user@example.com",
+        "user:pass",
+    ] {
+        assert!(!output.contains(secret), "leaked {secret}: {output}");
+    }
+    assert!(output.contains("中文错误: os error 5"));
+    assert_eq!(
+        redactor.clean("at http://tauri.localhost/bridge.js:42:7?token=private"),
+        "at [app]/bridge.js:42:7"
+    );
+    let long = redactor.clean(&"中".repeat(40_000));
+    assert!(long.ends_with(" [truncated]"));
+    assert_eq!(
+        redactor.clean(r#"browser_exe="C:\Users\Alice Smith\AppData\Local\Microsoft\EdgeWebView\msedgewebview2.exe""#),
+        r#"browser_exe="[user]\AppData\Local\Microsoft\EdgeWebView\msedgewebview2.exe""#,
+    );
+}
+
+#[test]
+fn unwritable_destination_reports_error() {
+    let root = tempfile::tempdir().unwrap();
+    let file = root.path().join("logs");
+    fs::write(&file, "do not replace").unwrap();
+    assert!(SessionLog::create(&file, "invalid").is_err());
+    assert_eq!(fs::read_to_string(file).unwrap(), "do not replace");
+}
+
+#[test]
+fn embedded_artwork_and_audio_are_not_written() {
+    let root = tempfile::tempdir().unwrap();
+    let logger = SessionLog::create(root.path(), "private-resources").unwrap();
+    logger
+        .write(
+            Level::Error,
+            "galfriends::frontend",
+            "Resource data:image/png;base64,private-image data:audio/wav;base64,private-audio",
+        )
+        .unwrap();
+    let content = fs::read_to_string(logger.path).unwrap();
+    assert!(!content.contains("private-image"));
+    assert!(!content.contains("private-audio"));
+    assert!(content.contains("Resource [data] [data]"));
+}
+
+#[test]
+fn third_party_and_debug_records_are_disabled() {
+    use log::{Log, Metadata};
+    let root = tempfile::tempdir().unwrap();
+    let logger = SessionLog::create(root.path(), "levels").unwrap();
+    assert!(
+        !logger.enabled(
+            &Metadata::builder()
+                .level(Level::Error)
+                .target("reqwest")
+                .build()
+        )
+    );
+    assert!(
+        !logger.enabled(
+            &Metadata::builder()
+                .level(Level::Debug)
+                .target("galfriends::test")
+                .build()
+        )
+    );
+    assert!(
+        logger.enabled(
+            &Metadata::builder()
+                .level(Level::Info)
+                .target("galfriends::test")
+                .build()
+        )
+    );
+}
+
+#[test]
+fn background_records_failures_without_serializing_successful_data() {
+    let log = run_session_child("background", true);
+    assert!(
+        log.contains("background_ok operation=successful_task"),
+        "{log}"
+    );
+    assert!(
+        log.contains("background_error operation=failed_task"),
+        "{log}"
+    );
+    assert!(log.contains("os error 5"), "{log}");
+    assert!(!log.contains("private-response"));
+    assert!(!log.contains("private-token"));
+}
+
+fn run_session_child(kind: &str, expected_success: bool) -> String {
+    let directory = tempfile::tempdir().unwrap();
+    let output = Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--ignored",
+            "--exact",
+            "diagnostics::tests::crash_child",
+            "--nocapture",
+        ])
+        .env("GALFRIENDS_TEST_LOG_DIR", directory.path())
+        .env("GALFRIENDS_TEST_CRASH_KIND", kind)
+        .output()
+        .unwrap();
+    assert_eq!(output.status.success(), expected_success, "{output:?}");
+    let file = fs::read_dir(directory.path())
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap()
+        .path();
+    fs::read_to_string(file).unwrap()
+}
+
+#[test]
+fn panic_records_location_backtrace_and_last_operation_before_exit() {
+    let log = run_session_child("panic", false);
+    assert!(log.contains("last_operation"));
+    assert!(log.contains("galfriends::panic"));
+    assert!(log.contains("diagnostic test panic"));
+    assert!(log.contains("tests.rs"));
+    assert!(log.contains("stack backtrace") || log.contains("0:"));
+    assert!(!log.contains("session_end"));
+}
+
+#[cfg(windows)]
+#[tauri::command]
+fn diagnostic_probe(fail: bool) -> Result<&'static str, &'static str> {
+    if fail {
+        Err("probe failed access_token=native-private-token")
+    } else {
+        Ok("native-private-response")
+    }
+}
+
+#[cfg(windows)]
+#[test]
+fn native_exception_records_fault_code_and_address() {
+    let log = run_session_child("native", false);
+    assert!(log.contains("last_operation"));
+    assert!(log.contains("galfriends::native_crash"), "{log}");
+    assert!(log.contains("0xE0424747"));
+    assert!(log.contains("module_base"));
+    assert!(!log.contains("session_end"));
+}
+
+#[test]
+fn clean_session_reports_no_webview_failure() {
+    let log = run_session_child("clean", true);
+    assert!(
+        log.contains("session_end webview_process_failed=false"),
+        "{log}"
+    );
+}
+
+#[cfg(windows)]
+#[test]
+fn webview_failure_without_details_is_recorded_in_session_summary() {
+    let log = run_session_child("webview_unavailable", true);
+    let records: Vec<serde_json::Value> = log
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    let failure = records
+        .iter()
+        .find(|record| {
+            record["message"]
+                .as_str()
+                .unwrap()
+                .starts_with("webview_process_failed ")
+        })
+        .unwrap();
+    assert_eq!(failure["level"], "ERROR");
+    assert!(
+        log.contains("session_end webview_process_failed=true"),
+        "{log}"
+    );
+}
+
+#[cfg(windows)]
+#[test]
+#[ignore = "需要 Windows 桌面和 WebView2，只使用临时 WebView 配置"]
+fn native_webview_records_frontend_view_and_renderer_failure() {
+    use super::{FRONTEND_SCRIPT, LOGGER, observe_webview};
+    use std::{
+        thread,
+        time::{Duration, Instant},
+    };
+    use tauri::{WebviewUrl, WebviewWindowBuilder, webview::PageLoadEvent};
+    use webview2_com::CallDevToolsProtocolMethodCompletedHandler;
+    use windows_core::w;
+
+    let browser_crash = std::env::var_os("GALFRIENDS_TEST_BROWSER_CRASH").is_some();
+    let root = tempfile::tempdir().unwrap();
+    let panic_hook = std::panic::take_hook();
+    initialize_at(&root.path().join("logs")).unwrap();
+    let log_path = LOGGER.get().unwrap().path.clone();
+    let profile = root.path().join("webview");
+    let mut context = tauri::generate_context!();
+    context.config_mut().app.windows.clear();
+    let app = tauri::Builder::default()
+        .any_thread()
+        .plugin(
+            tauri::plugin::Builder::<tauri::Wry>::new("diagnostics")
+                .js_init_script(FRONTEND_SCRIPT)
+                .build(),
+        )
+        .invoke_handler(super::trace_commands(tauri::generate_handler![
+            super::record_diagnostic,
+            diagnostic_probe
+        ]))
+        .setup({
+            let log_path = log_path.clone();
+            move |app| {
+                let window =
+                    WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
+                        .data_directory(profile)
+                        .visible(false)
+                        .on_page_load(|window, event| {
+                            if event.event() == PageLoadEvent::Finished {
+                                window
+                                    .eval("(async () => { await GalFriendsDiagnostics.invoke('diagnostic_probe', {fail:false, unused:'native-private-input'}); try { await GalFriendsDiagnostics.invoke('diagnostic_probe', {fail:true}); } catch {} GalFriendsDiagnostics.viewApplied('home', 'none'); })()")
+                                    .unwrap();
+                            }
+                        })
+                        .build()?;
+                observe_webview(
+                    &window,
+                    || log::info!(target: "galfriends::test", "webview_exit_notification"),
+                );
+                let app = app.handle().clone();
+                thread::spawn(move || {
+                    let wait_for = |message| {
+                        let deadline = Instant::now() + Duration::from_secs(10);
+                        while Instant::now() < deadline {
+                            if fs::read_to_string(&log_path).is_ok_and(|log| log.contains(message))
+                            {
+                                return true;
+                            }
+                            thread::sleep(Duration::from_millis(50));
+                        }
+                        false
+                    };
+                    let received_failure = wait_for(
+                        "page=Home overlay=None",
+                    ) && window
+                        .with_webview(move |webview| {
+                            let complete = CallDevToolsProtocolMethodCompletedHandler::create(
+                                Box::new(|_, _| Ok(())),
+                            );
+                            // SAFETY: Tauri 在隔离 WebView 的 UI 线程提供有效控制器。这里只让隔离配置下的测试浏览器或渲染进程退出。
+                            let result = unsafe {
+                                webview.controller().CoreWebView2().and_then(|core| {
+                                    core.CallDevToolsProtocolMethod(
+                                        if browser_crash {
+                                            w!("Browser.crash")
+                                        } else {
+                                            w!("Page.crash")
+                                        },
+                                        w!("{}"),
+                                        &complete,
+                                    )
+                                })
+                            };
+                            if let Err(error) = result {
+                                log::warn!(target: "galfriends::test", "Page.crash failed: {error}");
+                            }
+                        })
+                        .is_ok()
+                        && wait_for(if browser_crash {
+                            "webview_process_failed window=main kind=browser_exited"
+                        } else {
+                            "webview_process_failed window=main kind=renderer_exited"
+                        })
+                        && wait_for("webview_exit_notification");
+                    app.exit(i32::from(!received_failure));
+                });
+                Ok(())
+            }
+        })
+        .build(context)
+        .unwrap();
+    let exit_code = app.run_return(|_, event| {
+        if matches!(event, tauri::RunEvent::Exit) {
+            super::finish();
+        }
+    });
+    let log = fs::read_to_string(log_path).unwrap();
+    // 恢复测试框架输出，断言失败时应能看到临时日志中的诊断证据。
+    std::panic::set_hook(panic_hook);
+    assert_eq!(exit_code, 0, "{log}");
+    assert!(log.contains("command_start window=main request="), "{log}");
+    assert!(log.contains("command_ok request="), "{log}");
+    assert!(log.contains("command_error request="), "{log}");
+    assert!(!log.contains("native-private-"), "{log}");
+    assert!(
+        log.contains("webview_diagnostics_ready window=main browser_pid=Some("),
+        "{log}"
+    );
+    assert!(
+        log.contains("webview_failure_report_folder window=main path="),
+        "{log}"
+    );
+    let records: Vec<serde_json::Value> = log
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    let runtime = records
+        .iter()
+        .filter_map(|record| record["message"].as_str())
+        .find_map(|message| message.strip_prefix("webview_diagnostics_ready window=main "))
+        .unwrap();
+    assert!(runtime.contains("browser_pid=Some("), "{runtime}");
+    assert!(
+        regex::Regex::new(r"webview_version=\d+\.\d+\.\d+\.\d+")
+            .unwrap()
+            .is_match(runtime),
+        "{runtime}"
+    );
+    assert!(
+        runtime.to_lowercase().contains("msedgewebview2.exe\""),
+        "{runtime}"
+    );
+    let failure = records
+        .iter()
+        .find(|record| {
+            record["message"]
+                .as_str()
+                .unwrap()
+                .starts_with("webview_process_failed ")
+        })
+        .unwrap();
+    assert_eq!(failure["level"], "ERROR");
+    assert!(
+        failure["message"].as_str().unwrap().ends_with(runtime),
+        "{failure}"
+    );
+    assert!(
+        log.contains("session_end webview_process_failed=true"),
+        "{log}"
+    );
+}
+
+#[test]
+#[ignore = "Only launched in an isolated child with a temporary log directory"]
+fn crash_child() {
+    let Ok(directory) = std::env::var("GALFRIENDS_TEST_LOG_DIR") else {
+        return;
+    };
+    initialize_at(std::path::Path::new(&directory)).unwrap();
+    log::info!("last_operation");
+    let kind = std::env::var("GALFRIENDS_TEST_CRASH_KIND").unwrap_or_default();
+    if kind == "background" {
+        let result =
+            tauri::async_runtime::block_on(super::spawn_background("successful_task", || {
+                Ok::<_, String>("private-response")
+            }))
+            .unwrap()
+            .unwrap();
+        assert_eq!(result, "private-response");
+        let result = tauri::async_runtime::block_on(super::spawn_background("failed_task", || {
+            Err::<(), _>("os error 5 access_token=private-token".to_owned())
+        }))
+        .unwrap()
+        .unwrap_err();
+        assert!(result.contains("private-token"));
+        super::finish();
+        return;
+    }
+    if kind == "clean" {
+        super::finish();
+        return;
+    }
+    #[cfg(windows)]
+    if kind == "webview_unavailable" {
+        super::record_webview_failure(format_args!(
+            "webview_process_failed window=main details=unavailable"
+        ));
+        super::finish();
+        return;
+    }
+    if std::env::var("GALFRIENDS_TEST_CRASH_KIND").as_deref() == Ok("native") {
+        #[cfg(windows)]
+        // SAFETY: 仅在本测试派生的独立进程触发无参数、不可继续的测试异常；禁用系统错误弹窗。
+        unsafe {
+            use windows_sys::Win32::System::Diagnostics::Debug::{
+                RaiseException, SEM_FAILCRITICALERRORS, SEM_NOGPFAULTERRORBOX, SetErrorMode,
+            };
+            SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
+            RaiseException(0xE0424747, 1, 0, std::ptr::null());
+        }
+    }
+    panic!("diagnostic test panic");
+}

@@ -16,7 +16,9 @@ fn expire(app: &mut App, scope: &str, revision: u32) -> bool {
             true
         }
         "emotion" => crate::emotions::expire_notice(app, revision),
+        "expression" => crate::expression_scans::expire_notice(app, revision),
         "voice" => crate::voice::expire_notice(app, revision),
+        "update" => crate::preferences::updates::expire_notice(app, revision),
         _ => false,
     }
 }

@@ -4,7 +4,32 @@ mod storage;
 use crate::characters::{Character, Source};
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "desktop")]
-pub use storage::load;
+pub use storage::{load, validate_work_folder};
+
+/// 训练页选项中区分手动目录和 GalGear 安装 ID 的前缀。
+pub const LOCAL_GAME_PREFIX: &str = "local:";
+
+/// 返回仍属于该角色出演作品的手动目录；旧快照关系失效时不再提供给训练页。
+pub fn work_folder<'a>(character: &'a Character, work_id: &str) -> Option<&'a str> {
+    character
+        .work_folders
+        .get(work_id)
+        .filter(|_| works(character).iter().any(|work| work.id == work_id))
+        .map(String::as_str)
+}
+
+/// 保存关联前确认作品仍然属于此角色。
+pub fn set_work_folder(
+    character: &mut Character,
+    work_id: String,
+    folder: String,
+) -> Result<(), String> {
+    if !works(character).iter().any(|work| work.id == work_id) {
+        return Err("game_library.changed".into());
+    }
+    character.work_folders.insert(work_id, folder);
+    Ok(())
+}
 
 /// 来源快照中的出演作品；不改写原始响应。
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -176,6 +201,15 @@ fn matches(work: &Work, game: &Game) -> bool {
             .iter()
             .any(|id| work.identities.contains(id))
             || (!game.cover_hash.is_empty() && work.cover_hashes.contains(&game.cover_hash)))
+}
+
+/// 一个作品的默认安装目录，优先选择可用目录，库中顺序相同时保持稳定。
+pub fn work_installation<'a>(work: &Work, catalog: &'a Catalog) -> Option<&'a Game> {
+    catalog
+        .games
+        .iter()
+        .filter(|game| matches(work, game))
+        .min_by_key(|game| !game.available)
 }
 
 /// 当前角色全部出演游戏的已入库安装条目，每个安装只返回一次。

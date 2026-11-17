@@ -41,6 +41,16 @@ struct State {
     settings: bool,
 }
 thread_local! { static PET: RefCell<State> = RefCell::new(State::default()); }
+
+/// 保存最新立绘供后续重绘使用，DOM 图片由桥接原位更新。
+#[wasm_bindgen]
+pub fn companion_artwork_changed(artwork: &str) {
+    PET.with(|state| {
+        if let Some(profile) = &mut state.borrow_mut().profile {
+            profile.artwork = artwork.into();
+        }
+    });
+}
 #[wasm_bindgen(js_namespace = GalFriendsBridge)]
 extern "C" {
     fn play_audio(data: &str);
@@ -254,6 +264,7 @@ fn option(value: &str, label: &str, selected: bool) -> String {
 /// 初始化独立桌面窗口；不加载主应用页面和整库。
 #[wasm_bindgen]
 pub fn companion_start() {
+    bridge::install_panic_hook();
     PET.with(|s| {
         let mut s = s.borrow_mut();
         s.send(Request::Profile, "companion_profile", json!({}));

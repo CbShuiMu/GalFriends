@@ -1,5 +1,7 @@
 //! 展示字段是来源快照的投影；跨源关联使用明确外部 ID 或用户选择。
+mod expressions;
 mod import_progress;
+pub use expressions::{ExpressionChoice, ExpressionPreview, ExpressionScan, ExpressionVariant};
 pub use import_progress::ImportProgress;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -78,15 +80,44 @@ pub struct Character {
     pub tag_source: Option<Source>,
     pub artworks: Vec<Artwork>,
     pub snapshots: Vec<Snapshot>,
-    /// 用户确认的出演作品与 GalGear 安装条目关系。
+    /// 旧版与 GalGear 安装条目的关联，保留归档兼容。
     #[serde(default)]
     pub game_links: Vec<crate::game_library::Link>,
+    /// 按鲲 Gal 作品 ID 存放用户选择的本地目录，独立于 GalGear 库。
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub work_folders: std::collections::BTreeMap<String, String>,
     #[serde(default)]
     pub selected_art: usize,
     #[serde(default)]
     pub favorite: bool,
 }
 impl Character {
+    /// 来源提供的罗马字，用于界面展示和角色资料目录命名。
+    pub fn romanized_name(&self) -> Option<&str> {
+        self.aliases
+            .iter()
+            .filter(|alias| {
+                matches!(
+                    alias.kind.as_str(),
+                    "罗马字" | "羅馬字" | "romanized" | "latin"
+                )
+            })
+            .map(|alias| alias.name.trim())
+            .chain(
+                self.snapshots
+                    .iter()
+                    .filter(|snapshot| snapshot.source == Source::Kungal)
+                    .filter_map(|snapshot| {
+                        let data = &snapshot.data;
+                        data["character"]["latin"]
+                            .as_str()
+                            .or_else(|| data["latin"].as_str())
+                    })
+                    .map(str::trim),
+            )
+            .find(|name| !name.is_empty())
+    }
+
     /// 展示立绘；索引失效时回退首图，不丢失原始图片。
     pub fn artwork(&self) -> Option<&Artwork> {
         self.artworks
@@ -134,8 +165,12 @@ pub struct Settings {
     #[serde(default = "automatic_tags")]
     pub tag_source_automatic: bool,
     pub proxy: String,
+    /// 应用检查更新所用的 GitHub Releases 页面。
+    pub release_page: String,
     /// 用户选择的 GalGear catalog.json；空值关闭联动。
     pub galgear_library_path: String,
+    /// 库排序模式和独立角色顺序，旧库缺省保留添加顺序。
+    pub library_order: crate::library_order::Order,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -149,7 +184,9 @@ impl Default for Settings {
             tag_source: Source::Kungal,
             tag_source_automatic: true,
             proxy: String::new(),
+            release_page: crate::updates::RELEASE_PAGE.into(),
             galgear_library_path: String::new(),
+            library_order: Default::default(),
         }
     }
 }

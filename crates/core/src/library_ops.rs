@@ -52,6 +52,11 @@ pub fn apply_batch(
         }
         BatchOperation::Remove => {
             library
+                .settings
+                .library_order
+                .custom_order
+                .retain(|id| !targets.contains(id.as_str()));
+            library
                 .characters
                 .retain(|c| !targets.contains(c.id.as_str()));
             for members in library.collections.values_mut() {

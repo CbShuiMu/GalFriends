@@ -1,6 +1,9 @@
 //! 语音命令只负责角色身份、任务互斥和传输；长任务不持有角色库锁。
 use crate::commands::AppState;
-use galfriends_core::voice::{BaseModel, Input, Progress, Reply, base_models, catalog, process};
+use galfriends_core::{
+    archive, store,
+    voice::{BaseModel, Input, Progress, Reply, Update, base_models, catalog, process},
+};
 use std::{
     path::PathBuf,
     sync::{
@@ -17,6 +20,7 @@ struct ActiveTask {
     owner: String,
     request_id: u32,
     cancel: Arc<AtomicBool>,
+    character: Option<String>,
 }
 impl Tasks {
     pub(crate) fn acquire(
@@ -24,6 +28,7 @@ impl Tasks {
         owner: &str,
         request_id: u32,
         cancel: Arc<AtomicBool>,
+        character: Option<String>,
     ) -> Result<Lease, String> {
         let mut active = self.0.lock().map_err(|_| "voice.failed")?;
         if active.is_some() {
@@ -33,6 +38,7 @@ impl Tasks {
             owner: owner.into(),
             request_id,
             cancel: cancel.clone(),
+            character,
         });
         Ok(Lease {
             tasks: self.0.clone(),
@@ -45,6 +51,18 @@ impl Tasks {
             && task.request_id == request_id
         {
             task.cancel.store(true, Ordering::Relaxed);
+        }
+        Ok(())
+    }
+
+    pub(crate) fn ensure_can_remove(&self, ids: &[String]) -> Result<(), String> {
+        let active = self.0.lock().map_err(|_| "voice.failed")?;
+        if active
+            .as_ref()
+            .and_then(|task| task.character.as_ref())
+            .is_some_and(|id| ids.contains(id))
+        {
+            return Err("voice.character_in_use".into());
         }
         Ok(())
     }
@@ -128,12 +146,12 @@ pub(crate) async fn voice_download(
     let cancel = Arc::new(AtomicBool::new(false));
     let lease = app
         .state::<Tasks>()
-        .acquire("training", request_id, cancel.clone())?;
+        .acquire("training", request_id, cancel.clone(), None)?;
     let workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .ok_or("voice.failed")?
         .to_owned();
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("voice_download", move || {
         let _lease = lease;
         base_models::install(
             &workspace.join("tools/voice"),
@@ -178,7 +196,7 @@ pub(crate) async fn voice_run(
     request_id: u32,
     action: String,
     mut input: Input,
-    on_progress: Channel<Progress>,
+    on_progress: Channel<Update>,
 ) -> Result<Reply, String> {
     if window.label() != "main"
         || !matches!(
@@ -188,22 +206,33 @@ pub(crate) async fn voice_run(
     {
         return Err("voice.invalid_action".into());
     }
-    if action == "train" {
-        let state = app.state::<AppState>();
-        let library = state.library.lock().map_err(|_| "voice.failed")?;
-        let library = library.as_ref().map_err(Clone::clone)?;
-        if !library
-            .characters
-            .iter()
-            .any(|c| c.id == input.character_id)
-        {
-            return Err("voice.character_required".into());
-        }
-    }
+    let extracting = matches!(action.as_str(), "extract" | "skill_extract");
+    let writes_character_data = extracting || action == "train";
     let cancel = Arc::new(AtomicBool::new(false));
-    let lease = app
-        .state::<Tasks>()
-        .acquire("training", request_id, cancel.clone())?;
+    let lease = app.state::<Tasks>().acquire(
+        "training",
+        request_id,
+        cancel.clone(),
+        writes_character_data.then(|| input.character_id.clone()),
+    )?;
+    if action == "register" {
+        let folder = rfd::AsyncFileDialog::new()
+            .set_parent(&window)
+            .pick_folder()
+            .await
+            .ok_or("voice.cancelled")?;
+        let file = catalog_file(&app)?;
+        return crate::diagnostics::spawn_background("voice_register", move || {
+            let _lease = lease;
+            if cancel.load(Ordering::Relaxed) {
+                return Err("voice.cancelled".into());
+            }
+            catalog::register(&file, folder.path())?;
+            Ok(Reply::default())
+        })
+        .await
+        .map_err(|e| e.to_string())?;
+    }
     // 解包工具与引擎无关，继续复用同一个归档适配环境。
     let engine = if matches!(action.as_str(), "extract" | "skill_extract" | "inspect") {
         Default::default()
@@ -213,36 +242,70 @@ pub(crate) async fn voice_run(
     let config = runtime(engine);
     let worker =
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../crates/core/src/voice/python/worker.py");
-    let catalog_file = catalog_file(&app)?;
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("voice_run", move || {
         let _lease = lease;
-        if matches!(action.as_str(), "extract" | "skill_extract") && !input.game_id.is_empty() {
+        if extracting {
+            if input.game_id.is_empty() {
+                return Err("game_library.changed".into());
+            }
             input.game_dir = crate::game_library::resolve_training_game(&app, &input)?;
         }
-        let output = std::path::Path::new(&input.output_dir);
-        if action == "register" {
-            catalog::register(&catalog_file, output)?;
-            return Ok(Reply::default());
-        }
+        let output = writes_character_data
+            .then(|| character_output(&app, &input.character_id))
+            .transpose()?;
         let mut payload = serde_json::to_value(&input).map_err(|e| e.to_string())?;
-        if action == "skill_extract" {
-            payload["skill_dir"] = serde_json::json!(skill_directory(&input.catalog_path)?);
+        if let Some(output) = output {
+            payload["output_dir"] = serde_json::json!(output);
+        }
+        let _skill_lock = if action == "skill_extract" {
+            let home = crate::updates::skill_home().map_err(|e| e.key)?;
+            let lock = galfriends_core::updates::skill::read_lock(&home).map_err(|e| e.key)?;
+            let path = if lock.is_some() {
+                skill_directory(&input.catalog_path)?
+            } else {
+                legacy_skill_directory(&input.catalog_path)?
+            };
+            payload["skill_dir"] = serde_json::json!(path);
             agent::configure(&app, &input.character_id, &mut payload)?;
-        }
-        let reply = process::run(&config, &worker, &action, &payload, &cancel, |p| {
-            let _ = on_progress.send(p);
-        })?;
-        if action == "train" {
-            catalog::register(&catalog_file, output)?;
-        }
-        Ok(reply)
+            lock
+        } else {
+            None
+        };
+        process::run_with_updates(&config, &worker, &action, &payload, &cancel, |update| {
+            let _ = on_progress.send(update);
+        })
     })
     .await
     .map_err(|e| e.to_string())
     .and_then(|r| r)
 }
 
-fn skill_directory(catalog: &str) -> Result<PathBuf, String> {
+fn character_output(app: &tauri::AppHandle, id: &str) -> Result<PathBuf, String> {
+    let state = app.state::<AppState>();
+    let guard = state.library.lock().map_err(|_| "voice.failed")?;
+    let library = guard.as_ref().map_err(Clone::clone)?;
+    store::ensure_writable(&state.path)?;
+    let character = library
+        .characters
+        .iter()
+        .find(|character| character.id == id)
+        .ok_or("voice.character_required")?;
+    let root = state.path.parent().ok_or("voice.output_missing")?;
+    archive::ensure_character_directory(root, character)?;
+    catalog::output_directory(root, id)
+}
+
+pub(crate) fn skill_directory(catalog: &str) -> Result<PathBuf, String> {
+    let home = crate::updates::skill_home().map_err(|e| e.key)?;
+    if let Some(path) =
+        galfriends_core::updates::skill::managed_directory(&home).map_err(|e| e.key)?
+    {
+        return Ok(path);
+    }
+    legacy_skill_directory(catalog)
+}
+
+fn legacy_skill_directory(catalog: &str) -> Result<PathBuf, String> {
     let dev = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..");
     let mut candidates = Vec::new();
     if let Some(path) = std::env::var_os("GALFRIENDS_GALGEAR_SKILL") {
@@ -284,7 +347,10 @@ mod tests {
             owner: "training".into(),
             request_id: 8,
             cancel: cancel.clone(),
+            character: Some("active".into()),
         }))));
+        assert!(tasks.ensure_can_remove(&["active".into()]).is_err());
+        assert!(tasks.ensure_can_remove(&["another".into()]).is_ok());
         tasks.cancel(7).unwrap();
         assert!(!cancel.load(Ordering::Relaxed));
         tasks.cancel(8).unwrap();

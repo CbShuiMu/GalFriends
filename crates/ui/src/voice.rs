@@ -5,7 +5,7 @@ use crate::{
     view,
     widgets::{esc, icon, icon_button, progress_notice},
 };
-use galfriends_core::voice::{BaseModel, Engine, Input, Progress, Reply};
+use galfriends_core::voice::{BaseModel, Engine, Input, Progress, Reply, Update};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 pub(crate) struct State {
@@ -19,8 +19,53 @@ pub(crate) struct State {
     pub completed: Option<String>,
     pub download_open: bool,
     pub download_engine: Option<Engine>,
+    console: TrainingConsole,
     notice_id: u32,
 }
+
+#[derive(Default)]
+struct TrainingConsole {
+    request_id: Option<u32>,
+    output: String,
+    result: Option<&'static str>,
+}
+
+impl TrainingConsole {
+    fn append(&mut self, output: &str) {
+        let mut chars = output.chars().peekable();
+        while let Some(ch) = chars.next() {
+            match ch {
+                '\x1b' if chars.next_if_eq(&'[').is_some() => {
+                    // 上游终端颜色和光标定位序列不应混入可复制的日志文本。
+                    while let Some(code) = chars.next_if(|code| (' '..='~').contains(code)) {
+                        if ('@'..='~').contains(&code) {
+                            break;
+                        }
+                    }
+                }
+                '\r' if chars.peek() != Some(&'\n') => self.output.push('\n'),
+                '\n' | '\t' => self.output.push(ch),
+                ch if !ch.is_control() => self.output.push(ch),
+                _ => {}
+            }
+        }
+        const LIMIT: usize = 24 * 1024;
+        if self.output.len() > LIMIT {
+            let start = self.output.ceil_char_boundary(self.output.len() - LIMIT);
+            self.output.drain(..start);
+        }
+    }
+}
+
+impl State {
+    pub(crate) fn start_training(&mut self, request_id: u32) {
+        self.console = TrainingConsole {
+            request_id: Some(request_id),
+            ..Default::default()
+        };
+    }
+}
+
 impl Default for State {
     fn default() -> Self {
         Self {
@@ -38,6 +83,7 @@ impl Default for State {
             completed: None,
             download_open: false,
             download_engine: None,
+            console: TrainingConsole::default(),
             notice_id: 0,
         }
     }
@@ -77,10 +123,18 @@ pub(crate) fn handle(a: &mut App, action: &str, value: &str) -> bool {
             }
             return true;
         }
-        "voice-register" if !a.voice.input.output_dir.trim().is_empty() => "register",
+        "voice-register" => "register",
         "voice-refresh" => "status",
-        "voice-extract" => "extract",
-        "voice-skill-extract" => "skill_extract",
+        "voice-extract" => {
+            let Some(action) = identification_action(
+                &a.voice.input.manifest,
+                crate::game_library::has_selected_game(a),
+            ) else {
+                return true;
+            };
+            action
+        }
+        "voice-skill-extract" if crate::game_library::has_selected_game(a) => "skill_extract",
         "voice-inspect" => "inspect",
         "voice-train" => "train",
         "voice-cancel" => {
@@ -124,14 +178,10 @@ pub(crate) fn input(a: &mut App, name: &str, value: &str) -> bool {
         }
         "voice-character" => {
             a.voice.input.character_id = value.into();
+            a.voice.console = TrainingConsole::default();
             crate::game_library::clear_source(a);
         }
         "voice-linked-game" => crate::game_library::select_game(a, value),
-        "voice-game" => {
-            crate::game_library::clear_source(a);
-            a.voice.input.game_dir = value.into();
-        }
-        "voice-output" => a.voice.input.output_dir = value.into(),
         "voice-manifest" => {
             a.voice.input.manifest = value.into();
             a.voice.reply.speakers.clear();
@@ -176,14 +226,23 @@ pub(crate) fn resolve(a: &mut App, id: u32, success: bool, payload: &str) -> boo
                 a.voice.reply.ready = reply.ready;
                 a.voice.loaded = true;
             } else if action == "train" {
+                a.voice.console.result = Some("voice.completed");
                 a.voice.reply.artifact = reply.artifact;
                 a.voice.reply.samples = reply.samples;
                 a.voice.reply.excluded = reply.excluded;
             } else if matches!(action.as_str(), "extract" | "skill_extract" | "inspect") {
                 a.voice.reply.artifact.clear();
                 a.voice.reply.samples = reply.samples;
-                a.voice.input.manifest = reply.manifest.clone();
-                a.voice.input.speaker.clear();
+                let previous_speaker = (a.voice.input.manifest == reply.manifest)
+                    .then_some(a.voice.input.speaker.as_str());
+                a.voice.input.speaker = reply
+                    .speakers
+                    .iter()
+                    .find(|speaker| Some(speaker.name.as_str()) == previous_speaker)
+                    .or_else(|| (reply.speakers.len() == 1).then(|| &reply.speakers[0]))
+                    .map(|speaker| speaker.name.clone())
+                    .unwrap_or_default();
+                a.voice.input.manifest = reply.manifest;
                 a.voice.reply.speakers = reply.speakers;
                 a.voice.reply.excluded = reply.excluded;
             }
@@ -191,7 +250,18 @@ pub(crate) fn resolve(a: &mut App, id: u32, success: bool, payload: &str) -> boo
                 a.voice.completed = Some(action);
             }
         }
-        Err(e) => a.voice.error = Some(e),
+        Err(e) => {
+            if action == "train" {
+                if e == "voice.cancelled" {
+                    a.voice.console.result = Some("voice.console_cancelled");
+                } else {
+                    a.voice.console.result = Some("voice.failed");
+                    a.voice.console.append("\n");
+                    a.voice.console.append(&e);
+                }
+            }
+            a.voice.error = Some(e);
+        }
     }
     true
 }
@@ -209,9 +279,16 @@ pub fn voice_progress(id: u32, payload: &str) {
         {
             return;
         }
-        if let Ok(progress) = serde_json::from_str(payload) {
-            a.voice.progress = progress;
-            bridge::render_voice_progress(id, &progress_message(&a));
+        match serde_json::from_str(payload) {
+            Ok(Update::Phase(progress)) => {
+                a.voice.progress = progress;
+                bridge::render_voice_progress(id, &progress_message(&a));
+            }
+            Ok(Update::Log { log }) if a.voice.console.request_id == Some(id) => {
+                a.voice.console.append(&log);
+                bridge::render_voice_log(id, &a.voice.console.output);
+            }
+            _ => {}
         }
     });
 }
@@ -220,6 +297,8 @@ pub(crate) fn render(a: &App) -> String {
     let s = &a.voice;
     let busy = s.pending.is_some();
     let disabled = if busy { "disabled" } else { "" };
+    let can_extract = !busy && crate::game_library::has_selected_game(a);
+    let can_identify = !busy && identification_action(&s.input.manifest, can_extract).is_some();
     let field = |key: &str, name: &str, value: &str| {
         format!(
             r#"<label class="voice-field"><span>{}</span><input data-input="voice-{name}" value="{}" {disabled} autocomplete="off" spellcheck="false"></label>"#,
@@ -228,7 +307,7 @@ pub(crate) fn render(a: &App) -> String {
         )
     };
     let mut h = format!(
-        r#"<div class="voice-workbench"><section class="settings-card voice-runtime"><div>{}<select data-input="voice-engine" aria-label="{}" {disabled}>{}</select><span class="voice-status">{}</span></div><div class="voice-tools">{}{}{}</div></section><div class="voice-columns"><section class="settings-card"><h2>{}</h2><p>{}</p>{}{}<div class="voice-actions">{}{}{}</div><p>{}</p></section><section class="settings-card"><h2>{}</h2><p>{}</p>{}<div class="voice-actions">{}</div>"#,
+        r#"<div class="voice-workbench"><section class="settings-card voice-runtime"><div>{}<select data-input="voice-engine" aria-label="{}" {disabled}>{}</select><span class="voice-status">{}</span></div><div class="voice-tools">{}{}{}</div></section><div class="voice-columns"><section class="settings-card voice-game"><header class="voice-card-header"><h2>{}</h2>{}</header><p>{}</p>{}{}<p>{}</p><div class="voice-actions">{}{}</div></section><section class="settings-card"><h2>{}</h2><p>{}</p>{}<div class="voice-actions">{}</div>"#,
         icon("mic"),
         a.t("voice.engine"),
         Engine::ALL
@@ -258,54 +337,43 @@ pub(crate) fn render(a: &App) -> String {
         ),
         task(a),
         a.t("voice.source"),
+        crate::game_library::voice_tools(a),
         a.t("voice.source_hint"),
-        format_args!(
-            "{}{}{}",
-            character_select(a, disabled),
-            crate::game_library::voice_select(a),
-            field("voice.game", "game", &s.input.game_dir)
-        ),
-        field("voice.output", "output", &s.input.output_dir),
+        character_select(a, disabled),
+        crate::game_library::voice_select(a),
+        a.t("voice.skill_hint"),
         icon_button(
             "voice-register",
             "",
             a.t("voice.register"),
             "create_new_folder",
             "icon-button",
-            busy || s.input.output_dir.trim().is_empty()
-        ),
-        icon_button(
-            "voice-extract",
-            "",
-            a.t("voice.extract"),
-            "folder_open",
-            "button",
-            busy || s.input.game_dir.is_empty() || s.input.output_dir.is_empty()
+            busy
         ),
         icon_button(
             "voice-skill-extract",
             "",
             a.t("voice.skill_extract"),
-            "mic",
+            "upload",
             "button",
-            busy || s.input.character_id.is_empty()
-                || s.input.game_dir.is_empty()
-                || s.input.output_dir.is_empty()
+            !can_extract
         ),
-        a.t("voice.skill_hint"),
         a.t("voice.training"),
         a.t("voice.training_hint"),
         field("voice.manifest", "manifest", &s.input.manifest),
         icon_button(
-            "voice-inspect",
+            "voice-extract",
             "",
-            a.t("voice.inspect"),
-            "refresh",
+            a.t("voice.extract"),
+            "linked_services",
             "icon-button",
-            busy || s.input.manifest.is_empty()
+            !can_identify
         )
     );
-    h.push_str(&format!(r#"<label class="voice-field"><span>{}</span><select data-input="voice-speaker" {disabled}><option value="">{}</option>"#,a.t("voice.speaker"),a.t("voice.choose")));
+    h.push_str(&format!(
+        r#"<label class="voice-field"><span>{}</span><select data-input="voice-speaker" data-choice-allow-empty {disabled}>"#,
+        a.t("voice.speaker")
+    ));
     for speaker in &s.reply.speakers {
         h.push_str(&option(
             &speaker.name,
@@ -316,7 +384,7 @@ pub(crate) fn render(a: &App) -> String {
     h.push_str(&format!(r#"</select></label><div class="voice-options"><label class="voice-field"><span>{}</span><select data-input="voice-language" {disabled}>"#,a.t("voice.language")));
     h.push_str(&option("ja", "日本語", &s.input.language));
     h.push_str(&format!(r#"</select></label><label class="voice-field"><span>{}</span><input type="number" min="1" max="100" data-input="voice-epochs" value="{}" {disabled}></label></div><div class="voice-actions">{}</div>"#,a.t("voice.epochs"),s.input.epochs,
-        icon_button("voice-train", "", a.t("voice.train"), "mic", "button primary", busy || !s.reply.ready || s.input.character_id.is_empty() || s.input.speaker.is_empty() || s.input.output_dir.is_empty() || !(1..=100).contains(&s.input.epochs))));
+        icon_button("voice-train", "", a.t("voice.train"), "mic", "button primary", busy || !s.reply.ready || s.input.character_id.is_empty() || s.input.speaker.is_empty() || s.input.manifest.is_empty() || !(1..=100).contains(&s.input.epochs))));
     if !s.reply.artifact.is_empty() {
         h.push_str(&format!(
             r#"<p class="voice-path">{} · {}</p>"#,
@@ -324,8 +392,41 @@ pub(crate) fn render(a: &App) -> String {
             esc(&s.reply.artifact)
         ));
     }
-    h.push_str("</section></div></div>");
+    h.push_str("</section>");
+    h.push_str(&training_console(a));
+    h.push_str("</div></div>");
     h
+}
+
+fn identification_action(manifest: &str, linked_game: bool) -> Option<&'static str> {
+    if !manifest.trim().is_empty() {
+        Some("inspect")
+    } else if linked_game {
+        Some("skill_extract")
+    } else {
+        None
+    }
+}
+
+fn training_console(a: &App) -> String {
+    let console = &a.voice.console;
+    let request_id = console
+        .request_id
+        .map(|id| id.to_string())
+        .unwrap_or_default();
+    let status = if let Some(result) = console.result {
+        a.t(result).to_owned()
+    } else if console.request_id.is_some() {
+        progress_message(a)
+    } else {
+        a.t("voice.console_idle").to_owned()
+    };
+    format!(
+        r#"<section class="settings-card voice-console" data-voice-console="{request_id}"><h2 id="voice-console-title">{}</h2><div class="voice-console-window"><div class="voice-console-status">{}</div><pre id="voice-console-output" tabindex="0" aria-labelledby="voice-console-title">{}</pre></div></section>"#,
+        a.t("voice.console"),
+        esc(&status),
+        esc(&console.output),
+    )
 }
 
 pub(crate) fn download_dialog(a: &App) -> String {
@@ -388,6 +489,7 @@ pub(crate) fn notices(a: &App) -> String {
                 | "voice.skill_failed"
                 | "game_library.changed"
                 | "game_library.unavailable"
+                | "game_library.invalid_folder"
                 | "voice.cancelled"
                 | "voice.timeout"
                 | "voice.runtime_missing"
@@ -503,9 +605,8 @@ fn progress_message(a: &App) -> String {
 }
 fn character_select(a: &App, disabled: &str) -> String {
     let mut html = format!(
-        r#"<label class="voice-field"><span>{}</span><select data-input="voice-character" {disabled}><option value="">{}</option>"#,
-        a.t("voice.character"),
-        a.t("voice.choose")
+        r#"<label class="voice-field"><span>{}</span><select data-input="voice-character" data-choice-allow-empty {disabled}>"#,
+        a.t("voice.character")
     );
     for character in &a.library.characters {
         html.push_str(&option(
@@ -528,20 +629,72 @@ fn option(value: &str, label: &str, selected: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{notices, render, resolve};
+    use super::{identification_action, notices, render, resolve};
     use crate::state::App;
 
     #[test]
-    fn errors_and_source_paths_are_escaped_and_all_states_are_localized() {
+    fn identification_reuses_mapping_and_requires_linked_game_for_ai_extraction() {
+        assert_eq!(
+            identification_action("existing.json", false),
+            Some("inspect")
+        );
+        assert_eq!(
+            identification_action("existing.json", true),
+            Some("inspect")
+        );
+        assert_eq!(identification_action("  ", true), Some("skill_extract"));
+        assert_eq!(identification_action("", false), None);
+    }
+
+    #[test]
+    fn extraction_populates_speakers_and_selects_only_an_unambiguous_result() {
+        let mut app = App::default();
+        app.voice.pending = Some((7, "skill_extract".into()));
+        let single =
+            r#"{"manifest":"map.json","speakers":[{"name":"刹那","clips":123}],"samples":123}"#;
+        assert!(!resolve(&mut app, 6, true, single));
+        assert!(app.voice.input.manifest.is_empty());
+        assert!(resolve(&mut app, 7, true, single));
+        assert_eq!(app.voice.input.manifest, "map.json");
+        assert_eq!(app.voice.input.speaker, "刹那");
+        assert!(render(&app).contains(r#"<option value="刹那" selected>刹那 · 123</option>"#));
+        assert!(app.voice.pending.is_none());
+
+        let multiple = r#"{"manifest":"map.json","speakers":[{"name":"刹那","clips":124},{"name":"悠果","clips":99}],"samples":223}"#;
+        app.voice.pending = Some((8, "inspect".into()));
+        assert!(resolve(&mut app, 8, true, multiple));
+        assert_eq!(app.voice.input.speaker, "刹那");
+        assert_eq!(app.voice.reply.speakers[0].clips, 124);
+        app.voice.input.manifest.clear();
+        app.voice.pending = Some((9, "skill_extract".into()));
+        assert!(resolve(&mut app, 9, true, multiple));
+        assert!(app.voice.input.speaker.is_empty());
+        assert_eq!(app.voice.reply.speakers.len(), 2);
+        app.voice.pending = Some((10, "inspect".into()));
+        assert!(resolve(&mut app, 10, false, "voice.invalid_manifest"));
+        assert_eq!(app.voice.input.manifest, "map.json");
+        assert_eq!(app.voice.reply.speakers.len(), 2);
+    }
+
+    #[test]
+    fn training_output_is_escaped_and_manual_directory_inputs_are_absent() {
         let mut app = App::default();
         app.voice.input.game_dir = r#"F:\game<bad>""#.into();
+        app.voice.start_training(4);
+        app.voice
+            .console
+            .append("\x1b[32mstep <tag>\x1b[0m\rnext\r\n");
         for language in ["zh-CN", "ja-JP", "en-US"] {
             app.library.settings.language = language.into();
             app.voice.error = Some("Unknown model error <script>".into());
             let page = render(&app);
             assert!(notices(&app).contains("&lt;script&gt;"));
-            assert!(page.contains("&lt;bad&gt;&quot;"));
+            assert!(page.contains("step &lt;tag&gt;\nnext\n"));
+            assert!(!page.contains("[32m"));
+            assert!(!page.contains("F:\\game"));
+            assert!(!page.contains("data-input=\"voice-output\""));
             assert!(!page.contains("<h1"));
+            assert!(!page.contains(r#"<option value="">"#));
             assert!(!page.contains("value=\"zh\""));
             app.voice.pending = Some((4, "train".into()));
             app.voice.progress.stage = "unknown".into();

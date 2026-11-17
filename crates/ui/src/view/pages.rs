@@ -1,13 +1,16 @@
 use crate::{
     library,
     state::App,
-    widgets::{esc, favorite_button, icon, icon_button, source_icon},
+    widgets::{esc, icon, icon_button, source_icon},
 };
 pub(super) fn home(a: &App) -> String {
     let Some(c) = a.current() else {
         return format!(
-            r#"<div class="empty-state"><p>{}</p><button class="button primary" data-action="search">{}</button></div>"#,
-            a.t("empty"),
+            r#"<section class="home-empty" aria-labelledby="home-empty-title"><div class="home-empty-content">{}<h1 id="home-empty-title">{}</h1><p>{}</p><button type="button" class="button primary home-empty-search" data-action="search">{}{}</button></div></section>"#,
+            include_str!("home-empty.svg"),
+            a.t("home.empty_title"),
+            a.t("home.empty_description"),
+            icon("search"),
             a.t("search")
         );
     };
@@ -25,33 +28,20 @@ pub(super) fn home(a: &App) -> String {
         r#"<section class="character-home" data-character="{}"><div class="home-backdrop" data-cover="{}" aria-hidden="true"></div><div class="home-shelf" data-focus-scroll="managed">{shelf}</div><div class="home-feature"><div class="home-copy"><div class="home-name-reading">{}</div><h1>{}</h1><p class="home-description">{}</p><div class="actions"><button class="button primary" data-action="detail" data-value="{}">{} {}</button>{}</div></div></div></section>"#,
         esc(&c.id),
         esc(cover),
-        esc(c
-            .aliases
-            .iter()
-            .find(|n| n.kind == "罗马字" || n.kind == "romanized")
-            .map(|n| n.name.as_str())
-            .unwrap_or_default()),
+        esc(c.romanized_name().unwrap_or_default()),
         esc(&c.name),
         esc(&c.summary),
         esc(&c.id),
         icon("person"),
         a.t("details"),
-        favorite_button(
-            &c.id,
-            c.favorite,
-            a.t(if c.favorite {
-                "unfavorite_action"
-            } else {
-                "favorite"
-            }),
-            a.pending.is_some()
-        )
+        library::favorite_control(a, c)
     )
 }
 pub(super) fn about(a: &App) -> String {
     format!(
-        r#"<section class="about-page"><div class="about-mark">{}</div><h1>GalFriends</h1><p class="version">0.1.0</p><p>{}</p><hr><p>{}</p><p>{}</p></section>"#,
+        r#"<section class="about-page"><div class="about-mark">{}</div><h1>GalFriends</h1><p class="version">{}</p><p>{}</p><hr><p>{}</p><p>{}</p></section>"#,
         crate::widgets::brand(),
+        galfriends_core::updates::VERSION,
         a.t("about_text"),
         a.t("credits"),
         a.t("sample")

@@ -3,6 +3,7 @@ use serde_json::{Value, json};
 #[derive(Clone, Copy)]
 pub(crate) enum Kind {
     Load,
+    LibraryOrder,
     Save,
     Favorite,
     BatchFavorite,
@@ -13,11 +14,15 @@ pub(crate) enum Kind {
     Search,
     Import,
     Artwork,
+    ExpressionPreview,
+    ExpressionApply,
     Selection,
     Open,
+    SaveReleasePage,
     Environment,
     Tags,
     TagSource,
+    WorkFolder,
 }
 pub(crate) fn send(a: &mut App, kind: Kind, command: &str, payload: Value) {
     if matches!(kind, Kind::Import) {
@@ -62,6 +67,25 @@ pub(crate) fn connection(
     bridge::request(a.next_id, command, &payload.to_string());
 }
 
+pub(crate) fn check_app_update(a: &mut App, startup: bool) {
+    a.next_id = a.next_id.wrapping_add(1);
+    a.preferences.updates.app_request = Some((a.next_id, startup));
+    bridge::request(a.next_id, "check_app_update", "{}");
+}
+
+pub(crate) fn check_skill_update(a: &mut App) {
+    a.next_id = a.next_id.wrapping_add(1);
+    a.preferences.updates.skill_request = Some(a.next_id);
+    bridge::request(a.next_id, "check_skill_update", "{}");
+}
+
+pub(crate) fn update_job(a: &mut App, command: &str, mut payload: Value) -> u32 {
+    a.next_id = a.next_id.wrapping_add(1);
+    payload["requestId"] = json!(a.next_id);
+    bridge::request(a.next_id, command, &payload.to_string());
+    a.next_id
+}
+
 pub(crate) fn voice(a: &mut App, action: &str) {
     send_voice(
         a,
@@ -79,6 +103,9 @@ pub(crate) fn voice_download(a: &mut App, model: galfriends_core::voice::BaseMod
 fn send_voice(a: &mut App, action: &str, command: &str, mut payload: Value) {
     a.next_id = a.next_id.wrapping_add(1);
     a.voice.pending = Some((a.next_id, action.to_owned()));
+    if action == "train" {
+        a.voice.start_training(a.next_id);
+    }
     a.voice.error = None;
     a.voice.completed = None;
     a.voice.progress = Default::default();

@@ -203,8 +203,9 @@ mod tests {
             sha256: format!("{id}-{}-digest", emotion.code()),
         };
         for id in ["first-character", "second-character"] {
-            let path =
-                storage::binding_path(root.path(), id).with_file_name("emotion-references.json");
+            let path = storage::binding_path(root.path(), id)
+                .unwrap()
+                .with_file_name("emotion-references.json");
             for emotion in Emotion::ALL {
                 // 和选用命令一样，每次重新读取并提交单个情绪，避免覆盖其他选择。
                 let mut config = load(&path, id, "bound-model").unwrap();
@@ -213,8 +214,9 @@ mod tests {
             }
         }
         for id in ["first-character", "second-character"] {
-            let path =
-                storage::binding_path(root.path(), id).with_file_name("emotion-references.json");
+            let path = storage::binding_path(root.path(), id)
+                .unwrap()
+                .with_file_name("emotion-references.json");
             let reopened = load(&path, id, "different-inference-model").unwrap();
             assert_eq!(reopened.source_dir, "bound-model");
             assert_eq!(reopened.selected.len(), 5);

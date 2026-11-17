@@ -1,5 +1,5 @@
 //! 子进程生命周期、输出上限和取消；不读取 GalGear 配置或凭据。
-use super::Progress;
+use super::{Progress, Update};
 use std::{
     io::{BufRead, BufReader, Read, Write},
     path::Path,
@@ -29,6 +29,22 @@ pub fn run<I: serde::Serialize, R: serde::de::DeserializeOwned>(
     cancelled: &AtomicBool,
     progress: impl Fn(Progress),
 ) -> Result<R, String> {
+    run_with_updates(runtime, worker, action, input, cancelled, |update| {
+        if let Update::Phase(phase) = update {
+            progress(phase);
+        }
+    })
+}
+
+/// 如为训练任务，同时转发训练器的实际控制台输出。
+pub fn run_with_updates<I: serde::Serialize, R: serde::de::DeserializeOwned>(
+    runtime: &Path,
+    worker: &Path,
+    action: &str,
+    input: &I,
+    cancelled: &AtomicBool,
+    update: impl Fn(Update),
+) -> Result<R, String> {
     let config: serde_json::Value = serde_json::from_slice(
         &std::fs::read(runtime).map_err(|e| format!("voice.runtime_missing: {e}"))?,
     )
@@ -42,6 +58,7 @@ pub fn run<I: serde::Serialize, R: serde::de::DeserializeOwned>(
         .arg(action)
         .arg(std::process::id().to_string())
         .env("PYTHONUTF8", "1")
+        .env("PYTHONIOENCODING", "utf-8")
         .env("PYTHONDONTWRITEBYTECODE", "1")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -70,20 +87,49 @@ pub fn run<I: serde::Serialize, R: serde::de::DeserializeOwned>(
     }
     let stdout = child.stdout.take().ok_or("Missing worker stdout")?;
     let stderr = child.stderr.take().ok_or("Missing worker stderr")?;
+    let training = action == "train";
     let (sender, receiver) = mpsc::sync_channel(64);
     let reader = std::thread::spawn(move || {
-        for line in BufReader::new(stdout.take(8 * 1024 * 1024)).lines() {
-            if sender.send(line).is_err() {
-                break;
+        let mut stream = BufReader::new(stdout);
+        let mut line = Vec::new();
+        loop {
+            line.clear();
+            // 限制单条协议记录。长训练可持续写日志，不消耗固定的总输出额度。
+            const LIMIT: usize = 8 * 1024 * 1024;
+            match (&mut stream)
+                .take((LIMIT + 1) as u64)
+                .read_until(b'\n', &mut line)
+            {
+                Ok(0) => break,
+                Ok(size) if size <= LIMIT => {
+                    if sender
+                        .send(Ok(String::from_utf8_lossy(&line).into_owned()))
+                        .is_err()
+                    {
+                        break;
+                    }
+                }
+                Ok(_) => {
+                    let _ = sender.send(Err("Voice worker output record is too large".to_owned()));
+                    break;
+                }
+                Err(error) => {
+                    let _ = sender.send(Err(error.to_string()));
+                    break;
+                }
             }
         }
     });
+    let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel(64);
     let errors = std::thread::spawn(move || {
         let mut tail = String::new();
         // 持续排空 stderr，避免管道反压阻塞训练；只保留最后的诊断。
         for line in BufReader::new(stderr).lines() {
             match line {
                 Ok(line) => {
+                    if training && !line.trim().is_empty() {
+                        let _ = diagnostic_sender.try_send(format!("{line}\n"));
+                    }
                     tail.push_str(&line);
                     tail.push('\n');
                     if tail.len() > 8192 {
@@ -107,13 +153,28 @@ pub fn run<I: serde::Serialize, R: serde::de::DeserializeOwned>(
     let mut worker_error = None;
     let status = loop {
         let output_finished = reader.is_finished();
-        while let Ok(line) = receiver.try_recv() {
-            let line = line.map_err(|e| e.to_string())?;
+        let mut drained = false;
+        for log in diagnostic_receiver.try_iter().take(64) {
+            update(Update::Log { log });
+        }
+        for _ in 0..64 {
+            let Ok(line) = receiver.try_recv() else {
+                drained = true;
+                break;
+            };
+            let line = line?;
             if let Ok(value) = serde_json::from_str::<serde_json::Value>(&line) {
                 match value["event"].as_str() {
                     Some("progress") => {
                         if let Ok(p) = serde_json::from_value(value["data"].clone()) {
-                            progress(p);
+                            update(Update::Phase(p));
+                        }
+                    }
+                    Some("log") if training => {
+                        if let Some(log) = value["data"].as_str() {
+                            update(Update::Log {
+                                log: log.to_owned(),
+                            });
                         }
                     }
                     Some("result") => {
@@ -126,12 +187,15 @@ pub fn run<I: serde::Serialize, R: serde::de::DeserializeOwned>(
                         worker_error = Some(
                             value["detail"]
                                 .as_str()
+                                .or_else(|| value["data"].as_str())
                                 .unwrap_or("voice.failed")
                                 .to_owned(),
                         )
                     }
                     _ => {}
                 }
+            } else if training && !line.trim().is_empty() {
+                update(Update::Log { log: line });
             }
         }
         let timeout = if action == "speak" { 600 } else { 48 * 3600 };
@@ -160,7 +224,7 @@ pub fn run<I: serde::Serialize, R: serde::de::DeserializeOwned>(
         }
         if let Some(status) = child.try_wait().map_err(|e| e.to_string())? {
             // 输出线程可能还在处理进程退出前的最后一条结果。
-            if output_finished {
+            if output_finished && drained {
                 break status;
             }
         }
@@ -168,6 +232,9 @@ pub fn run<I: serde::Serialize, R: serde::de::DeserializeOwned>(
     };
     let _ = reader.join();
     let diagnostic = errors.join().unwrap_or_default();
+    for log in diagnostic_receiver.try_iter() {
+        update(Update::Log { log });
+    }
     if let Some(error) = worker_error {
         return Err(error);
     }

@@ -1,5 +1,6 @@
 //! Bangumi 立绘下载、去背景与超分。原图和派生图分开，处理成功后才返回结果。
 mod cutout;
+pub mod expressions;
 use base64::{Engine, engine::general_purpose::STANDARD};
 pub use cutout::{
     CutoutEngine, ProcessingStage, prepare, prepare_with_progress, replace_processed,

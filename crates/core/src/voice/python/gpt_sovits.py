@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import sys
 import time
-from common import checked_path, new_run, progress, separate_output, write_json
+from common import checked_path, emit, new_run, progress, separate_output, write_json
 from extract import read_manifest, digest
 from dataset import select_samples
 
@@ -128,7 +128,7 @@ def official_step(runtime, root, script, stage, args=()):
     progress(stage)
     started = time.time()
     # 上游 i18n 用 relpath(__file__)；Windows 上 cwd 不能与源码跨盘。
-    # 临时工作区留在源码同盘的独立目录，训练配置和最终产物仍全部指向用户输出盘。
+    # 临时工作区留在源码同盘的独立目录，训练配置和最终产物仍指向角色目录。
     work = checked_path(str(Path(runtime['source']).parent/'gpt-sovits-work'/root.name))
     work.mkdir(parents=True, exist_ok=True)
     entry = (Path(__file__).with_name('gpt_sovits_gpt.py') if script == 'GPT_SoVITS/s1_train.py'
@@ -136,16 +136,36 @@ def official_step(runtime, root, script, stage, args=()):
     log_path = checked_path(str(root/(stage+'.log')))
     if log_path.exists():
         log_path.rename(root/f'{stage}-{time.time_ns()}.log')
-    with log_path.open('xb') as log:
-        result = subprocess.run([runtime['python'], '-B', '-u', str(entry), *args],
-                       cwd=work, env=environment(runtime, root), stdout=log, stderr=subprocess.STDOUT,
-                       check=False, timeout=48*3600,
-                       creationflags=0x08000000 if os.name == 'nt' else 0)
+    command = [runtime['python'], '-B', '-u', str(entry), *args]
+    with log_path.open('xb') as log, subprocess.Popen(
+        command, cwd=work, env=environment(runtime, root), stdout=log, stderr=subprocess.STDOUT,
+        creationflags=0x08000000 if os.name == 'nt' else 0,
+    ) as process, log_path.open('r', encoding='utf-8', errors='replace') as live:
+        deadline = time.monotonic() + 48*3600
+        try:
+            while True:
+                chunk = live.read(4096)
+                if chunk:
+                    emit('log', chunk)
+                elif process.poll() is not None:
+                    # 进程退出与本次读取之间仍可能写入最后一段输出。
+                    if chunk := live.read(4096):
+                        emit('log', chunk)
+                        continue
+                    break
+                if time.monotonic() > deadline:
+                    raise subprocess.TimeoutExpired(command, 48*3600)
+                if not chunk:
+                    time.sleep(0.15)
+        finally:
+            if process.poll() is None:
+                process.kill()
+        exit_code = process.returncode
     timings_path = root/'stage-timings.json'
     timings = json.loads(timings_path.read_text('utf-8')) if timings_path.exists() else []
-    timings.append(dict(stage=stage, started_at=started, finished_at=time.time(), exit_code=result.returncode))
+    timings.append(dict(stage=stage, started_at=started, finished_at=time.time(), exit_code=exit_code))
     write_json(timings_path, timings)
-    if result.returncode:
+    if exit_code:
         with (root/(stage+'.log')).open('rb') as log:
             log.seek(max(0, log.seek(0, 2)-3000))
             detail = log.read().decode('utf-8', errors='replace')

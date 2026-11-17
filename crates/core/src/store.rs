@@ -4,7 +4,9 @@ use std::{fs, io::Write, path::Path};
 mod deletion;
 mod favorites;
 mod index;
+mod order;
 pub use favorites::set_favorites;
+pub use order::{reorder_characters, set_library_sort};
 #[cfg(test)]
 mod index_tests;
 /// 仅首次不存在时加载样本；损坏文件报错，不重置用户库。
@@ -164,7 +166,14 @@ pub fn load_for_migration(path: &Path, legacy: &Path) -> Result<Library, String>
     crate::archive::check_entry(path.parent().ok_or("Missing data directory")?)?;
     crate::archive::check_entry(path)?;
     if path.exists() || deletion::pending(path)?.is_some() || !legacy.exists() {
-        load(path)
+        let library = load(path)?;
+        if path.exists() {
+            crate::archive::migrate_directories(
+                path.parent().ok_or("Missing data directory")?,
+                &library.characters,
+            )?;
+        }
+        Ok(library)
     } else {
         load(legacy)
     }

@@ -6,11 +6,14 @@ license.workspace = true
 
 [features]
 default = ["desktop"]
-desktop = ["dep:reqwest", "dep:tempfile", "dep:scraper", "dep:image", "dep:base64", "dep:sha2", "dep:getrandom", "dep:windows-sys"]
+desktop = ["dep:reqwest", "dep:tempfile", "dep:scraper", "dep:image", "dep:base64", "dep:sha2", "dep:getrandom", "dep:windows-sys", "dep:semver", "dep:zip"]
 
 [dependencies]
 serde.workspace = true
 serde_json.workspace = true
+semver = { version = "1", optional = true }
+# 与 GalGear 使用同一 ZIP 解析器，用于校验并解包 Skill 快照。
+zip = { version = "4.6.1", default-features = false, features = ["deflate-flate2-zlib-rs"], optional = true }
 galfriends-i18n.workspace = true
 sha2 = { version = "0.10", optional = true }
 getrandom = { version = "0.3", optional = true }

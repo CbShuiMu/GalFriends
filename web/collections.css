@@ -5,96 +5,8 @@
 .folder-editor{display:grid;gap:12px;margin-top:20px}.folder-editor label{font-size:calc(var(--ui-font)*.875);color:var(--subtle)}.dialog-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:22px}.dialog-actions .button{padding-inline:18px}.game-membership-picker+footer{margin-top:12px}.editor-dialog #picker-query{width:100%}.editor-dialog ul{padding-left:22px;line-height:1.9;overflow-wrap:anywhere}
 @media(max-width:900px){.collection-bar{flex-wrap:wrap}.folder-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
 
-/* GalGear 的收藏夹选择器使用固定页首、独立滚动内容和右下角关闭按钮。 */
-.editor-overlay.folder-picker-overlay {
-  background: var(--palette-46304035);
-  backdrop-filter: none;
-}
-
-.editor-dialog.folder-picker-dialog {
-  display: flex;
-  flex-direction: column;
-  width: min(520px, 100%);
-  max-height: calc(100dvh - 60px);
-  padding: 0;
-  overflow: hidden;
-  border-radius: 15px;
-  box-shadow: 0 24px 70px var(--palette-59405425);
-}
-
-.folder-picker-dialog > header,
-.folder-picker-dialog > footer {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  border-color: var(--surface-line);
-  border-style: solid;
-  border-width: 0;
-}
-
-.folder-picker-dialog > header {
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px 24px;
-  border-bottom-width: 1px;
-}
-
-.folder-picker-dialog h2 {
-  font-size: calc(var(--ui-font) * 1.15);
-  font-weight: 600;
-}
-
-.folder-picker-body {
-  min-height: 0;
-  padding: 20px 24px 24px;
-  overflow: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  font-size: calc(var(--ui-font) * .9);
-  line-height: 1.8;
-}
-
-.folder-picker-body > p {
-  margin-bottom: 18px;
-}
-
-.folder-picker-body .edit-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin: 12px 0;
-  color: var(--button-color);
-  font-size: calc(var(--ui-font) * .8571);
-}
-
-.folder-picker-body input {
-  min-width: 0;
-  border: 1px solid var(--surface-line);
-  border-radius: 6px;
-  padding: 8px 10px;
-  color: var(--button-color);
-  line-height: 1.5;
-}
-
-.folder-picker-dialog :is(input, button):focus-visible {
-  outline-color: var(--focus-ring);
-}
-
-.folder-picker {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.folder-picker-dialog .button {
-  height: auto;
-  min-height: 32px;
-  font-size: calc(var(--ui-font) * .9286);
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.app-shell .folder-picker-dialog .folder-picker-option {
+.folder-picker { display: flex; flex-direction: column; gap: 6px; }
+.app-shell .library-dialog .folder-picker-option {
   justify-content: flex-start;
   padding: 10px 12px;
   border-radius: 6px;
@@ -102,21 +14,5 @@
   text-align: left;
   line-height: inherit;
 }
-
-.folder-picker-dialog > footer {
-  justify-content: flex-end;
-  padding: 16px 24px;
-  border-top-width: 1px;
-}
-
-.folder-picker-dialog > footer .button {
-  padding: 7px 13px;
-}
-
-@media (max-width: 560px) {
-  .editor-overlay.folder-picker-overlay { padding: 16px; }
-  .editor-dialog.folder-picker-dialog { max-height: calc(100dvh - 32px); }
-  .folder-picker-dialog > header,
-  .folder-picker-body,
-  .folder-picker-dialog > footer { padding-inline: 18px; }
-}
+.folder-picker-option[data-action=collection-star] > .icon { color: #ef4444; }
+.folder-picker-option.is-starred > .icon { fill: currentColor; }

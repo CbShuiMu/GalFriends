@@ -1,0 +1,30 @@
+<svg class="home-empty-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 236" aria-hidden="true" focusable="false">
+  <g fill="var(--surface)" stroke="var(--home-art-line)">
+    <g transform="rotate(-15 139 123)">
+      <rect x="78" y="47" width="122" height="152" rx="12"/>
+      <path d="M91 68v-6a3 3 0 0 1 3-3h6m-9 119v6a3 3 0 0 0 3 3h6" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="rotate(15 221 123)">
+      <rect x="160" y="47" width="122" height="152" rx="12"/>
+      <path d="M260 59h6a3 3 0 0 1 3 3v6m-9 119h6a3 3 0 0 0 3-3v-6" fill="none" stroke-linecap="round"/>
+    </g>
+  </g>
+  <rect class="home-empty-frame" x="111" y="21" width="138" height="190" rx="13" fill="var(--home-art-paper)" stroke="var(--home-art-line)"/>
+  <rect x="119" y="29" width="122" height="149" rx="8" fill="var(--home-art-wash)"/>
+  <circle cx="180" cy="99" r="45" fill="none" stroke="var(--home-art-line)"/>
+  <svg x="119" y="42" width="136" height="136" viewBox="0 0 256 256">
+    <!-- 按 Logo 原始坐标只保留角色轮廓，让卡面颜色继续跟随主题。 -->
+    <clipPath id="home-empty-mascot">
+      <path d="M0 75C33 41 83 35 125 59C167 82 190 122 191 171C199 168 209 169 217 176L213 188C209 185 204 183 200 181C207 192 216 201 223 213L213 217C207 209 202 202 197 193C200 217 213 237 230 247L232 256H0Z"/>
+    </clipPath>
+    <image href="assets/galfriends-logo.png" width="256" height="256" clip-path="url(#home-empty-mascot)"/>
+  </svg>
+  <circle cx="130" cy="194" r="3.5" fill="var(--home-art-line)"/>
+  <path d="M141 194h30m39 0h18" stroke="var(--home-art-line)" stroke-width="2" stroke-linecap="round"/>
+  <g fill="var(--home-art-silhouette)">
+    <path d="M55 117c0 10-4 14-14 14 10 0 14 4 14 14 0-10 4-14 14-14-10 0-14-4-14-14z"/>
+    <path d="M291 29c0 12-5 17-17 17 12 0 17 5 17 17 0-12 5-17 17-17-12 0-17-5-17-17z"/>
+    <circle cx="309" cy="169" r="2.5"/>
+    <circle cx="54" cy="89" r="2"/>
+  </g>
+</svg>

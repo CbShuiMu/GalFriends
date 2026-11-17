@@ -23,7 +23,7 @@ pub(crate) fn broadcast_display_preferences(app: &tauri::AppHandle) {
     };
     if let Err(error) = send() {
         // 保存已经成功；窗口退出造成通知失败不能把已提交的设置伪装成保存失败。
-        eprintln!("GalFriends display preferences notification: {error}");
+        log::warn!("display_preferences_notification_failed error={error}");
     }
 }
 
@@ -34,7 +34,7 @@ pub(crate) async fn set_appearance(
     value: String,
 ) -> Result<Appearance, String> {
     let handle = app.clone();
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("set_appearance", move || {
         let state = app.state::<AppState>();
         let mut guard = state.library.lock().map_err(|e| e.to_string())?;
         let library = guard.as_mut().map_err(|e| e.clone())?;
@@ -57,7 +57,7 @@ pub(crate) async fn settings_environment(app: tauri::AppHandle) -> Result<Enviro
     let resources = app.path().resource_dir().map_err(|e| e.to_string())?;
     let cache = app.path().app_cache_dir().map_err(|e| e.to_string())?;
     let library = app.state::<AppState>().path.clone();
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("settings_environment", move || {
         Ok(Environment {
             library_path: library.display().to_string(),
             cache_path: cache.display().to_string(),

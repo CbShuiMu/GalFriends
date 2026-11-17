@@ -13,7 +13,7 @@ import random
 import re
 import shutil
 import sys
-from common import checked_path, new_run, progress, separate_output, write_json
+from common import checked_path, emit, new_run, progress, separate_output, write_json
 from extract import read_manifest, digest
 from dataset import select_samples
 
@@ -213,7 +213,9 @@ def train(runtime, request):
             validation = sum(speech_loss(model,row,torch,'cuda').item() for row in valid)/len(valid)
         if not math.isfinite(validation):
             raise ValueError('Non-finite validation loss')
-        history.append(dict(epoch=epoch+1,train_loss=total_loss/len(training),validation_loss=validation))
+        train_loss = total_loss/len(training)
+        history.append(dict(epoch=epoch+1,train_loss=train_loss,validation_loss=validation))
+        emit('log', f'Epoch {epoch+1}/{epochs} · train_loss={train_loss:.6f} · validation_loss={validation:.6f}\n')
         write_json(root/'metrics.json',history)
         if validation < best:
             progress('saving',epoch+1,epochs)

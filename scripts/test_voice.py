@@ -6,6 +6,7 @@ import struct
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'crates/core/src/voice/python'))
 from common import checked_path, separate_output
@@ -14,7 +15,7 @@ from training import train
 from dataset import select_samples
 from speech import speak
 from reference_audio import selected_reference
-from gpt_sovits import verify_names
+from gpt_sovits import official_step, verify_names
 from gpt_sovits import prepare as gsv_prepare
 from gpt_sovits_speech import speak as gsv_speak, reference_prompt, synthesize_segments
 
@@ -24,6 +25,40 @@ def record(code, payload, offset):
 
 
 class VoiceTests(unittest.TestCase):
+    def test_official_step_streams_real_output_before_the_trainer_exits(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            source = root / 'trainer'
+            source.mkdir()
+            job = root / 'job'
+            job.mkdir()
+            signal = root / 'seen'
+            (source / 'train.py').write_text(
+                "import sys, time\n"
+                "from pathlib import Path\n"
+                "print('training step 1', flush=True)\n"
+                "for _ in range(100):\n"
+                "    if Path(sys.argv[1]).exists(): break\n"
+                "    time.sleep(.05)\n"
+                "else: raise RuntimeError('output was never streamed')\n"
+                "print('validation done', file=sys.stderr, flush=True)\n",
+                encoding='utf-8',
+            )
+            output = []
+
+            def observe(event, data):
+                self.assertEqual(event, 'log')
+                output.append(data)
+                if 'training step 1' in ''.join(output):
+                    signal.touch()
+
+            runtime = dict(python=sys.executable, source=str(source), models=str(root/'models'))
+            with patch('gpt_sovits.emit', side_effect=observe):
+                official_step(runtime, job, 'train.py', 'gsv_gpt', [str(signal)])
+            transcript = 'training step 1\nvalidation done\n'
+            self.assertEqual(''.join(output), transcript)
+            self.assertEqual((job/'gsv_gpt.log').read_text(encoding='utf-8'), transcript)
+
     def test_skill_host_boundaries_and_byte_evidence(self):
         from skill_host import create_host, span
         with tempfile.TemporaryDirectory() as folder:
@@ -56,8 +91,8 @@ class VoiceTests(unittest.TestCase):
             root = Path(folder)
             game = root / 'game'
             game.mkdir()
-            task = root / 'task'
-            task.mkdir()
+            task = root / 'characters/Shindou Setsuna--fixture/voice/skill-extract-fixture'
+            task.mkdir(parents=True)
             assets = task / 'raw'
             assets.mkdir()
             script = assets / 'scene.bin'
@@ -71,7 +106,11 @@ class VoiceTests(unittest.TestCase):
             manifest = task / 'dialogue-voice.json'
             manifest.write_text(json.dumps(data), encoding='utf-8')
             (task / 'extraction-report.json').write_text(json.dumps(dict(engine='fixture', unresolved=['unmapped'])), encoding='utf-8')
-            self.assertEqual(validate_result(task, game)['excluded'], 1)
+            reply = validate_result(task, game)
+            self.assertEqual(reply['excluded'], 1)
+            self.assertEqual(Path(reply['manifest']), manifest)
+            self.assertEqual(reply['speakers'], [dict(name='役', clips=1)])
+            self.assertEqual(json.loads(manifest.read_text(encoding='utf-8'))['failed_scripts'], ['unmapped'])
             row['source']['sha256'] = 'wrong'
             manifest.write_text(json.dumps(data), encoding='utf-8')
             with self.assertRaisesRegex(ValueError, 'source hash'):

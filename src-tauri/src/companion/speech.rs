@@ -24,7 +24,7 @@ pub(super) fn synthesize(
     storage::validate_model(Path::new(&profile.model_dir), &profile.id, engine)?;
     let _lease = app
         .state::<crate::voice::Tasks>()
-        .acquire("speech", 0, cancel.clone())?;
+        .acquire("speech", 0, cancel.clone(), None)?;
     let cache = app
         .path()
         .app_cache_dir()

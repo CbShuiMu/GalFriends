@@ -41,14 +41,14 @@ fn deletion_purges_all_versions_and_assets_but_keeps_other_characters_and_extern
     library.characters.push(second);
     store::save(&path, &library).unwrap();
     let ids = vec![library.characters[0].id.clone(), "second".into()];
-    let target = character_directory(&root, &ids[0]);
+    let target = character_directory(&root, &ids[0]).unwrap();
     assert_eq!(fs::read_dir(&target).unwrap().count(), 2);
     fs::create_dir(target.join("images")).unwrap();
     fs::write(target.join("images/original.png"), b"original").unwrap();
     fs::write(target.join("images/enhanced.png"), b"enhanced").unwrap();
     let outside = dir.path().join("original.png");
     fs::write(&outside, b"external source").unwrap();
-    let retained = character_directory(&root, "retained");
+    let retained = character_directory(&root, "retained").unwrap();
     let retained_file = fs::read_dir(&retained)
         .unwrap()
         .next()
@@ -59,7 +59,7 @@ fn deletion_purges_all_versions_and_assets_but_keeps_other_characters_and_extern
     let next = remove(&library, &ids);
     store::save_changes(&path, &library, &next).unwrap();
     for id in &ids {
-        assert!(!character_directory(&root, id).exists());
+        assert!(!character_directory(&root, id).unwrap().exists());
     }
     let restored = store::load(&path).unwrap();
     assert_eq!(restored.characters.len(), 1);
@@ -87,7 +87,7 @@ fn failed_validation_keeps_archives_and_current_library() {
     assert!(store::save_changes(&path, &library, &next).is_err());
     assert_eq!(fs::read(&path).unwrap(), before);
     assert_eq!(
-        fs::read_dir(character_directory(dir.path(), &library.characters[0].id))
+        fs::read_dir(character_directory(dir.path(), &library.characters[0].id).unwrap())
             .unwrap()
             .count(),
         2
@@ -115,7 +115,7 @@ fn locked_archive_reports_failure_and_same_deletion_can_retry() {
     let path = dir.path().join("library.json");
     let library = fixture(&path);
     let id = library.characters[0].id.clone();
-    let folder = character_directory(dir.path(), &id);
+    let folder = character_directory(dir.path(), &id).unwrap();
     let record = fs::read_dir(&folder)
         .unwrap()
         .next()
@@ -156,12 +156,12 @@ fn failed_library_replace_recovers_on_load_without_recreating_deleted_archives()
         .unwrap();
     assert!(store::save_changes(&path, &library, &next).is_err());
     assert_eq!(fs::read(&path).unwrap(), before);
-    assert!(!character_directory(dir.path(), &id).exists());
+    assert!(!character_directory(dir.path(), &id).unwrap().exists());
     drop(lock);
     let recovered = store::load(&path).unwrap();
     assert_eq!(recovered.characters.len(), 1);
     assert_eq!(recovered.collections["folder"], ["retained"]);
-    assert!(!character_directory(dir.path(), &id).exists());
+    assert!(!character_directory(dir.path(), &id).unwrap().exists());
     assert!(super::pending(&path).unwrap().is_none());
 }
 
@@ -176,7 +176,9 @@ fn junction_inside_archive_rejects_whole_batch_before_deleting_anything() {
     let outside = dir.path().join("outside");
     fs::create_dir(&outside).unwrap();
     fs::write(outside.join("original.png"), b"keep").unwrap();
-    let link = character_directory(&root, "retained").join("images");
+    let link = character_directory(&root, "retained")
+        .unwrap()
+        .join("images");
     let status = std::process::Command::new("powershell.exe")
         .args(["-NoProfile", "-NonInteractive", "-Command", "New-Item -ItemType Junction -Path $env:GALFRIENDS_TEST_LINK -Target $env:GALFRIENDS_TEST_TARGET | Out-Null"])
         .env("GALFRIENDS_TEST_LINK", &link).env("GALFRIENDS_TEST_TARGET", &outside)
@@ -187,7 +189,7 @@ fn junction_inside_archive_rejects_whole_batch_before_deleting_anything() {
     assert!(store::save_changes(&path, &library, &remove(&library, &ids)).is_err());
     assert_eq!(fs::read(&path).unwrap(), before);
     assert_eq!(
-        fs::read_dir(character_directory(&root, &ids[0]))
+        fs::read_dir(character_directory(&root, &ids[0]).unwrap())
             .unwrap()
             .count(),
         2

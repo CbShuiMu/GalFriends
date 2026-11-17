@@ -37,7 +37,7 @@ fn legacy_library_migrates_losslessly_and_selection_only_changes_small_index() {
     store::select_artwork(&path, &mut library, "bangumi:1", 1).unwrap();
     assert!(fs::metadata(&path).unwrap().len() < 2000);
     assert_eq!(store::load(&path).unwrap(), library);
-    let folder = archive::character_directory(dir.path(), "bangumi:1");
+    let folder = archive::character_directory(dir.path(), "bangumi:1").unwrap();
     let snapshot = fs::read_dir(&folder)
         .unwrap()
         .next()
@@ -79,7 +79,7 @@ fn favorites_migrate_legacy_data_and_keep_profiles_through_later_saves() {
     let ids = ["bangumi:1".to_owned()];
     store::set_favorites(&path, &mut library, &ids, false).unwrap();
     assert_eq!(store::load(&path).unwrap(), library);
-    let folder = archive::character_directory(dir.path(), &ids[0]);
+    let folder = archive::character_directory(dir.path(), &ids[0]).unwrap();
     let snapshot = fs::read_dir(&folder)
         .unwrap()
         .next()
@@ -167,7 +167,7 @@ fn favorites_never_access_profiles_and_failed_commit_preserves_state_for_retry()
     let path = dir.path().join("library.json");
     let mut library = fixture();
     store::save(&path, &library).unwrap();
-    let folder = archive::character_directory(dir.path(), "bangumi:1");
+    let folder = archive::character_directory(dir.path(), "bangumi:1").unwrap();
     let snapshot = fs::read_dir(&folder)
         .unwrap()
         .next()
@@ -222,7 +222,7 @@ fn appearance_migrates_legacy_library_and_returns_only_settings() {
     store::set_appearance(&path, &mut library, "color_theme", "white-pink").unwrap();
     assert_eq!(store::load(&path).unwrap(), library);
     assert_eq!(
-        fs::read_dir(archive::character_directory(dir.path(), "bangumi:1"))
+        fs::read_dir(archive::character_directory(dir.path(), "bangumi:1").unwrap())
             .unwrap()
             .count(),
         1
@@ -274,7 +274,7 @@ fn missing_corrupt_or_unsafe_profile_is_reported_without_resetting_library() {
     let path = dir.path().join("library.json");
     store::save(&path, &fixture()).unwrap();
     let original = fs::read(&path).unwrap();
-    let folder = archive::character_directory(dir.path(), "bangumi:1");
+    let folder = archive::character_directory(dir.path(), "bangumi:1").unwrap();
     let snapshot = fs::read_dir(&folder)
         .unwrap()
         .next()
@@ -303,7 +303,7 @@ fn selection_and_settings_save_do_not_read_or_rewrite_unchanged_profiles() {
     let path = dir.path().join("library.json");
     let mut library = fixture();
     store::save(&path, &library).unwrap();
-    let folder = archive::character_directory(dir.path(), "bangumi:1");
+    let folder = archive::character_directory(dir.path(), "bangumi:1").unwrap();
     let snapshot = fs::read_dir(folder)
         .unwrap()
         .next()

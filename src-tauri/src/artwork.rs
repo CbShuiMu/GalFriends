@@ -91,7 +91,7 @@ pub(crate) async fn reprocess_artworks(
     let resources = app.path().resource_dir().map_err(|e| e.to_string())?;
     let language =
         galfriends_i18n::Language::from_code(&library.settings.language).unwrap_or_default();
-    tauri::async_runtime::spawn_blocking(move || {
+    crate::diagnostics::spawn_background("reprocess_artworks", move || {
         let portrait = missing_bangumi_portrait(&character.snapshots, &character.artworks);
         let mut prepared = prepare_artworks(
             &character.artworks,
